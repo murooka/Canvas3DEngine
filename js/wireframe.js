@@ -1,46 +1,6 @@
-var Point2D = function (x, y) {
-    this.x = x;
-    this.y = y;
-};
-Point2D.prototype.add = function (other) {
-    return new Point2D(
-        this.x+other.x,
-        this.y+other.y
-    );
-};
-Point2D.prototype.sub = function (other) {
-    return new Point2D(
-        this.x-other.x,
-        this.y-other.y
-    );
-};
-Point2D.prototype.mul = function (other) {
-    return new Point2D(
-        this.x*other,
-        this.y*other
-    );
-};
-Point2D.prototype.div = function (other) {
-    return new Point2D(
-        this.x/other,
-        this.y/other
-    );
-};
-Point2D.prototype.sqabs = function () {
-    return this.x*this.x + this.y*this.y;
-};
-Point2D.prototype.abs = function () {
-    return Math.sqrt(this.sqabs());
-};
-Point2D.prototype.dot = function (other) {
-    return this.x*other.x + this.y*other.y;
-};
-Point2D.prototype.cross = function (other) {
-    return this.x*other.y - this.y*other.x;
-};
-Point2D.prototype.unit = function () {
-    return this.div(this.abs());
-};
+Object.prototype.isPoint2D = function () { return false; };
+Object.prototype.isPoint3D = function () { return false; };
+Object.prototype.isMatrix = function () { return false; };
 
 
 var radianWithTwoPoint = function (p1, p2) {
@@ -48,12 +8,16 @@ var radianWithTwoPoint = function (p1, p2) {
 };
 
 
+// ３次元ベクトルを表すクラス
 var Point3D = function (x, y, z) {
     this.x = x;
     this.y = y;
     this.z = z;
+    this.w = 1;
+    this.v = [x, y, z, 1];
 };
-Point3D.prototype.origin = new Point3D(0, 0, 0);
+Point3D.origin = new Point3D(0, 0, 0);
+Point3D.prototype.isPoint3D = function () { return true; };
 Point3D.prototype.add = function (other) {
     return new Point3D(
         this.x+other.x,
@@ -81,6 +45,9 @@ Point3D.prototype.div = function (other) {
         this.y/other,
         this.z/other
     );
+};
+Point3D.prototype.dot = function (other) {
+    return this.x*other.x + this.y*other.y + this.z*other.z;
 };
 Point3D.prototype.cross = function (other) {
     return new Point3D(
@@ -133,15 +100,55 @@ Point3D.prototype.radian = function (axis) {
         return radianWithTwoPoint(orig2D, this2D);
     }
 };
-Point3D.prototype.to2D = function (axis) {
-    if (axis.x===0 && axis.y===1 && axis.z===0) {
-        return new Point2D(this.x, this.z);
-    } else if (axis.x===0 && axis.y===0 && axis.z===1) {
-        return new Point2D(this.x, this.y);
-    }
-};
 Point3D.prototype.toString = function () {
-    return '(' + this.x.toFixed(2) + ',' + this.y.toFixed(2) + ',' + this.z.toFixed(2) + ')';
+    return '(' + this.x.toFixed(2) + ',' + this.y.toFixed(2) + ',' + this.z.toFixed(2) + ',' + this.w.toFixed(2) + ')';
+};
+
+
+var Matrix = function () {
+    this.m = new Array(Matrix.size*Matrix.size);
+    for (var i=0; i<Matrix.size*Matrix.size; i++) this.m[i] = 0;
+};
+Matrix.size = 4;
+Matrix.prototype.isMatrix = function () { return true; };
+Matrix.prototype.copy = function () {
+    return new Matrix().set(this.m);
+};
+Matrix.prototype.set = function (ary) {
+    for (var i=0; i<Matrix.size*Matrix.size; i++) this.m[i] = ary[i];
+};
+Matrix.identity = new Matrix().set([1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]);
+Matrix.prototype.setAt = function (row, col, v) {
+    this.m[row * Matrix.size + col] = v;
+};
+Matrix.prototype.getAt = function (row, col) {
+    return this.m[row * Matrix.size + col];
+};
+Matrix.prototype.mul = function (other) {
+    var i, j, k;
+    if (other.isPoint3D()) {
+        var v = [ 0, 0, 0, 0];
+        for (i=0; i<4; i++) {
+            for (j=0; j<4; j++) {
+                v[i] += this.getAt(i, j) * other.v[j];
+            }
+        }
+        return new Point3D(v[0], v[1], v[2]);
+    } else if (other.isMatrix()) {
+        var mat = new Matrix();
+        for (i=0; i<4; i++) {
+            for (j=0; j<4; j++) {
+                var a = 0;
+                for (k=0; k<4; k++) {
+                    a += this.getAt(i, k) * other.getAt(k, j);
+                }
+                mat.set(i, j, a);
+            }
+        }
+        return mat;
+    } else {
+        return undefined;
+    }
 };
 
 
@@ -169,6 +176,32 @@ Canvas3D.prototype.update = function () {
     for (var i=0; i<length; i++) {
         objects[i].draw(this);
     }
+};
+Canvas3D.prototype.setViewMatrix = function (view, target, upper) {
+    var zaxis = view.sub(target).unit();
+    var xaxis = upper.cross(zaxis).unit();
+    var yaxis = zaxis.cross(xaxis).unit();
+
+    var viewMatrix = new Matrix();
+
+    viewMatrix.setAt(0, 0, xaxis.x);
+    viewMatrix.setAt(0, 1, xaxis.y);
+    viewMatrix.setAt(0, 2, xaxis.z);
+    viewMatrix.setAt(0, 3, -xaxis.dot(view));
+
+    viewMatrix.setAt(1, 0, yaxis.x);
+    viewMatrix.setAt(1, 1, yaxis.y);
+    viewMatrix.setAt(1, 2, yaxis.z);
+    viewMatrix.setAt(1, 3, -yaxis.dot(view));
+
+    viewMatrix.setAt(2, 0, zaxis.x);
+    viewMatrix.setAt(2, 1, zaxis.y);
+    viewMatrix.setAt(2, 2, zaxis.z);
+    viewMatrix.setAt(2, 3, -zaxis.dot(view));
+
+    viewMatrix.setAt(3, 3, 1);
+
+    this.viewMatrix = viewMatrix;
 };
 
 
@@ -223,17 +256,30 @@ Polygon.prototype.toString = function () {
 };
 Polygon.prototype.draw = function (canvas) {
     var ctx = canvas.ctx;
-    var verts = this.vertices;
-    var len = verts.length;
+    var len = this.vertices.length;
+    var verts = new Array(len);
+
+    var cx = canvas.width/2,
+        cy = canvas.height/2,
+        center = new Point3D(cx, cy, 0);
 
     for (var i=0; i<len; i++) {
+        verts[i] = canvas.viewMatrix.mul(this.vertices[i]);
+        var d = verts[i].abs();
+        verts[i] = verts[i].mul(d/(d-verts[i].z));
+        verts[i] = verts[i].add(center);
+    }
+
+    for (i=0; i<len; i++) {
         ctx.beginPath();
         ctx.moveTo(verts[i].x, verts[i].y);
         ctx.lineTo(verts[(i+1)%len].x, verts[(i+1)%len].y);
         ctx.stroke();
     }
 
-    var color = (192 - Math.abs(Math.floor(this.normal().x * 128))).toString(16);
+    var color = Math.abs(Math.floor(this.normal().z * 128)) + 64;
+    color = Math.max(color, 0).toString(16);
+    if (color.length===1) color = ' ' + color;
     ctx.fillStyle = '#' + color + color + color;
     ctx.beginPath();
     for (i=0; i<len; i++) {
@@ -245,16 +291,47 @@ Polygon.prototype.draw = function (canvas) {
     ctx.fill();
 };
 
+var Model = function (polygons, origin) {
+    this.polygons = polygons;
+    this.origin = origin;
+};
+Model.prototype.move = function (v) {
+    for (var i=0; i<this.polygons.length; i++) {
+        this.polygons.move(v);
+    }
+};
+Model.prototype.rotateX = function (rad) {
+    for (var i=0; i<this.polygons.length; i++) {
+        this.polygons.rotateX(this.origin, rad);
+    }
+};
+Model.prototype.rotateY = function (rad) {
+    for (var i=0; i<this.polygons.length; i++) {
+        this.polygons.rotateY(this.origin, rad);
+    }
+};
+Model.prototype.rotateZ = function (rad) {
+    for (var i=0; i<this.polygons.length; i++) {
+        this.polygons.rotateZ(this.origin, rad);
+    }
+};
+
+
 
 var canvasInit = function () {
     var canvas = new Canvas3D('canvas');
+    canvas.setViewMatrix(
+        new Point3D(  0,   0,-100),
+        new Point3D(  0,   0,   0),
+        new Point3D(  0,   1,   0)
+    );
     var vertexData = [
-        new Point3D(300, 300, 100),
-        new Point3D(400, 400, 100),
-        new Point3D(400, 300,   0),
-        new Point3D(500, 300, 100),
-        new Point3D(400, 300, 200),
-        new Point3D(400, 200, 100),
+        new Point3D(-100,   0,   0),
+        new Point3D(   0, 100,   0),
+        new Point3D(   0,   0,-100),
+        new Point3D( 100,   0,   0),
+        new Point3D(   0,   0, 100),
+        new Point3D(   0,-100,   0),
     ];
     var faceData = [
         [ 1, 4, 2],
@@ -266,17 +343,25 @@ var canvasInit = function () {
         [ 3, 5, 2],
         [ 2, 5, 0],
     ];
-    var center = new Point3D(400, 300, 100);
+    var center = Point3D.origin;
     var polygons = [];
-    for (var i=0; i<faceData.length; i++) {
-        var polygon = new Polygon([
-            vertexData[faceData[i][0]],
-            vertexData[faceData[i][1]],
-            vertexData[faceData[i][2]],
-        ]);
-        polygons.push(polygon);
-        canvas.addObject(polygon);
-    }
+    // for (var i=0; i<faceData.length; i++) {
+        // var polygon = new Polygon([
+            // vertexData[faceData[i][0]],
+            // vertexData[faceData[i][1]],
+            // vertexData[faceData[i][2]],
+        // ]);
+        // polygons.push(polygon);
+        // canvas.addObject(polygon);
+    // }
+    var polygon = new Polygon([
+            new Point3D( 100, 100, 0),
+            new Point3D(-100, 100, 0),
+            new Point3D(-100,-100, 0),
+            new Point3D( 100,-100, 0),
+    ]);
+    polygons.push(polygon);
+    canvas.addObject(polygon);
 
     canvas.update();
 
@@ -296,8 +381,8 @@ var canvasInit = function () {
             var mouse_y = e.clientY - canvas.canvas.offsetTop;
 
             for (var i=0; i<polygons.length; i++) {
-                polygons[i].rotateY(center, (mouse_x - old_x) / 100);
-                polygons[i].rotateX(center, - (mouse_y - old_y) / 100);
+                polygons[i].rotateY(center, - (mouse_x - old_x) / 100);
+                // polygons[i].rotateX(center, - (mouse_y - old_y) / 100);
             }
             canvas.update();
 
@@ -305,14 +390,25 @@ var canvasInit = function () {
             old_y = mouse_y;
         }
     };
-
-    // setInterval(function () {
-    //     for (var i=0; i<polygons.length; i++) {
-    //         polygons[i].rotateZ(center, 0.02);
-    //         polygons[i].rotateX(center, 0.015);
-    //     }
-    //     canvas.update();
-    // },10);
+    document.onkeypress = function (e) {
+        console.log(e.charCode);
+        switch (e.charCode) {
+            case 120: // 'x'
+                break;
+            case 122: // 'z'
+                break;
+        }
+    };
+    var counter = 0;
+    setInterval(function () {
+        counter += 0.01;
+        var sin = Math.sin(counter);
+        var cos = Math.cos(counter);
+        var i;
+        for (i=0; i<polygons.length; i++) polygons[i].rotateY(center, cos*Math.PI*0.01);
+        for (i=0; i<polygons.length; i++) polygons[i].rotateZ(center, sin*Math.PI*0.01);
+        canvas.update();
+    }, 1);
 };
 
 window.onload = canvasInit;
