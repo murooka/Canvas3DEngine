@@ -1,3 +1,8 @@
+/*
+ * クラスを継承させるための汎用関数
+ * @param {Object} s 親クラス
+ * @param {Object} c 子クラス
+ */
 var extend = function (s, c) {
     var F = function () {};
     F.prototype = s.prototype;
@@ -6,266 +11,6 @@ var extend = function (s, c) {
     c.prototype.__super__.constructor = s;
     c.prototype.constructor = c;
     return c;
-};
-
-var radianWithTwoPoint = function (p1, p2) {
-    return Math.atan2(p1.dot(p2), p1.cross(p2));
-};
-
-
-// ３次元ベクトルを表すクラス
-var Vector = function (x, y, z) {
-    this.x = x;
-    this.y = y;
-    this.z = z;
-    this.w = 1;
-    this.v = [x, y, z, 1];
-};
-Vector.origin = function () {
-    return new Vector(0, 0, 0);
-};
-
-Vector.prototype.add = function (other) {
-    return new Vector(
-        this.x+other.x,
-        this.y+other.y,
-        this.z+other.z
-    );
-};
-Vector.prototype.sub = function (other) {
-    return new Vector(
-        this.x-other.x,
-        this.y-other.y,
-        this.z-other.z
-    );
-};
-Vector.prototype.mul = function (other) {
-    return new Vector(
-        this.x/other,
-        this.y/other,
-        this.z/other
-    );
-};
-Vector.prototype.div = function (other) {
-    return new Vector(
-        this.x/other,
-        this.y/other,
-        this.z/other
-    );
-};
-Vector.prototype.dot = function (other) {
-    return this.x*other.x + this.y*other.y + this.z*other.z;
-};
-Vector.prototype.cross = function (other) {
-    return new Vector(
-        this.y*other.z - this.z*other.y,
-        this.z*other.x - this.x*other.z,
-        this.x*other.y - this.y*other.x
-    );
-};
-Vector.prototype.unit = function () {
-    return this.div(this.abs());
-};
-Vector.prototype.sqabs = function () {
-    return this.x*this.x + this.y*this.y + this.z*this.z;
-};
-Vector.prototype.abs = function () {
-    return Math.sqrt(this.sqabs());
-};
-Vector.prototype.rotateX = function (rad) {
-    var sin = Math.sin(rad),
-        cos = Math.cos(rad);
-    return new Vector(
-        this.x,
-        this.y*cos - this.z*sin,
-        this.z*cos + this.y*sin
-    );
-};
-Vector.prototype.rotateY = function (rad) {
-    var sin = Math.sin(rad),
-        cos = Math.cos(rad);
-    return new Vector(
-        this.x*cos + this.z*sin,
-        this.y,
-        this.z*cos - this.x*sin
-    );
-};
-Vector.prototype.rotateZ = function (rad) {
-    var sin = Math.sin(rad),
-        cos = Math.cos(rad);
-    return new Vector(
-        this.x*cos - this.y*sin,
-        this.y*cos + this.x*sin,
-        this.z
-    );
-};
-Vector.prototype.radian = function (axis) {
-    if (axis.x===0 && axis.y===1 && axis.z===0) {
-        var orig = new Vector(1, 0, 0);
-        var orig2D = orig.to2D(axis);
-        var this2D = this.to2D(axis);
-        return radianWithTwoPoint(orig2D, this2D);
-    }
-};
-Vector.prototype.toString = function () {
-    return '(' + this.x.toFixed(2) + ',' + this.y.toFixed(2) + ',' + this.z.toFixed(2) + ',' + this.w.toFixed(2) + ')';
-};
-
-
-var Matrix = function () {
-    this.m = new Array(Matrix.size*Matrix.size);
-    for (var i=0; i<Matrix.size*Matrix.size; i++) this.m[i] = 0;
-};
-Matrix.size = 4;
-Matrix.translating = function () {
-    var x, y, z;
-    if (arguments.length===1) {
-        // 引数をVector型として処理
-        var v = arguments[0];
-        x = v.x;
-        y = v.y;
-        z = v.z;
-    } else if (arguments.length===3) {
-        // 引数をベクトルのx, y, z要素として処理
-        x = arguments[0];
-        y = arguments[1];
-        z = arguments[2];
-    }
-
-    return new Matrix().set([
-        1, 0, 0, x,
-        0, 1, 0, y,
-        0, 0, 1, z,
-        0, 0, 0, 1,
-    ]);
-};
-Matrix.rotatingX = function (rad) {
-    var sin = Math.sin(rad);
-    var cos = Math.cos(rad);
-    return new Matrix().set([
-        1,   0,   0, 0,
-        0, cos,-sin, 0,
-        0, sin, cos, 0,
-        0,   0,   0, 1,
-    ]);
-};
-Matrix.rotatingY = function (rad) {
-    var sin = Math.sin(rad);
-    var cos = Math.cos(rad);
-    return new Matrix().set([
-         cos, 0, sin, 0,
-           0, 1,   0, 0,
-        -sin, 0, cos, 0,
-           0, 0,   0, 1,
-    ]);
-};
-Matrix.rotatingZ = function (rad) {
-    var sin = Math.sin(rad);
-    var cos = Math.cos(rad);
-    return new Matrix().set([
-        cos,-sin, 0, 0,
-        sin, cos, 0, 0,
-          0,   0, 1, 0,
-          0,   0, 0, 1,
-    ]);
-};
-Matrix.scaling = function (x, y, z) {
-    return new Matrix().set([
-        x, 0, 0, 0,
-        0, y, 0, 0,
-        0, 0, z, 0,
-        0, 0, 0, 1,
-    ]);
-};
-Matrix.prototype.copy = function () {
-    return new Matrix().set(this.m);
-};
-Matrix.prototype.set = function (ary) {
-    for (var i=0; i<Matrix.size*Matrix.size; i++) this.m[i] = ary[i];
-    return this;
-};
-Matrix.identity = function () {
-    return new Matrix().set([1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]);
-};
-Matrix.prototype.setAt = function (row, col, v) {
-    this.m[row * Matrix.size + col] = v;
-};
-Matrix.prototype.getAt = function (row, col) {
-    return this.m[row * Matrix.size + col];
-};
-Matrix.prototype.mul = function (other) {
-    var v = [ 0, 0, 0, 0];
-    for (var i=0; i<4; i++) {
-        for (var j=0; j<4; j++) {
-            v[i] += this.getAt(i, j) * other.v[j];
-        }
-    }
-    return new Vector(v[0], v[1], v[2]);
-};
-Matrix.prototype.compose = function (other) {
-    var mat = new Matrix();
-    for (var i=0; i<4; i++) {
-        for (var j=0; j<4; j++) {
-            var a = 0;
-            for (var k=0; k<4; k++) {
-                a += this.getAt(i, k) * other.getAt(k, j);
-            }
-            mat.setAt(i, j, a);
-        }
-    }
-    return mat;
-};
-Matrix.prototype.toString = function () {
-    var str = '';
-    for (var i=0; i<Matrix.size; i++) {
-        var array = [];
-        for (var j=0; j<Matrix.size; j++) {
-            var v = this.getAt(i, j).toFixed(1);
-            var size = 8 - v.length;
-            for (var k=0; k<size; k++) v = ' ' + v;
-            array.push(v);
-        }
-        str += '|' + array.join(',') + '|\n';
-    }
-    return str;
-};
-// ガウスの消去法
-Matrix.prototype.inverse = function () {
-    var i, j, k;
-    var matrix = this.copy();
-    var inverse = Matrix.identity();
-
-    var mat = matrix.m;
-    var inv = inverse.m;
-
-    // 前進消去
-    for (i=0; i<4-1; i++) {
-        var e = mat[i*4+i];
-        for (j=0; j<4; j++) {
-            mat[i*4+j] = mat[i*4+j]/e;
-            inv[i*4+j] = inv[i*4+j]/e;
-        }
-        for (j=i+1; j<4; j++) {
-            var s = mat[j*4+i];
-            for (k=0; k<4; k++) {
-                mat[j*4+k] -= mat[i*4+k]*s;
-                inv[j*4+k] -= inv[i*4+k]*s;
-            }
-        }
-    }
-    
-    // 後進代入
-    for (i=3; i>0; i--) {
-        for (j=i-1; j>=0; j--) {
-            var t = mat[j*4+i];
-            for (k=0; k<4; k++) {
-                mat[j*4+k] -= mat[i*4+k]*t;
-                inv[j*4+k] -= inv[i*4+k]*t;
-            }
-        }
-    }
-
-    return inverse;
 };
 
 
@@ -519,8 +264,6 @@ var Texture = extend(Polygon, function (vertices, src) {
     image.src = src;
 
     var canvas = document.getElementById('tmp_canvas');
-    canvas.width = image.width;
-    canvas.height = image.height;
     var ctx = canvas.getContext('2d');
 
     ctx.drawImage(image, 0, 0);
@@ -528,7 +271,7 @@ var Texture = extend(Polygon, function (vertices, src) {
     this.imageData = ctx.getImageData(0, 0, image.width, image.height);
     this.image = image;
     this.vertices = vertices;
-    this.worldMatrix = Matrix.identity();
+    this.worldMatrix = new Matrix();
 });
 Texture.prototype.move = function (v) {
     for (var i=0; i<this.vertices.length; i++) {
@@ -639,18 +382,26 @@ Texture.prototype.draw = function (canvas) {
             if (isIn) {
                 var zz = calcZ(xx, yy);
                 var world = inverse.mul(new Vector(xx, yy, zz));
-                var ix = Math.floor(world.x / 97 * this.image.width);
-                var iy = Math.floor(world.y / 97 * this.image.height);
+                var fix = world.x / 97 * this.image.width;
+                var fiy = world.y / 97 * this.image.height;
+                var ix = Math.floor(fix);
+                var iy = Math.floor(fiy);
+                // var dix = fix - ix;
+                // var diy = fiy - iy;
 
-                dout[(y*width+x)*4+0] = din[(iy*this.image.width+ix)*4+0];
-                dout[(y*width+x)*4+1] = din[(iy*this.image.width+ix)*4+1];
-                dout[(y*width+x)*4+2] = din[(iy*this.image.width+ix)*4+2];
-                dout[(y*width+x)*4+3] = din[(iy*this.image.width+ix)*4+3];
+                for (i=0; i<4; i++) {
+                    dout[(y*width+x)*4+i] = din[(iy*this.image.width+ix)*4+i];
+                    // 線形補間?
+                    // dout[(y*width+x)*4+i] =
+                        // din[((iy  )*this.image.width+(ix  ))*4+i]*(1-dix)*(1-diy) +
+                        // din[((iy  )*this.image.width+(ix+1))*4+i]*(  dix)*(1-diy) +
+                        // din[((iy+1)*this.image.width+(ix  ))*4+i]*(1-dix)*(  diy) +
+                        // din[((iy+1)*this.image.width+(ix+1))*4+i]*(  dix)*(  diy);
+                }
             } else {
-                dout[(y*width+x)*4+0] = dback[(y*width+x)*4+0];
-                dout[(y*width+x)*4+1] = dback[(y*width+x)*4+1];
-                dout[(y*width+x)*4+2] = dback[(y*width+x)*4+2];
-                dout[(y*width+x)*4+3] = dback[(y*width+x)*4+3];
+                for (i=0; i<4; i++) {
+                    dout[(y*width+x)*4+i] = dback[(y*width+x)*4+i];
+                }
             }
         }
     }
@@ -702,7 +453,7 @@ var canvasInit = function () {
             new Vector(  97,   0, 0),
             new Vector(  97,  97, 0),
             new Vector(   0,  97, 0),
-        ], 'image/so-nya.png')
+        ], './image/so-nya.png')
     ], new Vector(48.5, 48.5, 0));
     // model.move(new Vector(-100, -100, 0));
     canvas.addObject(model);
