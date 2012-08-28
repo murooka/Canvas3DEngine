@@ -8,18 +8,28 @@ beforeEach(function() {
   });
 });
 
+var eq = function (number1, number2) {
+    return Math.abs(number1-number2) < 1e-9;
+};
+
 beforeEach(function () {
     this.addMatchers({
-        toEqualWithNumber: function (other) {
-            var value = this.actual;
-            return Math.abs(value-other) < 1e-9;
+        toEqualToNumber: function (other) {
+            return eq(this.actual, other);
         },
-        toEqualWithMatrix: function (other) {
+        toEqualToVector: function (other) {
+            var vector = this.actual;
+            return eq(vector.x, other.x) &&
+                   eq(vector.y, other.y) &&
+                   eq(vector.z, other.z);
+        },
+        toEqualToMatrix: function (other) {
             var matrix = this.actual;
             for (var i=0; i<4; i++) {
                 for (var j=0; j<4; j++) {
-                    var diff = Math.abs(matrix.getAt(i, j)-other.getAt(i, j));
-                    if (diff >= 1e-9) {
+                    if (eq(matrix.getAt(i, j), other.getAt(i, j))) {
+                        // nothing to do
+                    } else {
                         return false;
                     }
                 }
