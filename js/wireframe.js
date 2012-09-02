@@ -7,8 +7,14 @@
  * projectionMatrix : 透視変換行列
  *
  * viewportMatrix : ビューポート変換行列
- * 
+ *
+ * translate : 平行移動
+ * rotate    : 軸を指定しての回転
+ * scale     : 拡大・縮小
  */
+
+
+
 
 
 
@@ -103,6 +109,9 @@ Canvas3D.prototype.updateMatrix = function () {
     this.camera.updateMatrix();
     this.translatingMatrix = this.viewportMatrix.compose(this.camera.matrix);
 };
+
+
+
 
 
 
@@ -214,6 +223,10 @@ Camera.prototype.updateMatrix = function () {
 };
 
 
+
+
+
+
 /**
  * RGB表現の色クラス
  * @param {Number} r rgbのr要素
@@ -244,6 +257,10 @@ Color.prototype.hueBy = function (hue) {
 Color.prototype.negative = function () {
     return new Color(this.g, this.b, this.r);
 };
+
+
+
+
 
 
 /**
@@ -329,9 +346,6 @@ Polygon.prototype.draw = function (canvas) {
     var diffuseCoefficient = 0.8;
     var ambientPower = 0.5;
 
-    // var colorR = Math.min(255, 64 + this.color.r * lightPower + lightSpecular);
-    // var colorG = Math.min(255, 64 + this.color.g * lightPower + lightSpecular);
-    // var colorB = Math.min(255, 64 + this.color.b * lightPower + lightSpecular);
     var colorR = Math.min(255, (diffusePower * diffuseCoefficient * lightPower + ambientPower) * this.color.r);
     var colorG = Math.min(255, (diffusePower * diffuseCoefficient * lightPower + ambientPower) * this.color.g);
     var colorB = Math.min(255, (diffusePower * diffuseCoefficient * lightPower + ambientPower) * this.color.b);
@@ -343,12 +357,6 @@ Polygon.prototype.draw = function (canvas) {
             break;
         }
     }
-
-    for (var i=0; i<len; i++) {
-        // console.log(verts[i].toString());
-    }
-
-
     if (isHidden) return;
 
     // 透視変換
@@ -454,6 +462,10 @@ Polygon.prototype.draw = function (canvas) {
 };
 
 
+
+
+
+
 /*
  * 複数のPolygonを内包するオブジェクトモデルクラス
  * 各Polygonの移動・回転を一括して行う
@@ -490,6 +502,10 @@ Model.prototype.draw = function (canvas) {
         this.polygons[i].draw(canvas);
     }
 };
+
+
+
+
 
 
 /**
@@ -654,11 +670,94 @@ Texture.prototype.draw = function (canvas) {
 };
 
 
+
+
+
+
+/**
+ * billboardを表現するクラス
+ * @param {Vector} origin world座標系でのBillboardの中心座標
+ * @param {Number} width  world座標系でのBillboardの横幅
+ * @param {Number} height world座標系でのBillboardの縦幅
+ * @param {String} src    Billboardで使う画像のファイル名
+ */
+var Billboard = function (origin, width, height, src) {
+    var image = new Image();
+    image.src = src + '?' + new Date().getTime();
+
+    this.origin = origin;
+    this.width = width;
+    this.height = height;
+    this.src = src;
+    this.image = image;
+
+    var self = this;
+    image.onload = function () {
+        self.loaded = true;
+    };
+
+};
+Billboard.prototype.draw = function (canvas) {
+    var ctx = canvas.ctx;
+
+    if (!this.loaded) return;
+
+
+    var projectionAndViewportMatrix = canvas.viewportMatrix.compose(canvas.camera.projectionMatrix);
+
+    var vOrigin = canvas.camera.viewMatrix.mul(this.origin);
+    if (vOrigin.z > 0) return;
+    // TODO: 座標系のチェック
+    var vRightTop = vOrigin.sub(new Vector(this.width/2, this.height/2, 0));
+
+    var vpOrigin = projectionAndViewportMatrix.mul(vOrigin);
+    var vpRightTop = projectionAndViewportMatrix.mul(vRightTop);
+    var vpHalfWidth = vpRightTop.x - vpOrigin.x;
+    var vpHalfHeight = vpRightTop.y - vpOrigin.y;
+
+    var scaleX = vpHalfWidth  / this.image.width  * 2;
+    var scaleY = vpHalfHeight / this.image.height * 2;
+
+    ctx.setTransform(scaleX, 0, 0, scaleY, 0, 0);
+
+    ctx.drawImage(this.image, (vpOrigin.x-vpHalfWidth)/scaleX, (vpOrigin.y-vpHalfHeight)/scaleY);
+
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
+};
+
+
+
+
+
+
 var canvasInit = function () {
     var canvas = new Canvas3D('canvas');
 
     var model = (function () {
         var polygons = [];
+        var i, j;
+
+        i = -0;
+        j = -2;
+        var polygon = new Polygon([
+            new Vector(    i*50, -20,     j*50),
+            new Vector((i+1)*50, -20,     j*50),
+            new Vector((i+1)*50, -20, (j+1)*50),
+            new Vector(    i*50, -20, (j+1)*50)
+            ], new Color(128, 255, 128));
+        polygons.push(polygon);
+
+
+        i = -1;
+        j = -2;
+        polygon = new Polygon([
+            new Vector(    i*50, -20,     j*50),
+            new Vector((i+1)*50, -20,     j*50),
+            new Vector((i+1)*50, -20, (j+1)*50),
+            new Vector(    i*50, -20, (j+1)*50)
+            ], new Color(128, 255, 128));
+        polygons.push(polygon);
+
         for (var i=-10; i<10; i++) {
             for (var j=-10; j<10; j++) {
                 var polygon = new Polygon([
@@ -670,42 +769,44 @@ var canvasInit = function () {
                 polygons.push(polygon);
             }
         }
-        polygons.push(
-            new Polygon([
-                new Vector(-50, -20, 0),
-                new Vector( 50, -20, 0),
-                new Vector( 50,  30, 0),
-                new Vector(-50,  30, 0),
-            ], new Color(255, 0, 0))
-        );
-        polygons.push(
-            new Polygon([
-                new Vector( 50, -20,   0),
-                new Vector( 50, -20, 100),
-                new Vector( 50,  30, 100),
-                new Vector( 50,  30,   0),
-            ], new Color(255, 0, 0))
-        );
-        polygons.push(
-            new Polygon([
-                new Vector( 50, -20, 100),
-                new Vector(-50, -20, 100),
-                new Vector(-50,  30, 100),
-                new Vector( 50,  30, 100),
-            ], new Color(255, 0, 0))
-        );
-        polygons.push(
-            new Polygon([
-                new Vector(-50, -20, 100),
-                new Vector(-50, -20,   0),
-                new Vector(-50,  30,   0),
-                new Vector(-50,  30, 100),
-            ], new Color(255, 0, 0))
-        );
+        // polygons.push(
+        //     new Polygon([
+        //         new Vector(-50, -20, 0),
+        //         new Vector( 50, -20, 0),
+        //         new Vector( 50,  30, 0),
+        //         new Vector(-50,  30, 0),
+        //     ], new Color(255, 0, 0))
+        // );
+        // polygons.push(
+        //     new Polygon([
+        //         new Vector( 50, -20,   0),
+        //         new Vector( 50, -20, 100),
+        //         new Vector( 50,  30, 100),
+        //         new Vector( 50,  30,   0),
+        //     ], new Color(255, 0, 0))
+        // );
+        // polygons.push(
+        //     new Polygon([
+        //         new Vector( 50, -20, 100),
+        //         new Vector(-50, -20, 100),
+        //         new Vector(-50,  30, 100),
+        //         new Vector( 50,  30, 100),
+        //     ], new Color(255, 0, 0))
+        // );
+        // polygons.push(
+        //     new Polygon([
+        //         new Vector(-50, -20, 100),
+        //         new Vector(-50, -20,   0),
+        //         new Vector(-50,  30,   0),
+        //         new Vector(-50,  30, 100),
+        //     ], new Color(255, 0, 0))
+        // );
         return new Model(polygons, new Vector(0, 0, 0));
     })();
     canvas.addObject(model);
 
+    var billboard = new Billboard(new Vector(0, -3, 0), 50, 35, './image/tree.png');
+    canvas.addObject(billboard);
 
 
     canvas.update();
@@ -733,7 +834,7 @@ var canvasInit = function () {
         }
     };
     document.onkeypress = function (e) {
-        console.log(e.keyCode);
+        // console.log(e.keyCode);
         switch (e.keyCode) {
             case 119: // 'w'
                 canvas.camera.move(new Vector(0, 0, 10));

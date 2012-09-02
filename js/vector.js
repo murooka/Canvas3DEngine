@@ -152,5 +152,15 @@ Vector.prototype.radian = function (axis) {
     }
 };
 Vector.prototype.toString = function () {
-    return '(' + this.x.toFixed(2) + ',' + this.y.toFixed(2) + ',' + this.z.toFixed(2) + ',' + this.w.toFixed(2) + ')';
+    var myFix = function (value) {
+        var str = value.toFixed(1);
+        var len = str.length;
+        for (var i=0; i<8-len; i++) str = ' '+str;
+        return str;
+    };
+    return '(' +
+        myFix(this.x) + ',' +
+        myFix(this.y) + ',' +
+        myFix(this.z) + ',' +
+        myFix(this.w) + ')';
 };
