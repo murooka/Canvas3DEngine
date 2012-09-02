@@ -258,6 +258,7 @@ var Polygon = function (vertices, color) {
     this.vertices = vertices;
     this.color = color;
     this.updateDepth();
+    this.wireEnabled = true;
 };
 Polygon.prototype.move = function (v) {
     for (var i=0; i<this.vertices.length; i++) {
@@ -306,6 +307,35 @@ Polygon.prototype.draw = function (canvas) {
         verts[i] = canvas.camera.viewMatrix.mul(this.vertices[i]);
     }
 
+    // 光の計算をしておく
+    var center = (function () {
+        var center = new Vector(0, 0, 0);
+        for (var i=0; i<len; i++) {
+            center = center.add(verts[i]);
+        }
+        return center.div(len);
+    })();
+
+    var norm = (function () {
+        var v1 = verts[1].sub(center);
+        var v2 = verts[2].sub(center);
+
+        return v1.cross(v2).unit();
+    })();
+
+    var lightPower = norm.dot(center.unit());
+    var lightSpecular = Math.pow(Math.max(lightPower, 0), 2);
+    var diffusePower = 0.7;
+    var diffuseCoefficient = 0.8;
+    var ambientPower = 0.5;
+
+    // var colorR = Math.min(255, 64 + this.color.r * lightPower + lightSpecular);
+    // var colorG = Math.min(255, 64 + this.color.g * lightPower + lightSpecular);
+    // var colorB = Math.min(255, 64 + this.color.b * lightPower + lightSpecular);
+    var colorR = Math.min(255, (diffusePower * diffuseCoefficient * lightPower + ambientPower) * this.color.r);
+    var colorG = Math.min(255, (diffusePower * diffuseCoefficient * lightPower + ambientPower) * this.color.g);
+    var colorB = Math.min(255, (diffusePower * diffuseCoefficient * lightPower + ambientPower) * this.color.b);
+
     var isHidden = true;
     for (i=0; i<len; i++) {
         if (verts[i].z < 0) {
@@ -314,15 +344,22 @@ Polygon.prototype.draw = function (canvas) {
         }
     }
 
-    if (isHidden) return;
-
-    for (i=0; i<len; i++) {
-        // 透視変換
-        verts[i] = canvas.camera.projectionMatrix.mul(verts[i]);
-        // ビューポート変換
-        verts[i] = canvas.viewportMatrix.mul(verts[i]);
+    for (var i=0; i<len; i++) {
+        // console.log(verts[i].toString());
     }
 
+
+    if (isHidden) return;
+
+    // 透視変換
+    for (i=0; i<len; i++) {
+        verts[i] = canvas.camera.projectionMatrix.mul(verts[i]);
+    }
+
+    // ビューポート変換
+    for (i=0; i<len; i++) {
+        verts[i] = canvas.viewportMatrix.mul(verts[i]);
+    }
 
     // canvasの外側に位置する場合は表示しない
     var isRight = true,
@@ -387,26 +424,24 @@ Polygon.prototype.draw = function (canvas) {
         return;
     }
 
-
-    for (i=0; i<len; i++) {
-        ctx.beginPath();
-        ctx.moveTo(verts[i].x, verts[i].y);
-        ctx.lineTo(verts[(i+1)%len].x, verts[(i+1)%len].y);
-        ctx.stroke();
-    }
-
     var color = '#';
-    var norm = (function () {
-        var v1 = verts[1].sub(verts[0]);
-        var v2 = verts[2].sub(verts[0]);
+    color += new Color(colorR, colorG, colorB).toHexString();
 
-        return -v1.cross(v2).unit().z;
-    })();
-    if (norm>=0) {
-        color += this.color.hueBy(1-(1-norm)/2).toHexString();
-    } else {
-        color += '888888';
+    ctx.strokeStyle = color;
+    if (this.wireEnabled) {
+        for (i=0; i<len; i++) {
+            ctx.beginPath();
+            ctx.moveTo(verts[i].x, verts[i].y);
+            ctx.lineTo(verts[(i+1)%len].x, verts[(i+1)%len].y);
+            ctx.stroke();
+        }
     }
+
+    // if (norm>=0) {
+    //     color += this.color.hueBy(1-(1-norm)/2).toHexString();
+    // } else {
+    //     color += '888888';
+    // }
     ctx.fillStyle = color;
     ctx.beginPath();
     for (i=0; i<len; i++) {
@@ -709,11 +744,11 @@ var canvasInit = function () {
                 canvas.updateMatrix();
                 break;
             case 97:  // 'a'
-                canvas.camera.rotateY(-Math.PI/16);
+                canvas.camera.rotateY(-Math.PI/32);
                 canvas.updateMatrix();
                 break;
             case 100: // 'd'
-                canvas.camera.rotateY(Math.PI/16);
+                canvas.camera.rotateY(Math.PI/32);
                 canvas.updateMatrix();
                 break;
             case 106: // 'j'
