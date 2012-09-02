@@ -38,9 +38,25 @@ var extend = function (s, c) {
  */
 var cross2D = function (x1, y1, x2, y2) { return x1*y2 - x2*y1; };
 
+
+
+
 /**
- * 擬似3Dを実現するためのCanvasクラス
+ * @class 擬似3Dを実現するためのCanvasクラス
  * TODO: 名前変えたほうがいいかも
+ * 
+ * @property {Canvas}  canvas  描画するキャンバスへの参照
+ * @property {CanvasRenderingContext2D} ctx キャンバスのコンテキストへの参照
+ * @property {number}  width   キャンバスの横幅
+ * @property {number}  height  キャンバスの縦幅
+ * @property {Model[]} objects 描画する3Dオブジェクトモデルの配列
+ * @property {Camera}  camera  視点管理用のカメラ
+ * @property {Matrix}  screenMatrix スクリーン変換行列
+ * @property {Matrix}  transformationMatrix ワールド変換、透視変換、スクリーン変換行列を合成した変換行列
+ */
+
+/**
+ * @constructor
  * @param {String} canvas_id 利用するcanvas(DOM)のid
  */
 var Canvas3D = function (canvas_id) {
@@ -108,16 +124,23 @@ Canvas3D.prototype.setScreenMatrix = function (width, height) {
 };
 Canvas3D.prototype.updateMatrix = function () {
     this.camera.updateMatrix();
-    this.translatingMatrix = this.screenMatrix.compose(this.camera.matrix);
+    this.transformationMatrix = this.screenMatrix.compose(this.camera.matrix);
 };
 
 
 
 
 
+/**
+ * @class ワールド座標系上での物の見方を表すカメラクラス
+ *
+ * @property {Matrix} viewMatrix       ビュー変換行列
+ * @property {Matrix} projectionMatrix 透視変換行列
+ * @property {Matrix} matrix           ビュー変換と透視変換行列を合成した変換行列
+ */
 
 /**
- * ワールド座標系上での物の見方を表すカメラクラス
+ * @constructor
  * @param {Vector} view   視点座標
  * @param {Vector} target 注視点座標
  * @param {Vecotr} upper  上方向ベクトル
@@ -227,9 +250,11 @@ Camera.prototype.updateMatrix = function () {
 
 
 
-
 /**
- * RGB表現の色クラス
+ * @class RGB表現の色クラス
+ */
+/**
+ * @constructor
  * @param {number} r rgbのr要素
  * @param {number} g rgbのg要素
  * @param {number} b rgbのb要素
@@ -265,12 +290,23 @@ Color.prototype.negative = function () {
 
 
 /**
- * Canvas3Dで利用する多角形クラス
+ * Canvas3D上で表示するモデル(PolygonやBillboard)は、draw関数とcenterプロパティを実装する必要がある
+ * draw関数は描画対象のCanvas3Dを引数として受け取り、必要ならば変換行列を利用してレンダリングコンテキストへ描画を行う
+ * centerプロパティはZソートを行うためのモデルの中心座標である
+ */
+/**
+ * @class Canvas3Dで利用する多角形クラス
+ *
+ * TODO
+ * @deprecated
+ * @property {boolean} wireEnabled ワイヤフレームの描画のフラグ
+ */
+/**
  * 1つの面に対して1つの色情報を持つ
  * NOTICE: 引数のverticesは同一平面上に無いと歪む可能性がある
  * NOTICE: verticesは反時計回りに指定する
- * @param {Array} vertices 多角形の頂点座標の配列
- * @param {Color} color    多角形の色
+ * @param {Vector[]} vertices 多角形の頂点座標の配列
+ * @param {Color}    color    多角形の色
  */
 var Polygon = function (vertices, color) {
     this.vertices = vertices;
@@ -446,11 +482,6 @@ Polygon.prototype.draw = function (canvas) {
         }
     }
 
-    // if (norm>=0) {
-    //     color += this.color.hueBy(1-(1-norm)/2).toHexString();
-    // } else {
-    //     color += '888888';
-    // }
     ctx.fillStyle = color;
     ctx.beginPath();
     for (i=0; i<len; i++) {
@@ -467,11 +498,13 @@ Polygon.prototype.draw = function (canvas) {
 
 
 
+/**
+ * @class 複数のPolygonを内包するオブジェクトモデルクラス
+ * @description 各Polygonの移動・回転を一括して行う
+ */
 /*
- * 複数のPolygonを内包するオブジェクトモデルクラス
- * 各Polygonの移動・回転を一括して行う
- * @param {Array}  polygons Polygonの配列
- * @param {Vector} origin   world座標系での原点からの相対ベクトル
+ * @param {Polygon[]}  polygons Polygonの配列
+ * @param {Vector}     origin   world座標系での原点からの相対ベクトル
  */
 var Model = function (polygons, origin) {
     this.polygons = polygons;
@@ -510,10 +543,13 @@ Model.prototype.draw = function (canvas) {
 
 
 /**
- * テクスチャを貼ったPolygonを扱うクラス
- * verticesは画像の左下に対応する点から、反時計回りで指定する
- * @param {Array}  vertices ポリゴンの頂点座標の配列
- * @param {String} src      テクスチャに使う画像ファイル名
+ * @class テクスチャを貼ったPolygonを扱うクラス
+ */
+/**
+ * @constructor
+ * @description verticesは画像の左下に対応する点から、反時計回りで指定する
+ * @param {Vector[]}  vertices ポリゴンの頂点座標の配列
+ * @param {String}    src      テクスチャに使う画像ファイル名
  */
 var Texture = extend(Polygon, function (vertices, src) {
     var image = new Image();
@@ -592,7 +628,7 @@ Texture.prototype.draw = function (canvas) {
     var verts = [];
     for (i=0; i<this.vertices.length; i++) {
         var v = this.vertices[i];
-        v = canvas.translatingMatrix.mul(v);
+        v = canvas.transformationMatrix.mul(v);
         verts.push(v);
     }
 
@@ -624,7 +660,7 @@ Texture.prototype.draw = function (canvas) {
         Matrix.scaling(this.image.width/this.width, this.image.height/this.height, 1).compose(
             Matrix.translating(-this.originX, -this.originY, 0).compose(
                 this.worldMatrix.inverse().compose(
-                    canvas.translatingMatrix.inverse())));
+                    canvas.transformationMatrix.inverse())));
     var din = this.imageData.data;
     var contained = function (target, points) {
         var from = points[3],
@@ -676,7 +712,10 @@ Texture.prototype.draw = function (canvas) {
 
 
 /**
- * billboardを表現するクラス
+ * @class billboardを表すクラス
+ *
+ */
+/**
  * @param {Vector} origin world座標系でのBillboardの中心座標
  * @param {number} width  world座標系でのBillboardの横幅
  * @param {number} height world座標系でのBillboardの縦幅
@@ -806,7 +845,7 @@ var canvasInit = function () {
     })();
     canvas.addObject(model);
 
-    for (var i=0; i<20; i++) {
+    for (var i=0; i<100; i++) {
         var x = (Math.floor(Math.random()*20)-10)*25;
         var z = (Math.floor(Math.random()*20)-10)*25;
         var billboard = new Billboard(new Vector(x, -3, z), 50, 35, './image/tree.png');
