@@ -1,4 +1,18 @@
-/*
+/**
+ * 用語
+ * viewMatrix : ビュー変換行列
+ ** view : 視点
+ ** target : 注視点
+ *
+ * projectionMatrix : 透視変換行列
+ *
+ * viewportMatrix : ビューポート変換行列
+ * 
+ */
+
+
+
+/**
  * クラスを継承させるための汎用関数
  * @param {Object} s 親クラス
  * @param {Object} c 子クラス
@@ -13,15 +27,44 @@ var extend = function (s, c) {
     return c;
 };
 
+/**
+ * 2次元ベクトルの外積を計算する汎用関数
+ */
+var cross2D = function (x1, y1, x2, y2) { return x1*y2 - x2*y1; };
 
+/**
+ * 擬似3Dを実現するためのCanvasクラス
+ * TODO: 名前変えたほうがいいかも
+ * @param {String} canvas_id 利用するcanvas(DOM)のid
+ */
 var Canvas3D = function (canvas_id) {
     this.canvas = document.getElementById(canvas_id);
+    this.ctx = this.canvas.getContext('2d');
+
     this.width = this.canvas.width;
     this.height = this.canvas.height;
-    this.ctx = this.canvas.getContext('2d');
-    this.objects = [];
-    this.viewportMatrix = Matrix.translating(this.width/2, this.height/2, 0);
     this.setViewportMatrix(this.width, this.height);
+
+    this.objects = [];
+
+    var viewPosition   = new Vector(0, 0, -100),
+        targetPosition = new Vector(0, 0, 0),
+        upperVector    = new Vector(0, 1, 0),
+        fovyX          = Math.PI/3,
+        nearZ          = 0,
+        farZ           = 100,
+        aspect_ratio   = this.height / this.width;
+    this.camera = new Camera(
+        viewPosition,
+        targetPosition,
+        upperVector,
+        fovyX,
+        0,
+        100,
+        aspect_ratio
+    );
+
+    this.updateMatrix();
 };
 Canvas3D.prototype.addObject = function (o) {
     this.objects.push(o);
@@ -53,56 +96,130 @@ Canvas3D.prototype.update = function () {
         objects[i].draw(this);
     }
 };
-Canvas3D.prototype.setViewMatrix = function (view, target, upper) {
-    var zaxis = view.sub(target).unit();
-    var xaxis = upper.cross(zaxis).unit();
-    var yaxis = zaxis.cross(xaxis).unit();
+Canvas3D.prototype.setViewportMatrix = function (width, height) {
+    this.viewportMatrix = Matrix.translating(width/2, height/2, 0).compose(Matrix.scaling(width/2, height/2, 1));
+};
+Canvas3D.prototype.updateMatrix = function () {
+    this.camera.updateMatrix();
+    this.translatingMatrix = this.viewportMatrix.compose(this.camera.matrix);
+};
 
-    var viewMatrix = new Matrix();
 
-    viewMatrix.setAt(0, 0, xaxis.x);
-    viewMatrix.setAt(0, 1, xaxis.y);
-    viewMatrix.setAt(0, 2, xaxis.z);
-    viewMatrix.setAt(0, 3, -xaxis.dot(view));
 
-    viewMatrix.setAt(1, 0, yaxis.x);
-    viewMatrix.setAt(1, 1, yaxis.y);
-    viewMatrix.setAt(1, 2, yaxis.z);
-    viewMatrix.setAt(1, 3, -yaxis.dot(view));
+/**
+ * ワールド座標系上での物の見方を表すカメラクラス
+ * @param {Vector} view   視点座標
+ * @param {Vector} target 注視点座標
+ * @param {Vecotr} upper  上方向ベクトル
+ * @param {Number} fovyX  横方向の視野角
+ * @param {Number} nearZ  物が見える範囲のうち、最も近い距離
+ * @param {Number} farZ   物が見える範囲のうち、最も遠い距離
+ * @param {Number} apect_ratio カメラ画面のheight/widthの値
+ */
+var Camera = function (view, target, upper, fovyX, nearZ, farZ, aspect_ratio) {
+    this.view   = view;
+    this.target = target;
+    this.upper  = upper;
+    this.fovyX  = fovyX;
+    this.nearZ  = nearZ;
+    this.farZ   = farZ;
+    this.aspect_ratio = aspect_ratio;
 
-    viewMatrix.setAt(2, 0, zaxis.x);
-    viewMatrix.setAt(2, 1, zaxis.y);
-    viewMatrix.setAt(2, 2, zaxis.z);
-    viewMatrix.setAt(2, 3, -zaxis.dot(view));
+    this.rotatingMatrix = new Matrix();
 
-    viewMatrix.setAt(3, 3, 1);
+    this.updateMatrix();
+};
+/**
+ * カメラの位置を移動させる
+ * @param {Vector} v 移動させる方向ベクトル
+ */
+Camera.prototype.move = function (v) {
+    var vector = this.rotatingMatrix.mul(v);
+    this.view = this.view.add(vector);
+    this.target = this.target.add(vector);
+};
+/**
+ * Y軸を中心に反時計回りにカメラの向きを反時計回りに回転させる
+ * @param {Number} rad 回転量
+ */
+Camera.prototype.rotateY = function (rad) {
+    var lookingVec =  this.target.sub(this.view);
+    lookingVec = Matrix.rotatingY(rad).mul(lookingVec);
+    this.target = lookingVec.add(this.view);
+
+    this.rotatingMatrix = Matrix.rotatingY(rad).compose(this.rotatingMatrix);
+};
+/**
+ * カメラ情報に基づいて変換行列を更新する
+ * 変換行列はビュー変換->透視変換を行う
+ */
+Camera.prototype.updateMatrix = function () {
+    var view = this.view,
+        target = this.target,
+        upper  = this.upper,
+        fovyX  = this.fovyX,
+        nearZ  = this.nearZ,
+        farZ   = this.farZ,
+        aspect_ratio = this.aspect_ratio;
+
+    var viewMatrix = (function () {
+        var zaxis = view.sub(target).unit();
+        var xaxis = upper.cross(zaxis).unit();
+        var yaxis = zaxis.cross(xaxis).unit();
+
+        var viewMatrix = new Matrix();
+
+        viewMatrix.setAt(0, 0, xaxis.x);
+        viewMatrix.setAt(0, 1, xaxis.y);
+        viewMatrix.setAt(0, 2, xaxis.z);
+        viewMatrix.setAt(0, 3, -xaxis.dot(view));
+
+        viewMatrix.setAt(1, 0, yaxis.x);
+        viewMatrix.setAt(1, 1, yaxis.y);
+        viewMatrix.setAt(1, 2, yaxis.z);
+        viewMatrix.setAt(1, 3, -yaxis.dot(view));
+
+        viewMatrix.setAt(2, 0, zaxis.x);
+        viewMatrix.setAt(2, 1, zaxis.y);
+        viewMatrix.setAt(2, 2, zaxis.z);
+        viewMatrix.setAt(2, 3, -zaxis.dot(view));
+
+        viewMatrix.setAt(3, 3, 1);
+
+        return viewMatrix;
+    })();
+
+    var projectionMatrix = (function () {
+        var projectionMatrix = new Matrix();
+
+        var sx = 1 / Math.tan(fovyX/2);
+        var sy = sx / aspect_ratio;
+        var sz = farZ / (farZ-nearZ);
+
+        projectionMatrix.setAt(0, 0, sx);
+        projectionMatrix.setAt(1, 1, sy);
+        projectionMatrix.setAt(2, 2, sz);
+
+        projectionMatrix.setAt(3, 2, 1);
+        projectionMatrix.setAt(2, 3, -sz*nearZ);
+
+        projectionMatrix.setAt(3, 3, 1);
+
+        return projectionMatrix;
+    })();
 
     this.viewMatrix = viewMatrix;
-};
-Canvas3D.prototype.setProjectionMatrix = function (fovyX, nearZ, farZ) {
-    var projectionMatrix = new Matrix();
-
-    var sx = 1 / Math.tan(fovyX/2);
-    var sy = sx;
-    var sz = farZ / (farZ-nearZ);
-
-    projectionMatrix.setAt(0, 0, sx);
-    projectionMatrix.setAt(1, 1, sy);
-    projectionMatrix.setAt(2, 2, sz);
-    projectionMatrix.setAt(2, 3, 1);
-    projectionMatrix.setAt(3, 2, -sz*nearZ);
-    projectionMatrix.setAt(3, 3, 1);
-
     this.projectionMatrix = projectionMatrix;
-};
-Canvas3D.prototype.setViewportMatrix = function (width, height) {
-    this.viewportMatrix = Matrix.translating(width/2, height/2, 0);
-};
-Canvas3D.prototype.composeMatrix = function () {
-    this.translatingMatrix = this.viewportMatrix.compose(this.projectionMatrix).compose(this.viewMatrix);
+    this.matrix = projectionMatrix.compose(viewMatrix);
 };
 
 
+/**
+ * RGB表現の色クラス
+ * @param {Number} r rgbのr要素
+ * @param {Number} g rgbのg要素
+ * @param {Number} b rgbのb要素
+ */
 var Color = function (r, g, b) {
     this.r = r;
     this.g = g;
@@ -129,8 +246,15 @@ Color.prototype.negative = function () {
 };
 
 
+/**
+ * Canvas3Dで利用する多角形クラス
+ * 1つの面に対して1つの色情報を持つ
+ * NOTICE: 引数のverticesは同一平面上に無いと歪む可能性がある
+ * NOTICE: verticesは反時計回りに指定する
+ * @param {Array} vertices 多角形の頂点座標の配列
+ * @param {Color} color    多角形の色
+ */
 var Polygon = function (vertices, color) {
-    // TODO: verticesの正当性のチェック
     this.vertices = vertices;
     this.color = color;
     this.updateDepth();
@@ -159,13 +283,6 @@ Polygon.prototype.rotateZ = function (center, rad) {
     }
     this.updateDepth();
 };
-Polygon.prototype.normal = function () {
-    var verts = this.vertices;
-    var v1 = verts[1].sub(verts[0]);
-    var v2 = verts[2].sub(verts[0]);
-
-    return v1.cross(v2).unit();
-};
 Polygon.prototype.updateDepth = function () {
     this.depth = 0;
     for (var i=0; i<this.vertices.length; i++) {
@@ -184,19 +301,92 @@ Polygon.prototype.draw = function (canvas) {
     var len = this.vertices.length;
     var verts = new Array(len);
 
+    // ビュー変換
     for (var i=0; i<len; i++) {
-        // ビュー変換
-        // verts[i] = canvas.viewMatrix.mul(this.vertices[i]);
-        
-        // 透視変換
-        // verts[i] = canvas.projectionMatrix.mul(verts[i]);
-
-        // ビューポート変換
-        // verts[i] = canvas.viewportMatrix.mul(verts[i]);
-
-        // ビュー変換・透視変換・ビューポート変換
-        verts[i] = canvas.translatingMatrix.mul(this.vertices[i]);
+        verts[i] = canvas.camera.viewMatrix.mul(this.vertices[i]);
     }
+
+    var isHidden = true;
+    for (i=0; i<len; i++) {
+        if (verts[i].z < 0) {
+            isHidden = false;
+            break;
+        }
+    }
+
+    if (isHidden) return;
+
+    for (i=0; i<len; i++) {
+        // 透視変換
+        verts[i] = canvas.camera.projectionMatrix.mul(verts[i]);
+        // ビューポート変換
+        verts[i] = canvas.viewportMatrix.mul(verts[i]);
+    }
+
+
+    // canvasの外側に位置する場合は表示しない
+    var isRight = true,
+        isLeft  = true,
+        isBelow = true,
+        isAbove = true;
+    for (i=0; i<len; i++) {
+        if (verts[i].x < canvas.width) {
+            isRight = false;
+            break;
+        }
+    }
+    if (isRight) return;
+
+    for (i=0; i<len; i++) {
+        if (verts[i].x > 0) {
+            isLeft = false;
+            break;
+        }
+    }
+    if (isLeft) return;
+
+    for (i=0; i<len; i++) {
+        if (verts[i].y > 0) {
+            isAbove = false;
+            break;
+        }
+    }
+    if (isAbove) return;
+
+    for (i=0; i<len; i++) {
+        if (verts[i].y < canvas.height) {
+            isBelow = false;
+            break;
+        }
+    }
+    if (isBelow) return;
+
+    // 裏側から見たポリゴンは表示しない
+    if (cross2D(verts[1].x-verts[0].x,
+                verts[1].y-verts[0].y,
+                verts[2].x-verts[0].x,
+                verts[2].y-verts[0].y) > 0) {
+        return;
+    }
+    if (cross2D(verts[2].x-verts[1].x,
+                verts[2].y-verts[1].y,
+                verts[3].x-verts[1].x,
+                verts[3].y-verts[1].y) > 0) {
+        return;
+    }
+    if (cross2D(verts[3].x-verts[2].x,
+                verts[3].y-verts[2].y,
+                verts[0].x-verts[2].x,
+                verts[0].y-verts[2].y) > 0) {
+        return;
+    }
+    if (cross2D(verts[0].x-verts[3].x,
+                verts[0].y-verts[3].y,
+                verts[1].x-verts[3].x,
+                verts[1].y-verts[3].y) > 0) {
+        return;
+    }
+
 
     for (i=0; i<len; i++) {
         ctx.beginPath();
@@ -205,16 +395,17 @@ Polygon.prototype.draw = function (canvas) {
         ctx.stroke();
     }
 
-    // var color = Math.abs(Math.floor(this.normal().z * 128)) + 64;
-    // color = Math.max(color, 0).toString(16);
-    // if (color.length===1) color = ' ' + color;
-    // ctx.fillStyle = '#' + color + color + color;
     var color = '#';
-    var norm = this.normal().z;
+    var norm = (function () {
+        var v1 = verts[1].sub(verts[0]);
+        var v2 = verts[2].sub(verts[0]);
+
+        return -v1.cross(v2).unit().z;
+    })();
     if (norm>=0) {
-        color += this.color.hueBy(norm).toHexString();
+        color += this.color.hueBy(1-(1-norm)/2).toHexString();
     } else {
-        color += this.color.negative().hueBy(-norm).toHexString();
+        color += '888888';
     }
     ctx.fillStyle = color;
     ctx.beginPath();
@@ -228,6 +419,12 @@ Polygon.prototype.draw = function (canvas) {
 };
 
 
+/*
+ * 複数のPolygonを内包するオブジェクトモデルクラス
+ * 各Polygonの移動・回転を一括して行う
+ * @param {Array}  polygons Polygonの配列
+ * @param {Vector} origin   world座標系での原点からの相対ベクトル
+ */
 var Model = function (polygons, origin) {
     this.polygons = polygons;
     this.origin = origin;
@@ -259,19 +456,37 @@ Model.prototype.draw = function (canvas) {
     }
 };
 
+
+/**
+ * テクスチャを貼ったPolygonを扱うクラス
+ * verticesは画像の左下に対応する点から、反時計回りで指定する
+ * @param {Array}  vertices ポリゴンの頂点座標の配列
+ * @param {String} src      テクスチャに使う画像ファイル名
+ */
 var Texture = extend(Polygon, function (vertices, src) {
     var image = new Image();
-    image.src = src;
+    image.src = src + '?' + new Date().getTime();
+
+    this.image = image;
+    this.vertices = vertices;
+    this.worldMatrix = new Matrix();
+    this.loaded = false;
+
+    this.originX = vertices[0].x;
+    this.originY = vertices[0].y;
+    this.width  = Math.abs(vertices[1].sub(vertices[0]).abs());
+    this.height = Math.abs(vertices[2].sub(vertices[1]).abs());
 
     var canvas = document.getElementById('tmp_canvas');
     var ctx = canvas.getContext('2d');
 
-    ctx.drawImage(image, 0, 0);
+    var self = this;
+    image.onload = function () {
+        ctx.drawImage(image, 0, 0);
+        self.imageData = ctx.getImageData(0, 0, image.width, image.height);
+        self.loaded = true;
+    };
 
-    this.imageData = ctx.getImageData(0, 0, image.width, image.height);
-    this.image = image;
-    this.vertices = vertices;
-    this.worldMatrix = new Matrix();
 });
 Texture.prototype.move = function (v) {
     for (var i=0; i<this.vertices.length; i++) {
@@ -317,6 +532,8 @@ Texture.prototype.rotateZ = function (center, rad) {
     )));
 };
 Texture.prototype.draw = function (canvas) {
+    if (!this.loaded) return;
+
     var ctx = canvas.ctx;
 
     var i;
@@ -348,10 +565,26 @@ Texture.prototype.draw = function (canvas) {
     var background = ctx.getImageData(offsetX, offsetY, width, height);
     var dout = output.data;
     var dback = background.data;
-    var inverse = this.worldMatrix.inverse().compose(canvas.translatingMatrix.inverse());
+
+    // ビューポート座標系から、テクスチャ画像の座標系への変換行列
+    // ポリゴン描画時に行うビュー変換、透視変換、ビューポート変換それぞれの逆変換を逆順で行う
+    var inverse = 
+        Matrix.scaling(this.image.width/this.width, this.image.height/this.height, 1).compose(
+            Matrix.translating(-this.originX, -this.originY, 0).compose(
+                this.worldMatrix.inverse().compose(
+                    canvas.translatingMatrix.inverse())));
     var din = this.imageData.data;
-    var cross2D = function (x1, y1, x2, y2) {
-        return x1*y2 - x2*y1;
+    var contained = function (target, points) {
+        var from = points[3],
+            to   = points[0];
+        var cross = cross2D(to.x-from.x, to.y-from.y, target.x-from.x, target.y-from.y);
+        for (var i=0; i<3; i++) {
+            from = points[i];
+            to   = points[(i+1)%4];
+            var otherCross = cross2D(to.x-from.x, to.y-from.y, target.x-from.x, target.y-from.y);
+            if ((cross<0 && otherCross>0) || (cross>0 && otherCross<0)) return false;
+        }
+        return true;
     };
     var normal = verts[1].sub(verts[0]).cross(verts[2].sub(verts[0]));
     var calcZ = function (x, y) {
@@ -361,42 +594,18 @@ Texture.prototype.draw = function (canvas) {
     };
     for (var y=0; y<height; y++) {
         for (var x=0; x<width; x++) {
-            var v0, v1;
             var xx = offsetX + x;
             var yy = offsetY + y;
-            // 表示範囲の内外判定
-            v0 = verts[3];
-            v1 = verts[0];
-            var sign = cross2D(v1.x-v0.x, v1.y-v0.y, xx-v0.x, yy-v0.y);
-            var isIn = true;
-            for (i=0; i<3; i++) {
-                v0 = verts[i];
-                v1 = verts[(i+1)%4];
-                var cross = cross2D(v1.x-v0.x, v1.y-v0.y, xx-v0.x, yy-v0.y);
+            var isContained = contained({x:xx, y:yy}, verts);
 
-                if ((sign<0 && cross>0) || (sign>0 && cross<0)) {
-                    isIn = false;
-                }
-            }
-
-            if (isIn) {
+            if (isContained) {
                 var zz = calcZ(xx, yy);
-                var world = inverse.mul(new Vector(xx, yy, zz));
-                var fix = world.x / 97 * this.image.width;
-                var fiy = world.y / 97 * this.image.height;
-                var ix = Math.floor(fix);
-                var iy = Math.floor(fiy);
-                // var dix = fix - ix;
-                // var diy = fiy - iy;
+                var local = inverse.mul(new Vector(xx, yy, zz));
+                var ix = Math.floor(local.x);
+                var iy = Math.floor(local.y);
 
                 for (i=0; i<4; i++) {
                     dout[(y*width+x)*4+i] = din[(iy*this.image.width+ix)*4+i];
-                    // 線形補間?
-                    // dout[(y*width+x)*4+i] =
-                        // din[((iy  )*this.image.width+(ix  ))*4+i]*(1-dix)*(1-diy) +
-                        // din[((iy  )*this.image.width+(ix+1))*4+i]*(  dix)*(1-diy) +
-                        // din[((iy+1)*this.image.width+(ix  ))*4+i]*(1-dix)*(  diy) +
-                        // din[((iy+1)*this.image.width+(ix+1))*4+i]*(  dix)*(  diy);
                 }
             } else {
                 for (i=0; i<4; i++) {
@@ -412,51 +621,56 @@ Texture.prototype.draw = function (canvas) {
 
 var canvasInit = function () {
     var canvas = new Canvas3D('canvas');
-    canvas.setViewMatrix(
-        new Vector(  0,   0,-100),
-        new Vector(  0,   0,   0),
-        new Vector(  0,   1,   0)
-    );
-    canvas.setProjectionMatrix(Math.PI/3, 0, 100);
-    canvas.composeMatrix();
 
-    // var ringVerts = function (r) {
-    //     var verts = [];
-    //     var size = 64;
-    //     var x, y;
-    //     for (var i=0; i<size+1; i++) {
-    //         x = Math.cos(Math.PI/size*2*i) * r;
-    //         y = Math.sin(Math.PI/size*2*i) * r;
-    //         verts.push(new Vector(x, y, 0));
-    //     }
-    //     for (var j=size; j>=0; j--) {
-    //         x = Math.cos(Math.PI/size*2*j) * (r-10);
-    //         y = Math.sin(Math.PI/size*2*j) * (r-10);
-    //         verts.push(new Vector(x, y, 0));
-    //     }
-    //     return verts;
-    // };
-    // var model = new Model([
-    //     new Polygon(ringVerts(100))
-    // ], center);
-    // var model = new Model([
-    //     new Polygon([
-    //         new Vector( 100, 100, 0),
-    //         new Vector(-100, 100, 0),
-    //         new Vector(-100,-100, 0),
-    //         new Vector( 100,-100, 0),
-    //     ], new Color(191, 191, 255))
-    // ], center);
-    var model = new Model([
-        new Texture([
-            new Vector(   0,   0, 0),
-            new Vector(  97,   0, 0),
-            new Vector(  97,  97, 0),
-            new Vector(   0,  97, 0),
-        ], './image/so-nya.png')
-    ], new Vector(48.5, 48.5, 0));
-    // model.move(new Vector(-100, -100, 0));
+    var model = (function () {
+        var polygons = [];
+        for (var i=-10; i<10; i++) {
+            for (var j=-10; j<10; j++) {
+                var polygon = new Polygon([
+                    new Vector(    i*50, -20,     j*50),
+                    new Vector((i+1)*50, -20,     j*50),
+                    new Vector((i+1)*50, -20, (j+1)*50),
+                    new Vector(    i*50, -20, (j+1)*50)
+                ], new Color(128, 255, 128));
+                polygons.push(polygon);
+            }
+        }
+        polygons.push(
+            new Polygon([
+                new Vector(-50, -20, 0),
+                new Vector( 50, -20, 0),
+                new Vector( 50,  30, 0),
+                new Vector(-50,  30, 0),
+            ], new Color(255, 0, 0))
+        );
+        polygons.push(
+            new Polygon([
+                new Vector( 50, -20,   0),
+                new Vector( 50, -20, 100),
+                new Vector( 50,  30, 100),
+                new Vector( 50,  30,   0),
+            ], new Color(255, 0, 0))
+        );
+        polygons.push(
+            new Polygon([
+                new Vector( 50, -20, 100),
+                new Vector(-50, -20, 100),
+                new Vector(-50,  30, 100),
+                new Vector( 50,  30, 100),
+            ], new Color(255, 0, 0))
+        );
+        polygons.push(
+            new Polygon([
+                new Vector(-50, -20, 100),
+                new Vector(-50, -20,   0),
+                new Vector(-50,  30,   0),
+                new Vector(-50,  30, 100),
+            ], new Color(255, 0, 0))
+        );
+        return new Model(polygons, new Vector(0, 0, 0));
+    })();
     canvas.addObject(model);
+
 
 
     canvas.update();
@@ -484,23 +698,31 @@ var canvasInit = function () {
         }
     };
     document.onkeypress = function (e) {
-        console.log(e.charCode);
-        switch (e.charCode) {
-            case 120: // 'x'
+        console.log(e.keyCode);
+        switch (e.keyCode) {
+            case 119: // 'w'
+                canvas.camera.move(new Vector(0, 0, 10));
+                canvas.updateMatrix();
                 break;
-            case 122: // 'z'
+            case 115: // 's'
+                canvas.camera.move(new Vector(0, 0, -10));
+                canvas.updateMatrix();
+                break;
+            case 97:  // 'a'
+                canvas.camera.rotateY(-Math.PI/16);
+                canvas.updateMatrix();
+                break;
+            case 100: // 'd'
+                canvas.camera.rotateY(Math.PI/16);
+                canvas.updateMatrix();
+                break;
+            case 106: // 'j'
+                break;
+            case 107: // 'k'
                 break;
         }
-    };
-    var counter = 0;
-    setInterval(function () {
-        counter += 0.01;
-        var sin = Math.sin(counter);
-        var cos = Math.cos(counter);
-        model.rotateY(cos*Math.PI*0.01);
-        model.rotateZ(sin*Math.PI*0.01);
         canvas.update();
-    }, 20);
+    };
 };
 
 window.onload = canvasInit;

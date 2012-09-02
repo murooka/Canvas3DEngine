@@ -3,7 +3,7 @@ var radianWithTwoPoint = function (p1, p2) {
 };
 
 
-/*
+/**
  * 同時座標系での３次元ベクトル
  * 変換行列を利用できるようにするため、常に1のw成分を持たせている
  * @param {Number} x x成分
@@ -11,18 +11,31 @@ var radianWithTwoPoint = function (p1, p2) {
  * @param {Number} z z成分
  * @returns {Vector}
  */
-var Vector = function (x, y, z) {
-    this.x = x;
-    this.y = y;
-    this.z = z;
-    this.w = 1;
-    this.v = [x, y, z, 1];
+var Vector = function () {
+    if (arguments.length===3) {
+        this.x = arguments[0];
+        this.y = arguments[1];
+        this.z = arguments[2];
+        this.w = 1;
+    } else if (arguments.length===4) {
+        var w = arguments[3];
+        this.x = arguments[0] / w;
+        this.y = arguments[1] / w;
+        this.z = arguments[2] / w;
+        this.w = arguments[3] / w;
+    }
+    this.v = [
+        this.x,
+        this.y,
+        this.z,
+        this.w
+    ];
 };
 Vector.origin = function () {
     return new Vector(0, 0, 0);
 };
 
-/*
+/**
  * ベクトルの加減算
  * @param {Vector} other 
  * @returns {Vector}
@@ -42,16 +55,16 @@ Vector.prototype.sub = function (other) {
     );
 };
 
-/*
+/**
  * ベクトルの乗除算
  * @param {Number} other
  * @returns {Vector}
  */
 Vector.prototype.mul = function (other) {
     return new Vector(
-        this.x/other,
-        this.y/other,
-        this.z/other
+        this.x*other,
+        this.y*other,
+        this.z*other
     );
 };
 Vector.prototype.div = function (other) {
@@ -62,7 +75,7 @@ Vector.prototype.div = function (other) {
     );
 };
 
-/*
+/**
  * ３次元ベクトルの内積
  * @param {Vector} other
  * @returns {Number}
@@ -70,7 +83,7 @@ Vector.prototype.div = function (other) {
 Vector.prototype.dot = function (other) {
     return this.x*other.x + this.y*other.y + this.z*other.z;
 };
-/*
+/**
  * ３次元ベクトルの外積
  * @param {Vector} other
  * @returns {Vector} thisとotherの垂直ベクトル
@@ -82,7 +95,7 @@ Vector.prototype.cross = function (other) {
         this.x*other.y - this.y*other.x
     );
 };
-/*
+/**
  * 単位ベクトル化する関数
  * @return {Vector} 
  */
@@ -92,14 +105,14 @@ Vector.prototype.unit = function () {
 Vector.prototype.sqabs = function () {
     return this.x*this.x + this.y*this.y + this.z*this.z;
 };
-/*
+/**
  * ベクトルの長さ
  * @returns {Number}
  */
 Vector.prototype.abs = function () {
     return Math.sqrt(this.sqabs());
 };
-/*
+/**
  * x軸を基準としてベクトルを回転させる
  * @param {Number} 回転角 単位はラジアン
  */

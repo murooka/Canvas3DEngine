@@ -4,11 +4,42 @@
  */
 var Matrix = function () {
     this.m = new Array(16);
-    for (var i=0; i<16; i++) this.m[i] = 0;
-    this.m[0]  = 1;
-    this.m[5]  = 1;
-    this.m[10] = 1;
-    this.m[15] = 1;
+    if (arguments.length===0) {
+        this.m[0]  = 1;
+        this.m[1]  = 0;
+        this.m[2]  = 0;
+        this.m[3]  = 0;
+        this.m[4]  = 0;
+        this.m[5]  = 1;
+        this.m[6]  = 0;
+        this.m[7]  = 0;
+        this.m[8]  = 0;
+        this.m[9]  = 0;
+        this.m[10] = 1;
+        this.m[11] = 0;
+        this.m[12] = 0;
+        this.m[13] = 0;
+        this.m[14] = 0;
+        this.m[15] = 1;
+    } else {
+        var array = arguments[0];
+        this.m[0]  = array[0];
+        this.m[1]  = array[1];
+        this.m[2]  = array[2];
+        this.m[3]  = array[3];
+        this.m[4]  = array[4];
+        this.m[5]  = array[5];
+        this.m[6]  = array[6];
+        this.m[7]  = array[7];
+        this.m[8]  = array[8];
+        this.m[9]  = array[9];
+        this.m[10] = array[10];
+        this.m[11] = array[11];
+        this.m[12] = array[12];
+        this.m[13] = array[13];
+        this.m[14] = array[14];
+        this.m[15] = array[15];
+    }
 };
 
 Matrix.translating = function () {
@@ -30,7 +61,7 @@ Matrix.translating = function () {
         1, 0, 0, x,
         0, 1, 0, y,
         0, 0, 1, z,
-        0, 0, 0, 1,
+        0, 0, 0, 1
     ]);
 };
 
@@ -100,7 +131,7 @@ Matrix.prototype.mul = function (other) {
             v[i] += this.getAt(i, j) * other.v[j];
         }
     }
-    return new Vector(v[0], v[1], v[2]);
+    return new Vector(v[0], v[1], v[2], v[3]);
 };
 
 Matrix.prototype.compose = function (other) {
