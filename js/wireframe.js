@@ -6,7 +6,7 @@
  *
  * projectionMatrix : 透視変換行列
  *
- * viewportMatrix : ビューポート変換行列
+ * screenMatrix : スクリーン変換行列
  *
  * translate : 平行移動
  * rotate    : 軸を指定しての回転
@@ -49,7 +49,7 @@ var Canvas3D = function (canvas_id) {
 
     this.width = this.canvas.width;
     this.height = this.canvas.height;
-    this.setViewportMatrix(this.width, this.height);
+    this.setScreenMatrix(this.width, this.height);
 
     this.objects = [];
 
@@ -76,24 +76,25 @@ Canvas3D.prototype.addObject = function (o) {
     this.objects.push(o);
 };
 Canvas3D.prototype.update = function () {
+    var ctx = this.ctx;
     this.ctx.fillStyle = 'rgb(255, 255, 255)';
     this.ctx.fillRect(0, 0, this.width, this.height);
 
-    var i;
+    // draw heptagram
+    (function () {
+        var size = 7;
+        ctx.beginPath();
+        ctx.moveTo(400+100, 300);
+        for (var i=0; i<=size; i++) {
+            var sin = Math.sin(Math.PI*2/size*((i*3)%size));
+            var cos = Math.cos(Math.PI*2/size*((i*3)%size));
+            ctx.lineTo(400+cos*100, 300+sin*100);
+        }
+        ctx.stroke();
+    })();
 
-    var size = 7;
-    this.ctx.beginPath();
-    this.ctx.moveTo(400+100, 300);
-    for (i=0; i<=size; i++) {
-        var sin = Math.sin(Math.PI*2/size*((i*3)%size));
-        var cos = Math.cos(Math.PI*2/size*((i*3)%size));
-        this.ctx.lineTo(400+cos*100, 300+sin*100);
-    }
-    this.ctx.stroke();
-
-    var objects = this.objects;
-    objects = objects.sort(function (a, b) {
-        return a.depth - b.depth;
+    var objects = this.objects.sort(function (a, b) {
+        return a.center - b.center;
     });
     this.ctx.fillStyle = 'rgb(0, 0, 0)';
 
@@ -102,12 +103,12 @@ Canvas3D.prototype.update = function () {
         objects[i].draw(this);
     }
 };
-Canvas3D.prototype.setViewportMatrix = function (width, height) {
-    this.viewportMatrix = Matrix.translating(width/2, height/2, 0).compose(Matrix.scaling(width/2, height/2, 1));
+Canvas3D.prototype.setScreenMatrix = function (width, height) {
+    this.screenMatrix = Matrix.translating(width/2, height/2, 0).compose(Matrix.scaling(width/2, height/2, 1));
 };
 Canvas3D.prototype.updateMatrix = function () {
     this.camera.updateMatrix();
-    this.translatingMatrix = this.viewportMatrix.compose(this.camera.matrix);
+    this.translatingMatrix = this.screenMatrix.compose(this.camera.matrix);
 };
 
 
@@ -120,10 +121,10 @@ Canvas3D.prototype.updateMatrix = function () {
  * @param {Vector} view   視点座標
  * @param {Vector} target 注視点座標
  * @param {Vecotr} upper  上方向ベクトル
- * @param {Number} fovyX  横方向の視野角
- * @param {Number} nearZ  物が見える範囲のうち、最も近い距離
- * @param {Number} farZ   物が見える範囲のうち、最も遠い距離
- * @param {Number} apect_ratio カメラ画面のheight/widthの値
+ * @param {number} fovyX  横方向の視野角
+ * @param {number} nearZ  物が見える範囲のうち、最も近い距離
+ * @param {number} farZ   物が見える範囲のうち、最も遠い距離
+ * @param {number} apect_ratio カメラ画面のheight/widthの値
  */
 var Camera = function (view, target, upper, fovyX, nearZ, farZ, aspect_ratio) {
     this.view   = view;
@@ -149,7 +150,7 @@ Camera.prototype.move = function (v) {
 };
 /**
  * Y軸を中心に反時計回りにカメラの向きを反時計回りに回転させる
- * @param {Number} rad 回転量
+ * @param {number} rad 回転量
  */
 Camera.prototype.rotateY = function (rad) {
     var lookingVec =  this.target.sub(this.view);
@@ -229,9 +230,9 @@ Camera.prototype.updateMatrix = function () {
 
 /**
  * RGB表現の色クラス
- * @param {Number} r rgbのr要素
- * @param {Number} g rgbのg要素
- * @param {Number} b rgbのb要素
+ * @param {number} r rgbのr要素
+ * @param {number} g rgbのg要素
+ * @param {number} b rgbのb要素
  */
 var Color = function (r, g, b) {
     this.r = r;
@@ -274,39 +275,39 @@ Color.prototype.negative = function () {
 var Polygon = function (vertices, color) {
     this.vertices = vertices;
     this.color = color;
-    this.updateDepth();
+    this.updateCenter();
     this.wireEnabled = true;
 };
 Polygon.prototype.move = function (v) {
     for (var i=0; i<this.vertices.length; i++) {
         this.vertices[i] = this.vertices[i].add(v);
     }
-    this.updateDepth();
+    this.updateCenter();
 };
 Polygon.prototype.rotateX = function (center, rad) {
     for (var i=0; i<this.vertices.length; i++) {
         this.vertices[i] = this.vertices[i].sub(center).rotateX(rad).add(center);
     }
-    this.updateDepth();
+    this.updateCenter();
 };
 Polygon.prototype.rotateY = function (center, rad) {
     for (var i=0; i<this.vertices.length; i++) {
         this.vertices[i] = this.vertices[i].sub(center).rotateY(rad).add(center);
     }
-    this.updateDepth();
+    this.updateCenter();
 };
 Polygon.prototype.rotateZ = function (center, rad) {
     for (var i=0; i<this.vertices.length; i++) {
         this.vertices[i] = this.vertices[i].sub(center).rotateZ(rad).add(center);
     }
-    this.updateDepth();
+    this.updateCenter();
 };
-Polygon.prototype.updateDepth = function () {
-    this.depth = 0;
+Polygon.prototype.updateCenter = function () {
+    this.center = 0;
     for (var i=0; i<this.vertices.length; i++) {
-        this.depth += this.vertices[i].z;
+        this.center += this.vertices[i].z;
     }
-    this.depth = this.depth / this.vertices.length;
+    this.center = this.center / this.vertices.length;
 };
 Polygon.prototype.toString = function () {
     var str = '[';
@@ -364,9 +365,9 @@ Polygon.prototype.draw = function (canvas) {
         verts[i] = canvas.camera.projectionMatrix.mul(verts[i]);
     }
 
-    // ビューポート変換
+    // スクリーン変換
     for (i=0; i<len; i++) {
-        verts[i] = canvas.viewportMatrix.mul(verts[i]);
+        verts[i] = canvas.screenMatrix.mul(verts[i]);
     }
 
     // canvasの外側に位置する場合は表示しない
@@ -543,14 +544,14 @@ Texture.prototype.move = function (v) {
     for (var i=0; i<this.vertices.length; i++) {
         this.vertices[i] = this.vertices[i].add(v);
     }
-    this.updateDepth();
+    this.updateCenter();
     this.worldMatrix = Matrix.translating(v.x, v.y, v.x).compose(this.worldMatrix);
 };
 Texture.prototype.rotateX = function (center, rad) {
     for (var i=0; i<this.vertices.length; i++) {
         this.vertices[i] = this.vertices[i].sub(center).rotateX(rad).add(center);
     }
-    this.updateDepth();
+    this.updateCenter();
     this.worldMatrix = 
         Matrix.translating(center.x, center.y, center.z).compose(
             Matrix.rotatingX(rad).compose(
@@ -562,7 +563,7 @@ Texture.prototype.rotateY = function (center, rad) {
     for (var i=0; i<this.vertices.length; i++) {
         this.vertices[i] = this.vertices[i].sub(center).rotateY(rad).add(center);
     }
-    this.updateDepth();
+    this.updateCenter();
     this.worldMatrix = 
         Matrix.translating(center.x, center.y, center.z).compose(
             Matrix.rotatingY(rad).compose(
@@ -574,7 +575,7 @@ Texture.prototype.rotateZ = function (center, rad) {
     for (var i=0; i<this.vertices.length; i++) {
         this.vertices[i] = this.vertices[i].sub(center).rotateZ(rad).add(center);
     }
-    this.updateDepth();
+    this.updateCenter();
     this.worldMatrix = 
         Matrix.translating(center.x, center.y, center.z).compose(
             Matrix.rotatingZ(rad).compose(
@@ -617,8 +618,8 @@ Texture.prototype.draw = function (canvas) {
     var dout = output.data;
     var dback = background.data;
 
-    // ビューポート座標系から、テクスチャ画像の座標系への変換行列
-    // ポリゴン描画時に行うビュー変換、透視変換、ビューポート変換それぞれの逆変換を逆順で行う
+    // スクリーン座標系から、テクスチャ画像の座標系への変換行列
+    // ポリゴン描画時に行うビュー変換、透視変換、スクリーン変換それぞれの逆変換を逆順で行う
     var inverse = 
         Matrix.scaling(this.image.width/this.width, this.image.height/this.height, 1).compose(
             Matrix.translating(-this.originX, -this.originY, 0).compose(
@@ -677,8 +678,8 @@ Texture.prototype.draw = function (canvas) {
 /**
  * billboardを表現するクラス
  * @param {Vector} origin world座標系でのBillboardの中心座標
- * @param {Number} width  world座標系でのBillboardの横幅
- * @param {Number} height world座標系でのBillboardの縦幅
+ * @param {number} width  world座標系でのBillboardの横幅
+ * @param {number} height world座標系でのBillboardの縦幅
  * @param {String} src    Billboardで使う画像のファイル名
  */
 var Billboard = function (origin, width, height, src) {
@@ -703,15 +704,15 @@ Billboard.prototype.draw = function (canvas) {
     if (!this.loaded) return;
 
 
-    var projectionAndViewportMatrix = canvas.viewportMatrix.compose(canvas.camera.projectionMatrix);
+    var projectionAndScreenMatrix = canvas.screenMatrix.compose(canvas.camera.projectionMatrix);
 
     var vOrigin = canvas.camera.viewMatrix.mul(this.origin);
     if (vOrigin.z > 0) return;
     // TODO: 座標系のチェック
     var vRightTop = vOrigin.sub(new Vector(this.width/2, this.height/2, 0));
 
-    var vpOrigin = projectionAndViewportMatrix.mul(vOrigin);
-    var vpRightTop = projectionAndViewportMatrix.mul(vRightTop);
+    var vpOrigin = projectionAndScreenMatrix.mul(vOrigin);
+    var vpRightTop = projectionAndScreenMatrix.mul(vRightTop);
     var vpHalfWidth = vpRightTop.x - vpOrigin.x;
     var vpHalfHeight = vpRightTop.y - vpOrigin.y;
 
@@ -805,8 +806,13 @@ var canvasInit = function () {
     })();
     canvas.addObject(model);
 
-    var billboard = new Billboard(new Vector(0, -3, 0), 50, 35, './image/tree.png');
-    canvas.addObject(billboard);
+    for (var i=0; i<20; i++) {
+        var x = (Math.floor(Math.random()*20)-10)*25;
+        var z = (Math.floor(Math.random()*20)-10)*25;
+        var billboard = new Billboard(new Vector(x, -3, z), 50, 35, './image/tree.png');
+        canvas.addObject(billboard);
+    }
+
 
 
     canvas.update();
