@@ -36,7 +36,7 @@ Vector.origin = function () {
 };
 
 /**
- * ベクトルの加減算
+ * this + other
  * @param {Vector} other 
  * @returns {Vector}
  */
@@ -56,7 +56,7 @@ Vector.prototype.sub = function (other) {
 };
 
 /**
- * ベクトルの乗除算
+ * ベクトルの定数倍
  * @param {Number} other
  * @returns {Vector}
  */

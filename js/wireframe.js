@@ -81,8 +81,8 @@ var Canvas3D = function (canvas_id) {
         targetPosition,
         upperVector,
         fovyX,
-        0,
-        100,
+        nearZ,
+        farZ,
         aspect_ratio
     );
 
@@ -115,7 +115,7 @@ Canvas3D.prototype.update = function () {
     this.ctx.fillStyle = 'rgb(0, 0, 0)';
 
     var length = objects.length;
-    for (i=0; i<length; i++) {
+    for (var i=0; i<length; i++) {
         objects[i].draw(this);
     }
 };
@@ -138,7 +138,6 @@ Canvas3D.prototype.updateMatrix = function () {
  * @property {Matrix} projectionMatrix 透視変換行列
  * @property {Matrix} matrix           ビュー変換と透視変換行列を合成した変換行列
  */
-
 /**
  * @constructor
  * @param {Vector} view   視点座標
@@ -278,8 +277,10 @@ Color.prototype.hueBy = function (hue) {
     var h = 1 - (1-hue)*(1-hue);
     return new Color(this.r*h, this.g*h, this.b*h);
 };
-// r, g, bをg, b, rにする
-// ポリゴンの裏面の色を得るためのテスト的な関数
+/**
+ * r, g, bをg, b, rにする
+ * ポリゴンの裏面の色を得るためのテスト的な関数
+ */
 Color.prototype.negative = function () {
     return new Color(this.g, this.b, this.r);
 };
@@ -378,7 +379,6 @@ Polygon.prototype.draw = function (canvas) {
     })();
 
     var lightPower = norm.dot(center.unit());
-    var lightSpecular = Math.pow(Math.max(lightPower, 0), 2);
     var diffusePower = 0.7;
     var diffuseCoefficient = 0.8;
     var ambientPower = 0.5;
@@ -712,6 +712,173 @@ Texture.prototype.draw = function (canvas) {
 
 
 /**
+ * @class アフィン変換を用いて高速にテクスチャを描画するクラス
+ */
+/**
+ * @constructor
+ * @description verticesは画像の左下に対応する点から、反時計回りで指定する
+ * @param {Vector[]}  vertices ポリゴンの頂点座標の配列
+ * @param {String}    src      テクスチャに使う画像ファイル名
+ */
+var SmoothTexture = function (vertices, src) {
+    var image = new Image();
+    image.src = src + '?' + new Date().getTime();
+
+    this.image = image;
+    this.vertices = vertices;
+    this.worldMatrix = new Matrix();
+    this.loaded = false;
+
+    this.originX = vertices[0].x;
+    this.originY = vertices[0].y;
+    this.width  = Math.abs(vertices[1].sub(vertices[0]).abs());
+    this.height = Math.abs(vertices[2].sub(vertices[1]).abs());
+
+    var canvas = document.getElementById('tmp_canvas');
+    var ctx = canvas.getContext('2d');
+
+    var self = this;
+    image.onload = function () {
+        ctx.drawImage(image, 0, 0);
+        self.imageData = ctx.getImageData(0, 0, image.width, image.height);
+        self.loaded = true;
+    };
+
+};
+SmoothTexture.prototype.draw = function (canvas) {
+    if (!this.loaded) return;
+
+    var ctx = canvas.ctx;
+    
+    // world + left or right + top or bottom
+    var wltImage = this.vertices[3],
+        wlbImage = this.vertices[0],
+        wrbImage = this.vertices[1],
+        wrtImage = this.vertices[2];
+
+    var isHidden = (function () {
+    })();
+
+    if (isHidden) return;
+
+    // ビュー・透視・スクリーン変換行列
+    var matrix =
+        canvas.screenMatrix.compose(
+            canvas.camera.projectionMatrix.compose(
+                canvas.camera.viewMatrix));
+
+    // screen + left or right + top or bottom
+    var sltImage = matrix.mul(wltImage),
+        slbImage = matrix.mul(wlbImage),
+        srbImage = matrix.mul(wrbImage),
+        srtImage = matrix.mul(wrtImage);
+
+
+    /**
+     * @function
+     * @description 画像をアフィン変換のみを用いて台形へ変換し描画する
+     * @description 変換後の台形が極端に歪んでいる場合は分割を行い、この関数を再帰的に読んで描画する
+     * @param {Image}  image           描画する画像
+     * @param {Vector} wlt wlb wrb wrt ワールド座標系上の、画像の左上、左下、右下、右上の座標
+     * @param {Vector} slt slb srb srt 変換後のスクリーン座標系上の、画像の左上、左下、右下、右上の座標
+     * @param {number} depth           この関数の再帰呼び出しの回数、最初の呼び出しでは1を指定
+     * @param {number} dx              画像を描画する部分のx軸方向のオフセット
+     * @param {number} dy              画像を描画する部分のy軸方向のオフセット
+     * @param {number} dw              画像を描画する部分の横幅
+     * @param {number} dh              画像を描画する部分の縦幅
+     */
+    var divideAndDrawImage = function (image, wlt, wlb, wrb, wrt, slt, slb, srb, srt, depth, sx, sy, sw, sh) {
+        // ベクトルや距離には、prefixにwかsを付けworld座標系かscreen座標系かを区別する
+        // 座標の位置は、(world or screen) + (left or right or center) + (top or bottom or center)を組み合わせて表現する
+        // 例: world-left-top -> wlp
+
+        var hypotenuse = function (a, b) {
+            return Math.sqrt(a*a+b*b);
+        };
+
+        var sBottomWidth = hypotenuse(srb.x-slb.x, srb.y-slb.y),
+            sTopWidth    = hypotenuse(srt.x-slt.x, srt.y-slt.y),
+            sLeftHeight  = hypotenuse(slt.x-slb.x, slt.y-slb.y),
+            sRightHeight = hypotenuse(srt.x-srb.x, srt.y-srb.y);
+
+        var widthRatio  = sBottomWidth / sTopWidth,
+            heightRatio = sRightHeight / sLeftHeight;
+
+        if (widthRatio  < 1) widthRatio  = 1 / widthRatio;
+        if (heightRatio < 1) heightRatio = 1 / heightRatio;
+
+        // var splittingHorizontal = Math.abs(sBottomWidth - sTopWidth)   > 4,
+            // splittingVertical   = Math.abs(sRightHeight - sLeftHeight) > 4;
+        var splittingHorizontal = widthRatio > 1.01,
+            splittingVertical   = heightRatio > 1.01;
+
+        if (depth <= 2 || (depth <=4 && splittingHorizontal && splittingVertical)) {
+            var wct = wlt.add(wrt).div(2),
+                wcb = wlb.add(wrb).div(2),
+                wlc = wlt.add(wlb).div(2),
+                wrc = wrt.add(wrb).div(2),
+                wcc = wlt.add(wrb).div(2);
+
+            var sct = matrix.mul(wct),
+                scb = matrix.mul(wcb),
+                slc = matrix.mul(wlc),
+                src = matrix.mul(wrc),
+                scc = matrix.mul(wcc);
+
+            divideAndDrawImage(image, wlt, wlc, wcc, wct, slt, slc, scc, sct, depth+1,      sx, sy     , sw/2, sh/2); // 左上部分
+            divideAndDrawImage(image, wlc, wlb, wcb, wcc, slc, slb, scb, scc, depth+1,      sx, sy+sh/2, sw/2, sh/2); // 左下部分
+            divideAndDrawImage(image, wct, wcc, wrc, wrt, sct, scc, src, srt, depth+1, sx+sw/2, sy     , sw/2, sh/2); // 右上部分
+            divideAndDrawImage(image, wcc, wcb, wrb, wrc, scc, scb, srb, src, depth+1, sx+sw/2, sy+sh/2, sw/2, sh/2); // 右下部分
+        } else if (depth <= 6 && splittingVertical) {
+            var wct = wlt.add(wrt).div(2),
+                wcb = wlb.add(wrb).div(2);
+
+            var sct = matrix.mul(wct),
+                scb = matrix.mul(wcb);
+
+            divideAndDrawImage(image, wlt, wlb, wcb, wct, slt, slb, scb, sct, depth+1,      sx, sy, sw/2, sh); // 左側部分
+            divideAndDrawImage(image, wct, wcb, wrb, wrt, sct, scb, srb, srt, depth+1, sx+sw/2, sy, sw/2, sh); // 右側部分
+        } else if (depth <= 6 && splittingHorizontal) {
+            var wlc = wlt.add(wlb).div(2),
+                wrc = wrt.add(wrb).div(2);
+
+            var slc = matrix.mul(wlc),
+                src = matrix.mul(wrc);
+
+            divideAndDrawImage(image, wlt, wlc, wrc, wrt, slt, slc, src, srt, depth+1, sx,      sy, sw, sh/2); // 上側部分
+            divideAndDrawImage(image, wlc, wlb, wrb, wrc, slc, slb, srb, src, depth+1, sx, sy+sh/2, sw, sh/2); // 下側部分
+        } else {
+
+            var maxX = Math.max(slt.x, slb.x, srb.x, srt.x),
+                minX = Math.min(slt.x, slb.x, srb.x, srt.x),
+                maxY = Math.max(slt.y, slb.y, srb.y, srt.y),
+                minY = Math.min(slt.y, slb.y, srb.y, srt.y);
+
+            var scaleX   = (maxX-minX) / sw,
+                scaleY   = (maxY-minY) / sh,
+                skewingX = (srt.y-slt.y) / (srt.x-slt.x),
+                skewingY = (slb.x-slt.x) / (slb.y-slt.y);
+            
+
+            ctx.transform(1, 0, 0, 1, slt.x, slt.y);
+            ctx.transform(1, skewingX, skewingY, 1, 0, 0);
+            ctx.transform(scaleX, 0, 0, scaleY, 0, 0);
+            ctx.drawImage(image, Math.floor(sx), Math.floor(sy), Math.ceil(sw), Math.ceil(sh), 0, 0, Math.ceil(sw), Math.ceil(sh));
+            // ctx.drawImage(image, Math.floor(sx), Math.floor(sy), Math.ceil(sw), Math.ceil(sh), slt.x, slt.y, srt.x, slb.y);
+
+            ctx.setTransform(1, 0, 0, 1, 0, 0);
+        }
+    };
+
+    divideAndDrawImage(this.image, wltImage, wlbImage, wrbImage, wrtImage, sltImage, slbImage, srbImage, srtImage, 1, 0, 0, this.image.width, this.image.height);
+
+};
+
+
+
+
+
+/**
  * @class billboardを表すクラス
  *
  */
@@ -851,6 +1018,14 @@ var canvasInit = function () {
         var billboard = new Billboard(new Vector(x, -3, z), 50, 35, './image/tree.png');
         canvas.addObject(billboard);
     }
+
+    var texture = new SmoothTexture([
+        new Vector(-10, -10, 0),
+        new Vector( 10, -10, 0),
+        new Vector( 10,  10, 0),
+        new Vector(-10,  10, 0),
+    ], './image/so-nya.png');
+    canvas.addObject(texture);
 
 
 
