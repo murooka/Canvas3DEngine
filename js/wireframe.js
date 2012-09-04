@@ -11,6 +11,12 @@
  * translate : 平行移動
  * rotate    : 軸を指定しての回転
  * scale     : 拡大・縮小
+ *
+ * 方向ベクトルも位置ベクトルも両方Vectorクラスで表現する
+ * prefixにVecもしくはVector  をつけたら方向ベクトル
+ *         PosもしくはPositionをつけたら位置ベクトル
+ *
+ *
  */
 
 
@@ -92,30 +98,19 @@ Canvas3D.prototype.addObject = function (o) {
     this.objects.push(o);
 };
 Canvas3D.prototype.update = function () {
-    var ctx = this.ctx;
     this.ctx.fillStyle = 'rgb(255, 255, 255)';
     this.ctx.fillRect(0, 0, this.width, this.height);
 
-    // draw heptagram
-    (function () {
-        var size = 7;
-        ctx.beginPath();
-        ctx.moveTo(400+100, 300);
-        for (var i=0; i<=size; i++) {
-            var sin = Math.sin(Math.PI*2/size*((i*3)%size));
-            var cos = Math.cos(Math.PI*2/size*((i*3)%size));
-            ctx.lineTo(400+cos*100, 300+sin*100);
-        }
-        ctx.stroke();
-    })();
-
+    var camera = this.camera;
     var objects = this.objects.sort(function (a, b) {
-        return a.center - b.center;
+        if (a.depth===b.depth) {
+            return camera.viewMatrix.mul(a.center).z - camera.viewMatrix.mul(b.center).z;
+        } else {
+            return b.depth - a.depth;
+        }
     });
-    this.ctx.fillStyle = 'rgb(0, 0, 0)';
 
-    var length = objects.length;
-    for (var i=0; i<length; i++) {
+    for (var i=0; i<objects.length; i++) {
         objects[i].draw(this);
     }
 };
@@ -199,43 +194,28 @@ Camera.prototype.updateMatrix = function () {
         var xaxis = upper.cross(zaxis).unit();
         var yaxis = zaxis.cross(xaxis).unit();
 
-        var viewMatrix = new Matrix();
-
-        viewMatrix.setAt(0, 0, xaxis.x);
-        viewMatrix.setAt(0, 1, xaxis.y);
-        viewMatrix.setAt(0, 2, xaxis.z);
-        viewMatrix.setAt(0, 3, -xaxis.dot(view));
-
-        viewMatrix.setAt(1, 0, yaxis.x);
-        viewMatrix.setAt(1, 1, yaxis.y);
-        viewMatrix.setAt(1, 2, yaxis.z);
-        viewMatrix.setAt(1, 3, -yaxis.dot(view));
-
-        viewMatrix.setAt(2, 0, zaxis.x);
-        viewMatrix.setAt(2, 1, zaxis.y);
-        viewMatrix.setAt(2, 2, zaxis.z);
-        viewMatrix.setAt(2, 3, -zaxis.dot(view));
-
-        viewMatrix.setAt(3, 3, 1);
+        var viewMatrix = new Matrix([
+            xaxis.x, xaxis.y, xaxis.z, -xaxis.dot(view),
+            yaxis.x, yaxis.y, yaxis.z, -yaxis.dot(view),
+            zaxis.x, zaxis.y, zaxis.z, -zaxis.dot(view),
+                  0,       0,       0,                1
+        ]);
 
         return viewMatrix;
     })();
 
     var projectionMatrix = (function () {
-        var projectionMatrix = new Matrix();
-
         var sx = 1 / Math.tan(fovyX/2);
         var sy = sx / aspect_ratio;
         var sz = farZ / (farZ-nearZ);
+        var mz = -sz*nearZ;
 
-        projectionMatrix.setAt(0, 0, sx);
-        projectionMatrix.setAt(1, 1, sy);
-        projectionMatrix.setAt(2, 2, sz);
-
-        projectionMatrix.setAt(3, 2, 1);
-        projectionMatrix.setAt(2, 3, -sz*nearZ);
-
-        projectionMatrix.setAt(3, 3, 1);
+        var projectionMatrix = new Matrix([
+            sx,  0,  0,  0,
+             0, sy,  0,  0,
+             0,  0, sz, mz,
+             0,  0,  1,  1
+        ]);
 
         return projectionMatrix;
     })();
@@ -264,18 +244,13 @@ var Color = function (r, g, b) {
     this.b = b;
 };
 Color.prototype.toHexString = function () {
-    var digit2Hex = function (value) {
+    var to2digitHex = function (value) {
         var str = Math.floor(value).toString(16);
         if (str.length===1) str = '0' + str;
         return str;
     };
 
-    return digit2Hex(this.r) + digit2Hex(this.g) + digit2Hex(this.b);
-};
-Color.prototype.hueBy = function (hue) {
-    // TODO: 全然正しくない計算
-    var h = 1 - (1-hue)*(1-hue);
-    return new Color(this.r*h, this.g*h, this.b*h);
+    return to2digitHex(this.r) + to2digitHex(this.g) + to2digitHex(this.b);
 };
 /**
  * r, g, bをg, b, rにする
@@ -291,16 +266,21 @@ Color.prototype.negative = function () {
 
 
 /**
- * Canvas3D上で表示するモデル(PolygonやBillboard)は、draw関数とcenterプロパティを実装する必要がある
+ * Canvas3D上で表示するモデル(PolygonやBillboard)は、draw関数とcenter、depthプロパティを実装する必要がある
  * draw関数は描画対象のCanvas3Dを引数として受け取り、必要ならば変換行列を利用してレンダリングコンテキストへ描画を行う
  * centerプロパティはZソートを行うためのモデルの中心座標である
+ * depthプロはティは、centerとは無関係に描画順序を決定するための値である
+ * depthが小さいほど手前に表示され、大きいほど奥に表示される
+ * デフォルトではdepth = 5とする
  */
+var AbstractModel = function () {
+};
+AbstractModel.prototype.draw = function () {
+    throw this + '#draw : draw is not implemented yet';
+};
+
 /**
  * @class Canvas3Dで利用する多角形クラス
- *
- * TODO
- * @deprecated
- * @property {boolean} wireEnabled ワイヤフレームの描画のフラグ
  */
 /**
  * 1つの面に対して1つの色情報を持つ
@@ -309,12 +289,13 @@ Color.prototype.negative = function () {
  * @param {Vector[]} vertices 多角形の頂点座標の配列
  * @param {Color}    color    多角形の色
  */
-var Polygon = function (vertices, color) {
+var Polygon = extend(AbstractModel, function (vertices, color) {
     this.vertices = vertices;
     this.color = color;
+
     this.updateCenter();
-    this.wireEnabled = true;
-};
+    this.depth = 5;
+});
 Polygon.prototype.move = function (v) {
     for (var i=0; i<this.vertices.length; i++) {
         this.vertices[i] = this.vertices[i].add(v);
@@ -340,11 +321,11 @@ Polygon.prototype.rotateZ = function (center, rad) {
     this.updateCenter();
 };
 Polygon.prototype.updateCenter = function () {
-    this.center = 0;
+    var sumVector = new Vector(0,0,0);
     for (var i=0; i<this.vertices.length; i++) {
-        this.center += this.vertices[i].z;
+        sumVector = sumVector.add(this.vertices[i]);
     }
-    this.center = this.center / this.vertices.length;
+    this.center = sumVector.div(this.vertices.length);
 };
 Polygon.prototype.toString = function () {
     var str = '[';
@@ -362,38 +343,11 @@ Polygon.prototype.draw = function (canvas) {
         verts[i] = canvas.camera.viewMatrix.mul(this.vertices[i]);
     }
 
-    // 光の計算をしておく
-    var center = (function () {
-        var center = new Vector(0, 0, 0);
-        for (var i=0; i<len; i++) {
-            center = center.add(verts[i]);
-        }
-        return center.div(len);
+    // 視点より手前にあるものは描画しない
+    var isHidden = (function () {
+        for (i=0; i<len; i++) if (verts[i].z < 0) return false;
+        return true;
     })();
-
-    var norm = (function () {
-        var v1 = verts[1].sub(center);
-        var v2 = verts[2].sub(center);
-
-        return v1.cross(v2).unit();
-    })();
-
-    var lightPower = norm.dot(center.unit());
-    var diffusePower = 0.7;
-    var diffuseCoefficient = 0.8;
-    var ambientPower = 0.5;
-
-    var colorR = Math.min(255, (diffusePower * diffuseCoefficient * lightPower + ambientPower) * this.color.r);
-    var colorG = Math.min(255, (diffusePower * diffuseCoefficient * lightPower + ambientPower) * this.color.g);
-    var colorB = Math.min(255, (diffusePower * diffuseCoefficient * lightPower + ambientPower) * this.color.b);
-
-    var isHidden = true;
-    for (i=0; i<len; i++) {
-        if (verts[i].z < 0) {
-            isHidden = false;
-            break;
-        }
-    }
     if (isHidden) return;
 
     // 透視変換
@@ -407,6 +361,11 @@ Polygon.prototype.draw = function (canvas) {
     }
 
     // canvasの外側に位置する場合は表示しない
+    var isOutside = (function () {
+        var i;
+    })();
+    if (isOutside) return;
+
     var isRight = true,
         isLeft  = true,
         isBelow = true,
@@ -469,17 +428,40 @@ Polygon.prototype.draw = function (canvas) {
         return;
     }
 
+    // 光の計算をしておく
+    var center = (function () {
+        var posSum = new Vector(0, 0, 0);
+        for (var i=0; i<verts.length; i++) {
+            posSum = posSum.add(verts[i]);
+        }
+        return posSum.div(verts.length);
+    })();
+
+    var norm = (function () {
+        var v1 = verts[1].sub(center);
+        var v2 = verts[2].sub(center);
+
+        return v1.cross(v2).unit();
+    })();
+
+    var lightPower = norm.dot(center.unit());
+    var diffusePower = 0.7;
+    var diffuseCoefficient = 0.8;
+    var ambientPower = 0.5;
+
+    var colorR = Math.min(255, (diffusePower * diffuseCoefficient * lightPower + ambientPower) * this.color.r);
+    var colorG = Math.min(255, (diffusePower * diffuseCoefficient * lightPower + ambientPower) * this.color.g);
+    var colorB = Math.min(255, (diffusePower * diffuseCoefficient * lightPower + ambientPower) * this.color.b);
+
     var color = '#';
     color += new Color(colorR, colorG, colorB).toHexString();
 
     ctx.strokeStyle = color;
-    if (this.wireEnabled) {
-        for (i=0; i<len; i++) {
-            ctx.beginPath();
-            ctx.moveTo(verts[i].x, verts[i].y);
-            ctx.lineTo(verts[(i+1)%len].x, verts[(i+1)%len].y);
-            ctx.stroke();
-        }
+    for (i=0; i<len; i++) {
+        ctx.beginPath();
+        ctx.moveTo(verts[i].x, verts[i].y);
+        ctx.lineTo(verts[(i+1)%len].x, verts[(i+1)%len].y);
+        ctx.stroke();
     }
 
     ctx.fillStyle = color;
@@ -504,31 +486,32 @@ Polygon.prototype.draw = function (canvas) {
  */
 /*
  * @param {Polygon[]}  polygons Polygonの配列
- * @param {Vector}     origin   world座標系での原点からの相対ベクトル
+ * @param {Vector}     center   world座標系での原点からの相対ベクトル
  */
-var Model = function (polygons, origin) {
+var Model = extend(AbstractModel, function (polygons, center) {
     this.polygons = polygons;
-    this.origin = origin;
-};
+    this.center = center;
+    this.depth = 5;
+});
 Model.prototype.move = function (v) {
     for (var i=0; i<this.polygons.length; i++) {
         this.polygons[i].move(v);
     }
-    this.origin = this.origin.add(v);
+    this.center = this.center.add(v);
 };
 Model.prototype.rotateX = function (rad) {
     for (var i=0; i<this.polygons.length; i++) {
-        this.polygons[i].rotateX(this.origin, rad);
+        this.polygons[i].rotateX(this.center, rad);
     }
 };
 Model.prototype.rotateY = function (rad) {
     for (var i=0; i<this.polygons.length; i++) {
-        this.polygons[i].rotateY(this.origin, rad);
+        this.polygons[i].rotateY(this.center, rad);
     }
 };
 Model.prototype.rotateZ = function (rad) {
     for (var i=0; i<this.polygons.length; i++) {
-        this.polygons[i].rotateZ(this.origin, rad);
+        this.polygons[i].rotateZ(this.center, rad);
     }
 };
 Model.prototype.draw = function (canvas) {
@@ -575,6 +558,8 @@ var Texture = extend(Polygon, function (vertices, src) {
         self.loaded = true;
     };
 
+    this.updateCenter();
+    this.depth = 5;
 });
 Texture.prototype.move = function (v) {
     for (var i=0; i<this.vertices.length; i++) {
@@ -659,8 +644,8 @@ Texture.prototype.draw = function (canvas) {
     var inverse = 
         Matrix.scaling(this.image.width/this.width, this.image.height/this.height, 1).compose(
             Matrix.translating(-this.originX, -this.originY, 0).compose(
-                this.worldMatrix.inverse().compose(
-                    canvas.transformationMatrix.inverse())));
+                this.worldMatrix.invert().compose(
+                    canvas.transformationMatrix.invert())));
     var din = this.imageData.data;
     var contained = function (target, points) {
         var from = points[3],
@@ -713,6 +698,7 @@ Texture.prototype.draw = function (canvas) {
 
 /**
  * @class アフィン変換を用いて高速にテクスチャを描画するクラス
+ * TODO: 継承関係を直す
  */
 /**
  * @constructor
@@ -720,7 +706,7 @@ Texture.prototype.draw = function (canvas) {
  * @param {Vector[]}  vertices ポリゴンの頂点座標の配列
  * @param {String}    src      テクスチャに使う画像ファイル名
  */
-var SmoothTexture = function (vertices, src) {
+var SmoothTexture = extend(Texture, function (vertices, src) {
     var image = new Image();
     image.src = src + '?' + new Date().getTime();
 
@@ -744,6 +730,26 @@ var SmoothTexture = function (vertices, src) {
         self.loaded = true;
     };
 
+    this.updateCenter();
+    this.depth = 5;
+});
+SmoothTexture.prototype.rotateX = function (rad, center) {
+    for (var i=0; i<this.vertices.length; i++) {
+        this.vertices[i] = this.vertices[i].sub(center).rotateX(rad).add(center);
+    }
+    this.updateCenter();
+};
+SmoothTexture.prototype.rotateY = function (rad, center) {
+    for (var i=0; i<this.vertices.length; i++) {
+        this.vertices[i] = this.vertices[i].sub(center).rotateY(rad).add(center);
+    }
+    this.updateCenter();
+};
+SmoothTexture.prototype.rotateZ = function (rad, center) {
+    for (var i=0; i<this.vertices.length; i++) {
+        this.vertices[i] = this.vertices[i].sub(center).rotateZ(rad).add(center);
+    }
+    this.updateCenter();
 };
 SmoothTexture.prototype.draw = function (canvas) {
     if (!this.loaded) return;
@@ -812,38 +818,41 @@ SmoothTexture.prototype.draw = function (canvas) {
         var splittingHorizontal = widthRatio > 1.01,
             splittingVertical   = heightRatio > 1.01;
 
-        if (depth <= 2 || (depth <=4 && splittingHorizontal && splittingVertical)) {
-            var wct = wlt.add(wrt).div(2),
-                wcb = wlb.add(wrb).div(2),
-                wlc = wlt.add(wlb).div(2),
-                wrc = wrt.add(wrb).div(2),
-                wcc = wlt.add(wrb).div(2);
 
-            var sct = matrix.mul(wct),
-                scb = matrix.mul(wcb),
-                slc = matrix.mul(wlc),
-                src = matrix.mul(wrc),
-                scc = matrix.mul(wcc);
+            var wct, wcb, wlc, wrc, wcc; 
+            var sct, scb, slc, src, scc;
+        if (depth <= 2 || (depth <=4 && splittingHorizontal && splittingVertical)) {
+            wct = wlt.add(wrt).div(2);
+            wcb = wlb.add(wrb).div(2);
+            wlc = wlt.add(wlb).div(2);
+            wrc = wrt.add(wrb).div(2);
+            wcc = wlt.add(wrb).div(2);
+
+            sct = matrix.mul(wct);
+            scb = matrix.mul(wcb);
+            slc = matrix.mul(wlc);
+            src = matrix.mul(wrc);
+            scc = matrix.mul(wcc);
 
             divideAndDrawImage(image, wlt, wlc, wcc, wct, slt, slc, scc, sct, depth+1,      sx, sy     , sw/2, sh/2); // 左上部分
             divideAndDrawImage(image, wlc, wlb, wcb, wcc, slc, slb, scb, scc, depth+1,      sx, sy+sh/2, sw/2, sh/2); // 左下部分
             divideAndDrawImage(image, wct, wcc, wrc, wrt, sct, scc, src, srt, depth+1, sx+sw/2, sy     , sw/2, sh/2); // 右上部分
             divideAndDrawImage(image, wcc, wcb, wrb, wrc, scc, scb, srb, src, depth+1, sx+sw/2, sy+sh/2, sw/2, sh/2); // 右下部分
         } else if (depth <= 6 && splittingVertical) {
-            var wct = wlt.add(wrt).div(2),
-                wcb = wlb.add(wrb).div(2);
+            wct = wlt.add(wrt).div(2);
+            wcb = wlb.add(wrb).div(2);
 
-            var sct = matrix.mul(wct),
-                scb = matrix.mul(wcb);
+            sct = matrix.mul(wct);
+            scb = matrix.mul(wcb);
 
             divideAndDrawImage(image, wlt, wlb, wcb, wct, slt, slb, scb, sct, depth+1,      sx, sy, sw/2, sh); // 左側部分
             divideAndDrawImage(image, wct, wcb, wrb, wrt, sct, scb, srb, srt, depth+1, sx+sw/2, sy, sw/2, sh); // 右側部分
         } else if (depth <= 6 && splittingHorizontal) {
-            var wlc = wlt.add(wlb).div(2),
-                wrc = wrt.add(wrb).div(2);
+            wlc = wlt.add(wlb).div(2);
+            wrc = wrt.add(wrb).div(2);
 
-            var slc = matrix.mul(wlc),
-                src = matrix.mul(wrc);
+            slc = matrix.mul(wlc);
+            src = matrix.mul(wrc);
 
             divideAndDrawImage(image, wlt, wlc, wrc, wrt, slt, slc, src, srt, depth+1, sx,      sy, sw, sh/2); // 上側部分
             divideAndDrawImage(image, wlc, wlb, wrb, wrc, slc, slb, srb, src, depth+1, sx, sy+sh/2, sw, sh/2); // 下側部分
@@ -883,16 +892,15 @@ SmoothTexture.prototype.draw = function (canvas) {
  *
  */
 /**
- * @param {Vector} origin world座標系でのBillboardの中心座標
+ * @param {Vector} center world座標系でのBillboardの中心座標
  * @param {number} width  world座標系でのBillboardの横幅
  * @param {number} height world座標系でのBillboardの縦幅
  * @param {String} src    Billboardで使う画像のファイル名
  */
-var Billboard = function (origin, width, height, src) {
+var Billboard = extend(AbstractModel, function (center, width, height, src) {
     var image = new Image();
     image.src = src + '?' + new Date().getTime();
 
-    this.origin = origin;
     this.width = width;
     this.height = height;
     this.src = src;
@@ -903,7 +911,9 @@ var Billboard = function (origin, width, height, src) {
         self.loaded = true;
     };
 
-};
+    this.center = center;
+    this.depth = 5;
+});
 Billboard.prototype.draw = function (canvas) {
     var ctx = canvas.ctx;
 
@@ -912,22 +922,22 @@ Billboard.prototype.draw = function (canvas) {
 
     var projectionAndScreenMatrix = canvas.screenMatrix.compose(canvas.camera.projectionMatrix);
 
-    var vOrigin = canvas.camera.viewMatrix.mul(this.origin);
-    if (vOrigin.z > 0) return;
+    var vCenter = canvas.camera.viewMatrix.mul(this.center);
+    if (vCenter.z > 0) return;
     // TODO: 座標系のチェック
-    var vRightTop = vOrigin.sub(new Vector(this.width/2, this.height/2, 0));
+    var vRightTop = vCenter.sub(new Vector(this.width/2, this.height/2, 0));
 
-    var vpOrigin = projectionAndScreenMatrix.mul(vOrigin);
+    var vpCenter = projectionAndScreenMatrix.mul(vCenter);
     var vpRightTop = projectionAndScreenMatrix.mul(vRightTop);
-    var vpHalfWidth = vpRightTop.x - vpOrigin.x;
-    var vpHalfHeight = vpRightTop.y - vpOrigin.y;
+    var vpHalfWidth = vpRightTop.x - vpCenter.x;
+    var vpHalfHeight = vpRightTop.y - vpCenter.y;
 
     var scaleX = vpHalfWidth  / this.image.width  * 2;
     var scaleY = vpHalfHeight / this.image.height * 2;
 
     ctx.setTransform(scaleX, 0, 0, scaleY, 0, 0);
 
-    ctx.drawImage(this.image, (vpOrigin.x-vpHalfWidth)/scaleX, (vpOrigin.y-vpHalfHeight)/scaleY);
+    ctx.drawImage(this.image, (vpCenter.x-vpHalfWidth)/scaleX, (vpCenter.y-vpHalfHeight)/scaleY);
 
     ctx.setTransform(1, 0, 0, 1, 0, 0);
 };
@@ -942,28 +952,6 @@ var canvasInit = function () {
 
     var model = (function () {
         var polygons = [];
-        var i, j;
-
-        i = -0;
-        j = -2;
-        var polygon = new Polygon([
-            new Vector(    i*50, -20,     j*50),
-            new Vector((i+1)*50, -20,     j*50),
-            new Vector((i+1)*50, -20, (j+1)*50),
-            new Vector(    i*50, -20, (j+1)*50)
-            ], new Color(128, 255, 128));
-        polygons.push(polygon);
-
-
-        i = -1;
-        j = -2;
-        polygon = new Polygon([
-            new Vector(    i*50, -20,     j*50),
-            new Vector((i+1)*50, -20,     j*50),
-            new Vector((i+1)*50, -20, (j+1)*50),
-            new Vector(    i*50, -20, (j+1)*50)
-            ], new Color(128, 255, 128));
-        polygons.push(polygon);
 
         for (var i=-10; i<10; i++) {
             for (var j=-10; j<10; j++) {
@@ -1010,9 +998,23 @@ var canvasInit = function () {
         // );
         return new Model(polygons, new Vector(0, 0, 0));
     })();
-    canvas.addObject(model);
+    // canvas.addObject(model);
 
-    for (var i=0; i<100; i++) {
+    for (var i=-10; i<10; i++) {
+        for (var j=-10; j<10; j++) {
+            var polygon = new Polygon([
+                new Vector(    i*50, -20,     j*50),
+                new Vector((i+1)*50, -20,     j*50),
+                new Vector((i+1)*50, -20, (j+1)*50),
+                new Vector(    i*50, -20, (j+1)*50)
+            ], new Color(128, 255, 128));
+            polygon.depth = 8;
+            canvas.addObject(polygon);
+        }
+    }
+
+
+    for (i=0; i<100; i++) {
         var x = (Math.floor(Math.random()*20)-10)*25;
         var z = (Math.floor(Math.random()*20)-10)*25;
         var billboard = new Billboard(new Vector(x, -3, z), 50, 35, './image/tree.png');
@@ -1020,10 +1022,10 @@ var canvasInit = function () {
     }
 
     var texture = new SmoothTexture([
-        new Vector(-10, -10, 0),
-        new Vector( 10, -10, 0),
-        new Vector( 10,  10, 0),
-        new Vector(-10,  10, 0),
+        new Vector(-30, -20, 0),
+        new Vector( 30, -20, 0),
+        new Vector( 30,  20, 0),
+        new Vector(-30,  20, 0),
     ], './image/so-nya.png');
     canvas.addObject(texture);
 
@@ -1079,6 +1081,7 @@ var canvasInit = function () {
         }
         canvas.update();
     };
+
 };
 
 window.onload = canvasInit;

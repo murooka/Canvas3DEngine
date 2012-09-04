@@ -163,7 +163,7 @@ Matrix.prototype.toString = function () {
 };
 
 // ガウスの消去法
-Matrix.prototype.inverse = function () {
+Matrix.prototype.invert = function () {
     var i, j, k;
     var matrix = this.copy();
     var inverse = new Matrix();

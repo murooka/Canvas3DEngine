@@ -34,6 +34,9 @@ var Vector = function () {
 Vector.origin = function () {
     return new Vector(0, 0, 0);
 };
+Vector.prototype.copy = function () {
+    return new Matrix(this.x, this.y, this.x);
+};
 
 /**
  * this + other
