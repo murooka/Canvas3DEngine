@@ -110,12 +110,16 @@ Canvas3D.prototype.update = function () {
         }
     });
 
+    var count = 0;
     for (var i=0; i<objects.length; i++) {
-        objects[i].draw(this);
+        if (objects[i].draw(this)) count++;
     }
+    console.log('draw ' + count + ' models');
 };
 Canvas3D.prototype.setScreenMatrix = function (width, height) {
-    this.screenMatrix = Matrix.translating(width/2, height/2, 0).compose(Matrix.scaling(width/2, height/2, 1));
+    this.screenMatrix =
+        Matrix.translating(width/2, height/2, 0).compose(
+            Matrix.scaling(width/2, height/2, 1));
 };
 Canvas3D.prototype.updateMatrix = function () {
     this.camera.updateMatrix();
@@ -348,7 +352,7 @@ Polygon.prototype.draw = function (canvas) {
         for (i=0; i<len; i++) if (verts[i].z < 0) return false;
         return true;
     })();
-    if (isHidden) return;
+    if (isHidden) return false;
 
     // 透視変換
     for (i=0; i<len; i++) {
@@ -362,9 +366,8 @@ Polygon.prototype.draw = function (canvas) {
 
     // canvasの外側に位置する場合は表示しない
     var isOutside = (function () {
-        var i;
     })();
-    if (isOutside) return;
+    if (isOutside) return false;
 
     var isRight = true,
         isLeft  = true,
@@ -376,7 +379,7 @@ Polygon.prototype.draw = function (canvas) {
             break;
         }
     }
-    if (isRight) return;
+    if (isRight) return false;
 
     for (i=0; i<len; i++) {
         if (verts[i].x > 0) {
@@ -384,7 +387,7 @@ Polygon.prototype.draw = function (canvas) {
             break;
         }
     }
-    if (isLeft) return;
+    if (isLeft) return false;
 
     for (i=0; i<len; i++) {
         if (verts[i].y > 0) {
@@ -400,32 +403,32 @@ Polygon.prototype.draw = function (canvas) {
             break;
         }
     }
-    if (isBelow) return;
+    if (isBelow) return false;
 
     // 裏側から見たポリゴンは表示しない
     if (cross2D(verts[1].x-verts[0].x,
                 verts[1].y-verts[0].y,
                 verts[2].x-verts[0].x,
                 verts[2].y-verts[0].y) > 0) {
-        return;
+        return false;
     }
     if (cross2D(verts[2].x-verts[1].x,
                 verts[2].y-verts[1].y,
                 verts[3].x-verts[1].x,
                 verts[3].y-verts[1].y) > 0) {
-        return;
+        return false;
     }
     if (cross2D(verts[3].x-verts[2].x,
                 verts[3].y-verts[2].y,
                 verts[0].x-verts[2].x,
                 verts[0].y-verts[2].y) > 0) {
-        return;
+        return false;
     }
     if (cross2D(verts[0].x-verts[3].x,
                 verts[0].y-verts[3].y,
                 verts[1].x-verts[3].x,
                 verts[1].y-verts[3].y) > 0) {
-        return;
+        return false;
     }
 
     // 光の計算をしておく
@@ -473,6 +476,8 @@ Polygon.prototype.draw = function (canvas) {
     }
     ctx.closePath();
     ctx.fill();
+
+    return true;
 };
 
 
@@ -605,7 +610,7 @@ Texture.prototype.rotateZ = function (center, rad) {
     )));
 };
 Texture.prototype.draw = function (canvas) {
-    if (!this.loaded) return;
+    if (!this.loaded) return false;
 
     var ctx = canvas.ctx;
 
@@ -689,6 +694,7 @@ Texture.prototype.draw = function (canvas) {
     }
     ctx.putImageData(output, offsetX, offsetY);
 
+    return true;
 };
 
 
@@ -752,7 +758,7 @@ SmoothTexture.prototype.rotateZ = function (rad, center) {
     this.updateCenter();
 };
 SmoothTexture.prototype.draw = function (canvas) {
-    if (!this.loaded) return;
+    if (!this.loaded) return false;
 
     var ctx = canvas.ctx;
     
@@ -765,7 +771,7 @@ SmoothTexture.prototype.draw = function (canvas) {
     var isHidden = (function () {
     })();
 
-    if (isHidden) return;
+    if (isHidden) return false;
 
     // ビュー・透視・スクリーン変換行列
     var matrix =
@@ -881,6 +887,7 @@ SmoothTexture.prototype.draw = function (canvas) {
 
     divideAndDrawImage(this.image, wltImage, wlbImage, wrbImage, wrtImage, sltImage, slbImage, srbImage, srtImage, 1, 0, 0, this.image.width, this.image.height);
 
+    return true;
 };
 
 
@@ -917,13 +924,13 @@ var Billboard = extend(AbstractModel, function (center, width, height, src) {
 Billboard.prototype.draw = function (canvas) {
     var ctx = canvas.ctx;
 
-    if (!this.loaded) return;
+    if (!this.loaded) return false;
 
 
     var projectionAndScreenMatrix = canvas.screenMatrix.compose(canvas.camera.projectionMatrix);
 
     var vCenter = canvas.camera.viewMatrix.mul(this.center);
-    if (vCenter.z > 0) return;
+    if (vCenter.z > 0) return false;
     // TODO: 座標系のチェック
     var vRightTop = vCenter.sub(new Vector(this.width/2, this.height/2, 0));
 
@@ -940,6 +947,8 @@ Billboard.prototype.draw = function (canvas) {
     ctx.drawImage(this.image, (vpCenter.x-vpHalfWidth)/scaleX, (vpCenter.y-vpHalfHeight)/scaleY);
 
     ctx.setTransform(1, 0, 0, 1, 0, 0);
+
+    return true;
 };
 
 
@@ -964,38 +973,6 @@ var canvasInit = function () {
                 polygons.push(polygon);
             }
         }
-        // polygons.push(
-        //     new Polygon([
-        //         new Vector(-50, -20, 0),
-        //         new Vector( 50, -20, 0),
-        //         new Vector( 50,  30, 0),
-        //         new Vector(-50,  30, 0),
-        //     ], new Color(255, 0, 0))
-        // );
-        // polygons.push(
-        //     new Polygon([
-        //         new Vector( 50, -20,   0),
-        //         new Vector( 50, -20, 100),
-        //         new Vector( 50,  30, 100),
-        //         new Vector( 50,  30,   0),
-        //     ], new Color(255, 0, 0))
-        // );
-        // polygons.push(
-        //     new Polygon([
-        //         new Vector( 50, -20, 100),
-        //         new Vector(-50, -20, 100),
-        //         new Vector(-50,  30, 100),
-        //         new Vector( 50,  30, 100),
-        //     ], new Color(255, 0, 0))
-        // );
-        // polygons.push(
-        //     new Polygon([
-        //         new Vector(-50, -20, 100),
-        //         new Vector(-50, -20,   0),
-        //         new Vector(-50,  30,   0),
-        //         new Vector(-50,  30, 100),
-        //     ], new Color(255, 0, 0))
-        // );
         return new Model(polygons, new Vector(0, 0, 0));
     })();
     // canvas.addObject(model);

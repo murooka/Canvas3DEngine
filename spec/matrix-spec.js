@@ -57,7 +57,7 @@ describe("Identity matrix", function () {
         });
 
         it("should be equal to Identity Matrix", function () {
-            expect(matrix.inverse()).toEqualToMatrix(matrix);
+            expect(matrix.invert()).toEqualToMatrix(matrix);
         });
 
     });
