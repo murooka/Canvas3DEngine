@@ -93,6 +93,31 @@ var Engine = function (canvas_id) {
 
     this.updateMatrix();
 };
+Engine.images = {};
+Engine.imageDatas = {};
+Engine.loadImages = function (images) {
+    var canvas = document.getElementById('tmp_canvas');
+    var ctx = canvas.getContext('2d');
+
+    var setLoaded = function (src) {
+        Engine.images[src].onload = function () {
+            Engine.images[src].loaded = true;
+            ctx.drawImage(image, 0, 0);
+            Engine.imageDatas[src] = ctx.getImageData(0, 0, image.width, image.height);
+        };
+    };
+
+    for (var i=0; i<images.length; i++) {
+        var src = images[i];
+
+        var image = new Image();
+        image.src = src;
+        image.loaded = false;
+        Engine.images[src] = image;
+        setLoaded(src);
+    }
+
+};
 Engine.prototype.addObject = function (o) {
     this.objects.push(o);
 };
@@ -292,7 +317,7 @@ var AbstractModel = function () {
  * @description 引数に渡されたviewMatrixを用いて、ビュー座標系でのcenter(vCenter)を更新する
  */
 AbstractModel.prototype.applyViewMatrix = function () {
-    throw this + '#applyViewMatrix : draw is not implemented yet';
+    throw this + '#applyViewMatrix : applyViewMatrix is not implemented yet';
 };
 /**
  * @function
@@ -300,7 +325,7 @@ AbstractModel.prototype.applyViewMatrix = function () {
  * @param {Camera} camera Zvalueの範囲情報を持つCamera
  */
 AbstractModel.prototype.isHidden = function () {
-    throw this + '#applyViewMatrix : draw is not implemented yet';
+    throw this + '#isHidden : isHidden is not implemented yet';
 };
 /**
  * @function
@@ -551,9 +576,20 @@ var Model = extend(AbstractModel, function (polygons, center) {
     this.polygons = polygons;
     this.center = center;
     this.depth = 5;
+    this.enabledZSort = false;
 });
 Model.prototype.applyViewMatrix = function (viewMatrix) {
     this.vCenter = viewMatrix.mul(this.center);
+    for (var i=0; i<this.polygons.length; i++) {
+        this.polygons[i].applyViewMatrix(viewMatrix);
+    }
+};
+Model.prototype.isHidden = function (camera) {
+    for (var i=0; i<this.polygons.length; i++) {
+        var polygon = this.polygons[i];
+        if (camera.nearZ < -polygon.vCenter.z && -polygon.vCenter.z < camera.farZ) return false;
+    }
+    return true;
 };
 Model.prototype.move = function (v) {
     for (var i=0; i<this.polygons.length; i++) {
@@ -578,8 +614,13 @@ Model.prototype.rotateZ = function (rad) {
 };
 Model.prototype.draw = function (canvas) {
     // TODO: Z-sort
+    if (this.enabledZSort) {
+    }
+
     for (var i=0; i<this.polygons.length; i++) {
-        this.polygons[i].draw(canvas);
+        var polygon = this.polygons[i];
+        if (polygon.isHidden(canvas.camera)) continue;
+        polygon.draw(canvas);
     }
 };
 
@@ -785,10 +826,7 @@ Texture.prototype.draw = function (canvas) {
  * @param {String}    src      テクスチャに使う画像ファイル名
  */
 var SmoothTexture = extend(Texture, function (vertices, src) {
-    var image = new Image();
-    image.src = src + '?' + new Date().getTime();
-
-    this.image = image;
+    this.image = Engine.images[src];
     this.vertices = vertices;
     this.worldMatrix = new Matrix();
     this.loaded = false;
@@ -797,16 +835,6 @@ var SmoothTexture = extend(Texture, function (vertices, src) {
     this.originY = vertices[0].y;
     this.width  = Math.abs(vertices[1].sub(vertices[0]).abs());
     this.height = Math.abs(vertices[2].sub(vertices[1]).abs());
-
-    var canvas = document.getElementById('tmp_canvas');
-    var ctx = canvas.getContext('2d');
-
-    var self = this;
-    image.onload = function () {
-        ctx.drawImage(image, 0, 0);
-        self.imageData = ctx.getImageData(0, 0, image.width, image.height);
-        self.loaded = true;
-    };
 
     this.updateCenter();
     this.depth = 5;
@@ -837,7 +865,7 @@ SmoothTexture.prototype.rotateZ = function (rad, center) {
     this.updateCenter();
 };
 SmoothTexture.prototype.draw = function (canvas) {
-    if (!this.loaded) return false;
+    if (!this.image.loaded) return false;
 
     var ctx = canvas.ctx;
     
@@ -979,18 +1007,10 @@ SmoothTexture.prototype.draw = function (canvas) {
  * @param {String} src    Billboardで使う画像のファイル名
  */
 var Billboard = extend(AbstractModel, function (center, width, height, src) {
-    var image = new Image();
-    image.src = src + '?' + new Date().getTime();
-
     this.width = width;
     this.height = height;
     this.src = src;
-    this.image = image;
-
-    var self = this;
-    image.onload = function () {
-        self.loaded = true;
-    };
+    this.image = Engine.images[src];
 
     this.center = center;
     this.depth = 5;
@@ -1005,7 +1025,7 @@ Billboard.prototype.isHidden = function (camera) {
 Billboard.prototype.draw = function (canvas) {
     var ctx = canvas.ctx;
 
-    if (!this.loaded) return false;
+    if (!this.image.loaded) return false;
 
 
     var projectionAndScreenMatrix = canvas.screenMatrix.compose(canvas.camera.projectionMatrix);
@@ -1038,37 +1058,42 @@ Billboard.prototype.draw = function (canvas) {
 
 var gameInit = function () {
     var engine = new Engine('canvas');
+    var i, j;
+
+    Engine.loadImages(['./image/tree.png', './image/so-nya.png']);
 
     var model = (function () {
         var polygons = [];
 
-        for (var i=-10; i<10; i++) {
-            for (var j=-10; j<10; j++) {
+        for (i=-10; i<10; i++) {
+            for (j=-10; j<10; j++) {
                 var polygon = new Polygon([
                     new Vector(    i*50, -20,     j*50),
                     new Vector((i+1)*50, -20,     j*50),
                     new Vector((i+1)*50, -20, (j+1)*50),
                     new Vector(    i*50, -20, (j+1)*50)
                 ], new Color(128, 255, 128));
+                polygon.depth = 8;
                 polygons.push(polygon);
             }
         }
         return new Model(polygons, new Vector(0, 0, 0));
     })();
-    // engine.addObject(model);
+    model.depth = 8;
+    engine.addObject(model);
 
-    for (var i=-10; i<10; i++) {
-        for (var j=-10; j<10; j++) {
-            var polygon = new Polygon([
-                new Vector(    i*50, -20,     j*50),
-                new Vector((i+1)*50, -20,     j*50),
-                new Vector((i+1)*50, -20, (j+1)*50),
-                new Vector(    i*50, -20, (j+1)*50)
-            ], new Color(128, 255, 128));
-            polygon.depth = 8;
-            engine.addObject(polygon);
-        }
-    }
+    // for (var i=-10; i<10; i++) {
+    //     for (var j=-10; j<10; j++) {
+    //         var polygon = new Polygon([
+    //             new Vector(    i*50, -20,     j*50),
+    //             new Vector((i+1)*50, -20,     j*50),
+    //             new Vector((i+1)*50, -20, (j+1)*50),
+    //             new Vector(    i*50, -20, (j+1)*50)
+    //         ], new Color(128, 255, 128));
+    //         polygon.depth = 8;
+    //         engine.addObject(polygon);
+    //     }
+    // }
 
 
     for (i=0; i<100; i++) {
@@ -1138,6 +1163,15 @@ var gameInit = function () {
         }
         engine.update();
     };
+
+    var move = function () {
+        engine.camera.move(new Vector(0, 0, 5));
+        engine.camera.rotateY((Math.random()) * Math.PI / 32);
+        engine.updateMatrix();
+        engine.update();
+        setTimeout(move, 50);
+    };
+    setTimeout(move, 50);
 
 };
 
