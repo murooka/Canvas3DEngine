@@ -80,7 +80,7 @@ var Canvas3D = function (canvas_id) {
         upperVector    = new Vector(0, 1, 0),
         fovyX          = Math.PI/3,
         nearZ          = 0,
-        farZ           = 100,
+        farZ           = 500,
         aspect_ratio   = this.height / this.width;
     this.camera = new Camera(
         viewPosition,
@@ -102,16 +102,24 @@ Canvas3D.prototype.update = function () {
     this.ctx.fillRect(0, 0, this.width, this.height);
 
     var camera = this.camera;
-    var objects = this.objects.sort(function (a, b) {
+
+    var i;
+    var objects = [];
+    for (i=0; i<this.objects.length; i++) {
+        this.objects[i].applyViewMatrix(camera.viewMatrix);
+        if (!this.objects[i].isHidden(camera)) objects.push(this.objects[i]);
+    }
+
+    objects = objects.sort(function (a, b) {
         if (a.depth===b.depth) {
-            return camera.viewMatrix.mul(a.center).z - camera.viewMatrix.mul(b.center).z;
+            return a.vCenter.z - b.vCenter.z;
         } else {
             return b.depth - a.depth;
         }
     });
 
     var count = 0;
-    for (var i=0; i<objects.length; i++) {
+    for (i=0; i<objects.length; i++) {
         if (objects[i].draw(this)) count++;
     }
     console.log('draw ' + count + ' models');
@@ -270,14 +278,30 @@ Color.prototype.negative = function () {
 
 
 /**
- * Canvas3D上で表示するモデル(PolygonやBillboard)は、draw関数とcenter、depthプロパティを実装する必要がある
- * draw関数は描画対象のCanvas3Dを引数として受け取り、必要ならば変換行列を利用してレンダリングコンテキストへ描画を行う
- * centerプロパティはZソートを行うためのモデルの中心座標である
- * depthプロはティは、centerとは無関係に描画順序を決定するための値である
- * depthが小さいほど手前に表示され、大きいほど奥に表示される
- * デフォルトではdepth = 5とする
+ * @class Canvas3D上で表示するモデルの抽象クラス
+ * @description このクラスを継承するクラスは、draw関数、applyViewMatrix関数、isHidden関数、centerプロパティ、vCenterプロパティ、depthプロパティを実装する必要がある
+ * @property {Vector} center  Zソートを行うためのモデルの中心座標
+ * @property {Vector} vCenter view変換を行ったあとのcenter
+ * @property {number} depth   centerとは無関係に描画順序を決定するための値
+ *                            小さいほど手前に表示され、大きいほど奥に表示される
+ *                            デフォルトで値は5とする
  */
 var AbstractModel = function () {
+};
+/**
+ * @function
+ * @description 引数に渡されたviewMatrixを用いて、ビュー座標系でのcenter(vCenter)を更新する
+ */
+AbstractModel.prototype.applyViewMatrix = function () {
+    throw this + '#applyViewMatrix : draw is not implemented yet';
+};
+/**
+ * @function
+ * @description 透視変換後の座標を用いて、Zvalueが見える範囲にあるか(nearZ以上farZ以下か)を確認する
+ * @param {Camera} camera Zvalueの範囲情報を持つCamera
+ */
+AbstractModel.prototype.isHidden = function () {
+    throw this + '#applyViewMatrix : draw is not implemented yet';
 };
 AbstractModel.prototype.draw = function () {
     throw this + '#draw : draw is not implemented yet';
@@ -300,6 +324,21 @@ var Polygon = extend(AbstractModel, function (vertices, color) {
     this.updateCenter();
     this.depth = 5;
 });
+Polygon.prototype.applyViewMatrix = function (viewMatrix) {
+    var vVertices = [];
+    var vSumPos = new Vector(0, 0, 0);
+    for (var i=0; i<this.vertices.length; i++) {
+        var vVertex = viewMatrix.mul(this.vertices[i]);
+        vVertices.push(vVertex);
+        vSumPos = vSumPos.add(vVertex);
+    }
+    this.vCenter = vSumPos.div(this.vertices.length);
+    this.vVertices = vVertices;
+};
+Polygon.prototype.isHidden = function (camera) {
+    if (camera.nearZ < -this.vCenter.z && -this.vCenter.z < camera.farZ) return false;
+    return true;
+};
 Polygon.prototype.move = function (v) {
     for (var i=0; i<this.vertices.length; i++) {
         this.vertices[i] = this.vertices[i].add(v);
@@ -340,19 +379,37 @@ Polygon.prototype.toString = function () {
 Polygon.prototype.draw = function (canvas) {
     var ctx = canvas.ctx;
     var len = this.vertices.length;
-    var verts = new Array(len);
+    var verts = this.vVertices;
 
-    // ビュー変換
-    for (var i=0; i<len; i++) {
-        verts[i] = canvas.camera.viewMatrix.mul(this.vertices[i]);
-    }
 
-    // 視点より手前にあるものは描画しない
-    var isHidden = (function () {
-        for (i=0; i<len; i++) if (verts[i].z < 0) return false;
-        return true;
+    // 透視変換の前に光の計算をしておく
+    var center = (function () {
+        var posSum = new Vector(0, 0, 0);
+        for (var i=0; i<verts.length; i++) {
+            posSum = posSum.add(verts[i]);
+        }
+        return posSum.div(verts.length);
     })();
-    if (isHidden) return false;
+
+    var norm = (function () {
+        var v1 = verts[1].sub(center);
+        var v2 = verts[2].sub(center);
+
+        return v1.cross(v2).unit();
+    })();
+
+    var lightPower = norm.dot(center.unit());
+    var diffusePower = 0.7;
+    var diffuseCoefficient = 0.8;
+    var ambientPower = 0.5;
+
+    var colorR = Math.min(255, (diffusePower * diffuseCoefficient * lightPower + ambientPower) * this.color.r);
+    var colorG = Math.min(255, (diffusePower * diffuseCoefficient * lightPower + ambientPower) * this.color.g);
+    var colorB = Math.min(255, (diffusePower * diffuseCoefficient * lightPower + ambientPower) * this.color.b);
+
+
+
+    var i;
 
     // 透視変換
     for (i=0; i<len; i++) {
@@ -365,9 +422,6 @@ Polygon.prototype.draw = function (canvas) {
     }
 
     // canvasの外側に位置する場合は表示しない
-    var isOutside = (function () {
-    })();
-    if (isOutside) return false;
 
     var isRight = true,
         isLeft  = true,
@@ -431,31 +485,6 @@ Polygon.prototype.draw = function (canvas) {
         return false;
     }
 
-    // 光の計算をしておく
-    var center = (function () {
-        var posSum = new Vector(0, 0, 0);
-        for (var i=0; i<verts.length; i++) {
-            posSum = posSum.add(verts[i]);
-        }
-        return posSum.div(verts.length);
-    })();
-
-    var norm = (function () {
-        var v1 = verts[1].sub(center);
-        var v2 = verts[2].sub(center);
-
-        return v1.cross(v2).unit();
-    })();
-
-    var lightPower = norm.dot(center.unit());
-    var diffusePower = 0.7;
-    var diffuseCoefficient = 0.8;
-    var ambientPower = 0.5;
-
-    var colorR = Math.min(255, (diffusePower * diffuseCoefficient * lightPower + ambientPower) * this.color.r);
-    var colorG = Math.min(255, (diffusePower * diffuseCoefficient * lightPower + ambientPower) * this.color.g);
-    var colorB = Math.min(255, (diffusePower * diffuseCoefficient * lightPower + ambientPower) * this.color.b);
-
     var color = '#';
     color += new Color(colorR, colorG, colorB).toHexString();
 
@@ -498,6 +527,9 @@ var Model = extend(AbstractModel, function (polygons, center) {
     this.center = center;
     this.depth = 5;
 });
+Model.prototype.applyViewMatrix = function (viewMatrix) {
+    this.vCenter = viewMatrix.mul(this.center);
+};
 Model.prototype.move = function (v) {
     for (var i=0; i<this.polygons.length; i++) {
         this.polygons[i].move(v);
@@ -520,6 +552,7 @@ Model.prototype.rotateZ = function (rad) {
     }
 };
 Model.prototype.draw = function (canvas) {
+    // TODO: Z-sort
     for (var i=0; i<this.polygons.length; i++) {
         this.polygons[i].draw(canvas);
     }
@@ -566,6 +599,18 @@ var Texture = extend(Polygon, function (vertices, src) {
     this.updateCenter();
     this.depth = 5;
 });
+Texture.prototype.applyViewMatrix = function (viewMatrix) {
+    var vSumPos = new Vector(0, 0, 0);
+    for (var i=0; i<this.vertices.length; i++) {
+        var vVertex = viewMatrix.mul(this.vertices[i]);
+        vSumPos = vSumPos.add(vVertex);
+    }
+    this.vCenter = vSumPos.div(this.vertices.length);
+};
+Texture.prototype.isHidden = function (camera) {
+    if (camera.nearZ < -this.vCenter.z && -this.vCenter.z < camera.farZ) return false;
+    return true;
+};
 Texture.prototype.move = function (v) {
     for (var i=0; i<this.vertices.length; i++) {
         this.vertices[i] = this.vertices[i].add(v);
@@ -739,6 +784,13 @@ var SmoothTexture = extend(Texture, function (vertices, src) {
     this.updateCenter();
     this.depth = 5;
 });
+SmoothTexture.prototype.applyViewMatrix = function (viewMatrix) {
+    this.vCenter = viewMatrix.mul(this.center);
+};
+SmoothTexture.prototype.isHidden = function (camera) {
+    if (camera.nearZ < -this.vCenter.z && -this.vCenter.z < camera.farZ) return false;
+    return true;
+};
 SmoothTexture.prototype.rotateX = function (rad, center) {
     for (var i=0; i<this.vertices.length; i++) {
         this.vertices[i] = this.vertices[i].sub(center).rotateX(rad).add(center);
@@ -767,11 +819,6 @@ SmoothTexture.prototype.draw = function (canvas) {
         wlbImage = this.vertices[0],
         wrbImage = this.vertices[1],
         wrtImage = this.vertices[2];
-
-    var isHidden = (function () {
-    })();
-
-    if (isHidden) return false;
 
     // ビュー・透視・スクリーン変換行列
     var matrix =
@@ -921,6 +968,13 @@ var Billboard = extend(AbstractModel, function (center, width, height, src) {
     this.center = center;
     this.depth = 5;
 });
+Billboard.prototype.applyViewMatrix = function (viewMatrix) {
+    this.vCenter = viewMatrix.mul(this.center);
+};
+Billboard.prototype.isHidden = function (camera) {
+    if (camera.nearZ < -this.vCenter.z && -this.vCenter.z < camera.farZ) return false;
+    return true;
+};
 Billboard.prototype.draw = function (canvas) {
     var ctx = canvas.ctx;
 
