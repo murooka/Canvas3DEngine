@@ -303,9 +303,32 @@ AbstractModel.prototype.applyViewMatrix = function () {
 AbstractModel.prototype.isHidden = function () {
     throw this + '#applyViewMatrix : draw is not implemented yet';
 };
+/**
+ * @function
+ * @description 渡されたcanvasにモデルを描画する
+ *              描画を行った場合はtrueを、行う必要がなかった場合はfalseを返す
+ */
 AbstractModel.prototype.draw = function () {
     throw this + '#draw : draw is not implemented yet';
 };
+/**
+ * @function
+ * @description スクリーン座標系の頂点がcanvas内に描画する必要があるかどうかを確認する
+ *              描画する必要がないならばtrueを返す
+ */
+AbstractModel.isHiddenXY = function (vertices, canvas) {
+    for (var i=0; i<vertices.length; i++) {
+        var v = vertices[i];
+        if (0 < v.x && v.x < canvas.width &&
+            0 < v.y && v.y < canvas.height  ) return false;
+    }
+    return true;
+};
+
+
+
+
+
 
 /**
  * @class Canvas3Dで利用する多角形クラス
@@ -423,41 +446,44 @@ Polygon.prototype.draw = function (canvas) {
 
     // canvasの外側に位置する場合は表示しない
 
-    var isRight = true,
-        isLeft  = true,
-        isBelow = true,
-        isAbove = true;
-    for (i=0; i<len; i++) {
-        if (verts[i].x < canvas.width) {
-            isRight = false;
-            break;
-        }
-    }
-    if (isRight) return false;
+    var isHiddenXY = AbstractModel.isHiddenXY(verts, canvas);
+    if (isHiddenXY) return false;
 
-    for (i=0; i<len; i++) {
-        if (verts[i].x > 0) {
-            isLeft = false;
-            break;
-        }
-    }
-    if (isLeft) return false;
+    // var isRight = true,
+    //     isLeft  = true,
+    //     isBelow = true,
+    //     isAbove = true;
+    // for (i=0; i<len; i++) {
+    //     if (verts[i].x < canvas.width) {
+    //         isRight = false;
+    //         break;
+    //     }
+    // }
+    // if (isRight) return false;
 
-    for (i=0; i<len; i++) {
-        if (verts[i].y > 0) {
-            isAbove = false;
-            break;
-        }
-    }
-    if (isAbove) return;
+    // for (i=0; i<len; i++) {
+    //     if (verts[i].x > 0) {
+    //         isLeft = false;
+    //         break;
+    //     }
+    // }
+    // if (isLeft) return false;
 
-    for (i=0; i<len; i++) {
-        if (verts[i].y < canvas.height) {
-            isBelow = false;
-            break;
-        }
-    }
-    if (isBelow) return false;
+    // for (i=0; i<len; i++) {
+    //     if (verts[i].y > 0) {
+    //         isAbove = false;
+    //         break;
+    //     }
+    // }
+    // if (isAbove) return;
+
+    // for (i=0; i<len; i++) {
+    //     if (verts[i].y < canvas.height) {
+    //         isBelow = false;
+    //         break;
+    //     }
+    // }
+    // if (isBelow) return false;
 
     // 裏側から見たポリゴンは表示しない
     if (cross2D(verts[1].x-verts[0].x,
@@ -677,6 +703,8 @@ Texture.prototype.draw = function (canvas) {
         ty = Math.min(ty, verts[i].y);
         by = Math.max(by, verts[i].y);
     }
+
+    if (AbstractModel.isHiddenXY(verts, canvas)) return true;
 
     var offsetX = Math.floor(lx),
         offsetY = Math.floor(ty),
@@ -983,12 +1011,10 @@ Billboard.prototype.draw = function (canvas) {
 
     var projectionAndScreenMatrix = canvas.screenMatrix.compose(canvas.camera.projectionMatrix);
 
-    var vCenter = canvas.camera.viewMatrix.mul(this.center);
-    if (vCenter.z > 0) return false;
     // TODO: 座標系のチェック
-    var vRightTop = vCenter.sub(new Vector(this.width/2, this.height/2, 0));
+    var vRightTop = this.vCenter.sub(new Vector(this.width/2, this.height/2, 0));
 
-    var vpCenter = projectionAndScreenMatrix.mul(vCenter);
+    var vpCenter = projectionAndScreenMatrix.mul(this.vCenter);
     var vpRightTop = projectionAndScreenMatrix.mul(vRightTop);
     var vpHalfWidth = vpRightTop.x - vpCenter.x;
     var vpHalfHeight = vpRightTop.y - vpCenter.y;
@@ -998,6 +1024,7 @@ Billboard.prototype.draw = function (canvas) {
 
     ctx.setTransform(scaleX, 0, 0, scaleY, 0, 0);
 
+    // TODO: 描画位置を決めなくても、アフィン変換でなんとかなるかも
     ctx.drawImage(this.image, (vpCenter.x-vpHalfWidth)/scaleX, (vpCenter.y-vpHalfHeight)/scaleY);
 
     ctx.setTransform(1, 0, 0, 1, 0, 0);
