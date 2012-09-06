@@ -1164,14 +1164,14 @@ var gameInit = function () {
         engine.update();
     };
 
-    var move = function () {
-        engine.camera.move(new Vector(0, 0, 5));
-        engine.camera.rotateY((Math.random()) * Math.PI / 32);
-        engine.updateMatrix();
-        engine.update();
-        setTimeout(move, 50);
-    };
-    setTimeout(move, 50);
+    // var move = function () {
+    //     engine.camera.move(new Vector(0, 0, 5));
+    //     engine.camera.rotateY((Math.random()) * Math.PI / 32);
+    //     engine.updateMatrix();
+    //     engine.update();
+    //     setTimeout(move, 50);
+    // };
+    // setTimeout(move, 50);
 
 };
 
