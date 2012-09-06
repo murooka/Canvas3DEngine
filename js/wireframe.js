@@ -48,8 +48,7 @@ var cross2D = function (x1, y1, x2, y2) { return x1*y2 - x2*y1; };
 
 
 /**
- * @class 擬似3Dを実現するためのCanvasクラス
- * TODO: 名前変えたほうがいいかも
+ * @class 擬似3Dを実現するためのゲームエンジンクラス
  * 
  * @property {Canvas}  canvas  描画するキャンバスへの参照
  * @property {CanvasRenderingContext2D} ctx キャンバスのコンテキストへの参照
@@ -65,7 +64,7 @@ var cross2D = function (x1, y1, x2, y2) { return x1*y2 - x2*y1; };
  * @constructor
  * @param {String} canvas_id 利用するcanvas(DOM)のid
  */
-var Canvas3D = function (canvas_id) {
+var Engine = function (canvas_id) {
     this.canvas = document.getElementById(canvas_id);
     this.ctx = this.canvas.getContext('2d');
 
@@ -94,10 +93,10 @@ var Canvas3D = function (canvas_id) {
 
     this.updateMatrix();
 };
-Canvas3D.prototype.addObject = function (o) {
+Engine.prototype.addObject = function (o) {
     this.objects.push(o);
 };
-Canvas3D.prototype.update = function () {
+Engine.prototype.update = function () {
     this.ctx.fillStyle = 'rgb(255, 255, 255)';
     this.ctx.fillRect(0, 0, this.width, this.height);
 
@@ -124,12 +123,12 @@ Canvas3D.prototype.update = function () {
     }
     console.log('draw ' + count + ' models');
 };
-Canvas3D.prototype.setScreenMatrix = function (width, height) {
+Engine.prototype.setScreenMatrix = function (width, height) {
     this.screenMatrix =
         Matrix.translating(width/2, height/2, 0).compose(
             Matrix.scaling(width/2, height/2, 1));
 };
-Canvas3D.prototype.updateMatrix = function () {
+Engine.prototype.updateMatrix = function () {
     this.camera.updateMatrix();
     this.transformationMatrix = this.screenMatrix.compose(this.camera.matrix);
 };
@@ -278,7 +277,7 @@ Color.prototype.negative = function () {
 
 
 /**
- * @class Canvas3D上で表示するモデルの抽象クラス
+ * @class Engine上で表示するモデルの抽象クラス
  * @description このクラスを継承するクラスは、draw関数、applyViewMatrix関数、isHidden関数、centerプロパティ、vCenterプロパティ、depthプロパティを実装する必要がある
  * @property {Vector} center  Zソートを行うためのモデルの中心座標
  * @property {Vector} vCenter view変換を行ったあとのcenter
@@ -331,7 +330,7 @@ AbstractModel.isHiddenXY = function (vertices, canvas) {
 
 
 /**
- * @class Canvas3Dで利用する多角形クラス
+ * @class Engineで利用する多角形クラス
  */
 /**
  * 1つの面に対して1つの色情報を持つ
@@ -1037,8 +1036,8 @@ Billboard.prototype.draw = function (canvas) {
 
 
 
-var canvasInit = function () {
-    var canvas = new Canvas3D('canvas');
+var gameInit = function () {
+    var engine = new Engine('canvas');
 
     var model = (function () {
         var polygons = [];
@@ -1056,7 +1055,7 @@ var canvasInit = function () {
         }
         return new Model(polygons, new Vector(0, 0, 0));
     })();
-    // canvas.addObject(model);
+    // engine.addObject(model);
 
     for (var i=-10; i<10; i++) {
         for (var j=-10; j<10; j++) {
@@ -1067,7 +1066,7 @@ var canvasInit = function () {
                 new Vector(    i*50, -20, (j+1)*50)
             ], new Color(128, 255, 128));
             polygon.depth = 8;
-            canvas.addObject(polygon);
+            engine.addObject(polygon);
         }
     }
 
@@ -1076,7 +1075,7 @@ var canvasInit = function () {
         var x = (Math.floor(Math.random()*20)-10)*25;
         var z = (Math.floor(Math.random()*20)-10)*25;
         var billboard = new Billboard(new Vector(x, -3, z), 50, 35, './image/tree.png');
-        canvas.addObject(billboard);
+        engine.addObject(billboard);
     }
 
     var texture = new SmoothTexture([
@@ -1085,29 +1084,29 @@ var canvasInit = function () {
         new Vector( 30,  20, 0),
         new Vector(-30,  20, 0),
     ], './image/so-nya.png');
-    canvas.addObject(texture);
+    engine.addObject(texture);
 
 
 
-    canvas.update();
+    engine.update();
 
     var dragging = false;
     var old_x, old_y;
-    canvas.canvas.onmousedown = function (e) {
+    engine.canvas.onmousedown = function (e) {
         dragging = true;
-        old_x = e.clientX - canvas.canvas.offsetLeft;
-        old_y = e.clientY - canvas.canvas.offsetTop;
+        old_x = e.clientX - engine.canvas.offsetLeft;
+        old_y = e.clientY - engine.canvas.offsetTop;
     };
-    canvas.canvas.onmouseup = function () {
+    engine.canvas.onmouseup = function () {
         dragging = false;
     };
-    canvas.canvas.onmousemove = function (e) {
+    engine.canvas.onmousemove = function (e) {
         if (dragging) {
-            var mouse_x = e.clientX - canvas.canvas.offsetLeft;
-            var mouse_y = e.clientY - canvas.canvas.offsetTop;
+            var mouse_x = e.clientX - engine.canvas.offsetLeft;
+            var mouse_y = e.clientY - engine.canvas.offsetTop;
 
             model.rotateY(-(mouse_x - old_x) / 100);
-            canvas.update();
+            engine.update();
 
             old_x = mouse_x;
             old_y = mouse_y;
@@ -1117,30 +1116,30 @@ var canvasInit = function () {
         // console.log(e.keyCode);
         switch (e.keyCode) {
             case 119: // 'w'
-                canvas.camera.move(new Vector(0, 0, 10));
-                canvas.updateMatrix();
+                engine.camera.move(new Vector(0, 0, 10));
+                engine.updateMatrix();
                 break;
             case 115: // 's'
-                canvas.camera.move(new Vector(0, 0, -10));
-                canvas.updateMatrix();
+                engine.camera.move(new Vector(0, 0, -10));
+                engine.updateMatrix();
                 break;
             case 97:  // 'a'
-                canvas.camera.rotateY(-Math.PI/32);
-                canvas.updateMatrix();
+                engine.camera.rotateY(-Math.PI/32);
+                engine.updateMatrix();
                 break;
             case 100: // 'd'
-                canvas.camera.rotateY(Math.PI/32);
-                canvas.updateMatrix();
+                engine.camera.rotateY(Math.PI/32);
+                engine.updateMatrix();
                 break;
             case 106: // 'j'
                 break;
             case 107: // 'k'
                 break;
         }
-        canvas.update();
+        engine.update();
     };
 
 };
 
-window.onload = canvasInit;
+window.onload = gameInit;
 
