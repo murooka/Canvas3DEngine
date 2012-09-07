@@ -429,6 +429,7 @@ Polygon.prototype.draw = function (canvas) {
     var verts = this.vVertices;
 
 
+    // TODO: 光の使用をユーザが無効化できるようにする
     // 透視変換の前に光の計算をしておく
     var center = (function () {
         var posSum = new Vector(0, 0, 0);
