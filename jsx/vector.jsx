@@ -1,79 +1,92 @@
 
 class Vector {
     
-    var v : number[];
+    var x : number;
+    var y : number;
+    var z : number;
+    var w : number;
 
     function constructor(x:number, y:number, z:number) {
-        this.v = [x, y, z, 1];
+        this.x = x;
+        this.y = y;
+        this.z = z;
+        this.w = 1;
     }
 
     function constructor(x:number, y:number, z:number, w:number) {
-        this.v = [x/w, y/w, z/w, 1];
+        this.x = x / w;
+        this.y = y / w;
+        this.z = z / w;
+        this.w = 1;
+
+        if (this.x==NaN) {
+            log w;
+        }
     }
 
     function constructor(v:Vector) {
-        this.v = [v.x(), v.y(), v.z(), 1];
+        this.x = v.x;
+        this.y = v.y;
+        this.z = v.z;
+        this.w = 1;
     }
 
     static function origin() : Vector {
         return new Vector(0, 0, 0);
     }
 
-    function x() : number { return this.v[0]; }
-    function y() : number { return this.v[1]; }
-    function z() : number { return this.v[2]; }
-    function w() : number { return this.v[3]; }
-
     function add(other:Vector) : Vector {
         return new Vector(
-            this.x() + other.x(),
-            this.y() + other.y(),
-            this.z() + other.z()
+            this.x + other.x,
+            this.y + other.y,
+            this.z + other.z
         );
     }
 
     function sub(other:Vector) : Vector {
         return new Vector(
-            this.x() - other.x(),
-            this.y() - other.y(),
-            this.z() - other.z()
+            this.x - other.x,
+            this.y - other.y,
+            this.z - other.z
         );
     }
 
     function mul(other:number) : Vector {
         return new Vector(
-            this.x() * other,
-            this.x() * other,
-            this.x() * other
+            this.x * other,
+            this.y * other,
+            this.z * other
         );
     }
 
     function div(other:number) : Vector {
         return new Vector(
-            this.x() / other,
-            this.x() / other,
-            this.x() / other
+            this.x / other,
+            this.y / other,
+            this.z / other
         );
     }
 
     function dot(other:Vector) : number {
-        return this.x()*other.x() + this.y()*other.y() + this.z()*other.z();
+        return this.x*other.x + this.y*other.y + this.z*other.z;
     }
 
     function cross(other:Vector) : Vector {
         return new Vector(
-            this.y()*other.z() - this.z()*other.y(),
-            this.z()*other.x() - this.x()*other.z(),
-            this.x()*other.y() - this.y()*other.x()
+            this.y*other.z - this.z*other.y,
+            this.z*other.x - this.x*other.z,
+            this.x*other.y - this.y*other.x
         );
     }
 
     function unit() : Vector {
-        return this.div(this.abs());
+        var length = this.abs();
+        if (length < 1e-9) return new Vector(0, 0, 0);
+        return this.div(length);
     }
 
     function sqabs() : number {
-        return this.x()*this.x() + this.y()*this.y() + this.z()*this.z();
+        return this.dot(this);
     }
 
     function abs() : number {
@@ -84,9 +97,9 @@ class Vector {
         var sin = Math.sin(rad);
         var cos = Math.cos(rad);
         return new Vector(
-            this.x(),
-            this.y()*cos - this.z()*sin,
-            this.z()*cos + this.y()*sin
+            this.x,
+            this.y*cos - this.z*sin,
+            this.z*cos + this.y*sin
         );
     }
 
@@ -94,9 +107,9 @@ class Vector {
         var sin = Math.sin(rad);
         var cos = Math.cos(rad);
         return new Vector(
-            this.x()*cos + this.z()*sin,
-            this.y(),
-            this.z()*cos - this.x()*sin
+            this.x*cos + this.z*sin,
+            this.y,
+            this.z*cos - this.x*sin
         );
     }
 
@@ -104,9 +117,9 @@ class Vector {
         var sin = Math.sin(rad);
         var cos = Math.cos(rad);
         return new Vector(
-            this.x()*cos - this.y()*sin,
-            this.y()*cos + this.z()*sin,
-            this.z()
+            this.x*cos - this.y*sin,
+            this.y*cos + this.z*sin,
+            this.z
         );
     }
 
@@ -119,10 +132,10 @@ class Vector {
         };
 
         return '(' +
-            fix(this.v[0]) + ',' +
-            fix(this.v[1]) + ',' +
-            fix(this.v[2]) + ',' +
-            fix(this.v[3]) + ')';
+            fix(this.x) + ',' +
+            fix(this.y) + ',' +
+            fix(this.z) + ',' +
+            fix(this.w) + ')';
     }
 
 }

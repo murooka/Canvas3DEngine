@@ -2,32 +2,72 @@ import "./vector.jsx";
 
 class Matrix {
 
-    var m : number[];
+    var m11 : number;
+    var m12 : number;
+    var m13 : number;
+    var m14 : number;
+    var m21 : number;
+    var m22 : number;
+    var m23 : number;
+    var m24 : number;
+    var m31 : number;
+    var m32 : number;
+    var m33 : number;
+    var m34 : number;
+    var m41 : number;
+    var m42 : number;
+    var m43 : number;
+    var m44 : number;
     
     function constructor() {
-        this.m = [
-            1, 0, 0, 0,
-            0, 1, 0, 0,
-            0, 0, 1, 0,
-            0, 0, 0, 1
-        ];
+        this.m11 = 1;
+        this.m12 = 0;
+        this.m13 = 0;
+        this.m14 = 0;
+        this.m21 = 0;
+        this.m22 = 1;
+        this.m23 = 0;
+        this.m24 = 0;
+        this.m31 = 0;
+        this.m32 = 0;
+        this.m33 = 1;
+        this.m34 = 0;
+        this.m41 = 0;
+        this.m42 = 0;
+        this.m43 = 0;
+        this.m44 = 1;
     }
 
     function constructor(m:number[]) {
-        this.m = [
-            m[ 0], m[ 1], m[ 2], m[ 3],
-            m[ 4], m[ 5], m[ 6], m[ 7],
-            m[ 8], m[ 9], m[10], m[11],
-            m[12], m[13], m[14], m[15]
-        ];
+        this.m11 = m[0];
+        this.m12 = m[1];
+        this.m13 = m[2];
+        this.m14 = m[3];
+        this.m21 = m[4];
+        this.m22 = m[5];
+        this.m23 = m[6];
+        this.m24 = m[7];
+        this.m31 = m[8];
+        this.m32 = m[9];
+        this.m33 = m[10];
+        this.m34 = m[11];
+        this.m41 = m[12];
+        this.m42 = m[13];
+        this.m43 = m[14];
+        this.m44 = m[15];
     }
 
     function copy() : Matrix {
-        return new Matrix(this.m);
+        return new Matrix([
+            this.m11, this.m12, this.m13, this.m14,
+            this.m21, this.m22, this.m23, this.m24,
+            this.m31, this.m32, this.m33, this.m34,
+            this.m41, this.m42, this.m43, this.m44
+        ]);
     }
 
     static function translating(v:Vector) : Matrix {
-        return Matrix.translating(v.x(), v.y(), v.z());
+        return Matrix.translating(v.x, v.y, v.z);
     }
 
     static function translating(x:number, y:number, z:number) : Matrix {
@@ -81,60 +121,76 @@ class Matrix {
         ]);
     }
 
-    function setAt(row:int, col:int, v:number) : void {
-        this.m[row*4 + col] = v;
-    }
+    // function setAt(row:int, col:int, v:number) : void {
+    //     this.m[row*4 + col] = v;
+    // }
 
-    function getAt(row:int, col:int) : number {
-        return this.m[row*4 + col];
-    }
+    // function getAt(row:int, col:int) : number {
+    //     return this.m[row*4 + col];
+    // }
 
     function mul(other:Vector) : Vector {
-        var v = [ 0, 0, 0, 0];
-        for (var i=0; i<4; i++) {
-            for (var j=0; j<4; j++) {
-                v[i] += this.getAt(i, j) * other.v[j];
-            }
-        }
-        return new Vector(v[0], v[1], v[2], v[3]);
+        var x = this.m11 * other.x + this.m12 * other.y + this.m13 * other.z + this.m14 * other.w;
+        var y = this.m21 * other.x + this.m22 * other.y + this.m23 * other.z + this.m24 * other.w;
+        var z = this.m31 * other.x + this.m32 * other.y + this.m33 * other.z + this.m34 * other.w;
+        var w = this.m41 * other.x + this.m42 * other.y + this.m43 * other.z + this.m44 * other.w;
+
+        return new Vector(x, y, z, w);
     }
 
     function compose(other:Matrix) : Matrix {
-        var mat = new Matrix;
-        for (var i=0; i<4; i++) {
-            for (var j=0; j<4; j++) {
-                var a = 0;
-                for (var k=0; k<4; k++) {
-                    a += this.getAt(i, k) * other.getAt(k, j);
-                }
-                mat.setAt(i, j, a);
-            }
-        }
-        return mat;
+        var m11 = this.m11 * other.m11 + this.m12 * other.m21 + this.m13 * other.m31 + this.m14 * other.m41;
+        var m12 = this.m11 * other.m12 + this.m12 * other.m22 + this.m13 * other.m32 + this.m14 * other.m42;
+        var m13 = this.m11 * other.m13 + this.m12 * other.m23 + this.m13 * other.m33 + this.m14 * other.m43;
+        var m14 = this.m11 * other.m14 + this.m12 * other.m24 + this.m13 * other.m34 + this.m14 * other.m44;
+
+        var m21 = this.m21 * other.m11 + this.m22 * other.m21 + this.m23 * other.m31 + this.m24 * other.m41;
+        var m22 = this.m21 * other.m12 + this.m22 * other.m22 + this.m23 * other.m32 + this.m24 * other.m42;
+        var m23 = this.m21 * other.m13 + this.m22 * other.m23 + this.m23 * other.m33 + this.m24 * other.m43;
+        var m24 = this.m21 * other.m14 + this.m22 * other.m24 + this.m23 * other.m34 + this.m24 * other.m44;
+
+        var m31 = this.m31 * other.m11 + this.m32 * other.m21 + this.m33 * other.m31 + this.m34 * other.m41;
+        var m32 = this.m31 * other.m12 + this.m32 * other.m22 + this.m33 * other.m32 + this.m34 * other.m42;
+        var m33 = this.m31 * other.m13 + this.m32 * other.m23 + this.m33 * other.m33 + this.m34 * other.m43;
+        var m34 = this.m31 * other.m14 + this.m32 * other.m24 + this.m33 * other.m34 + this.m34 * other.m44;
+
+        var m41 = this.m41 * other.m11 + this.m42 * other.m21 + this.m43 * other.m31 + this.m44 * other.m41;
+        var m42 = this.m41 * other.m12 + this.m42 * other.m22 + this.m43 * other.m32 + this.m44 * other.m42;
+        var m43 = this.m41 * other.m13 + this.m42 * other.m23 + this.m43 * other.m33 + this.m44 * other.m43;
+        var m44 = this.m41 * other.m14 + this.m42 * other.m24 + this.m43 * other.m34 + this.m44 * other.m44;
+
+        return new Matrix([
+            m11, m12, m13, m14,
+            m21, m22, m23, m24,
+            m31, m32, m33, m34,
+            m41, m42, m43, m44
+        ]);
     }
 
     override function toString() : string {
+        var fix = (val:number) : string -> {
+            var str = val.toFixed(1);
+            var len = str.length;
+            for (var i=0; i<8-len; i++) str = ' ' + str;
+            return str;
+        };
         var str = '';
-        for (var i=0; i<4; i++) {
-            var array = [] : string[];
-            for (var j=0; j<4; j++) {
-                var v = this.getAt(i, j).toFixed(1);
-                var size = 8 - v.length;
-                for (var k=0; k<size; k++) v = ' ' + v;
-                array.push(v);
-            }
-            str += '|' + array.join(',') + '|\n';
-        }
+        str += '|' + fix(this.m11) + ',' + fix(this.m12) + ',' + fix(this.m13) + ',' + fix(this.m14) + '|\n';
+        str += '|' + fix(this.m21) + ',' + fix(this.m22) + ',' + fix(this.m23) + ',' + fix(this.m24) + '|\n';
+        str += '|' + fix(this.m31) + ',' + fix(this.m32) + ',' + fix(this.m33) + ',' + fix(this.m34) + '|\n';
+        str += '|' + fix(this.m41) + ',' + fix(this.m42) + ',' + fix(this.m43) + ',' + fix(this.m44) + '|\n';
         return str;
     }
 
     function invert() : Matrix {
         var i, j, k;
-        var matrix = this.copy();
-        var inverse = new Matrix;
-
-        var mat = matrix.m;
-        var inv = inverse.m;
+        var mat = [
+            this.m11, this.m12, this.m13, this.m14,
+            this.m21, this.m22, this.m23, this.m24,
+            this.m31, this.m32, this.m33, this.m34,
+            this.m41, this.m42, this.m43, this.m44
+        ];
+        var inv = [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1];
 
         // 前進消去
         for (i=0; i<4-1; i++) {
@@ -163,7 +219,7 @@ class Matrix {
             }
         }
 
-        return inverse;
+        return new Matrix(inv);
     }
 
 }

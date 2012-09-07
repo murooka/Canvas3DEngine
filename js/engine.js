@@ -101,7 +101,8 @@ Engine.loadImages = function (images) {
 
     var setLoaded = function (src) {
         Engine.images[src].onload = function () {
-            Engine.images[src].loaded = true;
+            var image = Engine.images[src];
+            image.loaded = true;
             ctx.drawImage(image, 0, 0);
             Engine.imageDatas[src] = ctx.getImageData(0, 0, image.width, image.height);
         };
@@ -1114,6 +1115,8 @@ var gameInit = function () {
 
 
     engine.update();
+
+
 
     var dragging = false;
     var old_x, old_y;
