@@ -588,18 +588,12 @@ class Polygon extends AbstractModel {
         var color = this.color;
         if (this.enabledLighting) {
             color = (():Color -> {
-                var center = (():Vector -> {
-                    var posSum = new Vector(0, 0, 0);
-                    for (var i=0; i<verts.length; i++) posSum.addSelf(verts[i]);
-                    return posSum.div(verts.length);
-                })();
+                var center = this.vCenter;
 
-                var norm = (():Vector -> {
-                    var v1 = verts[1].sub(center);
-                    var v2 = verts[2].sub(center);
-
-                    return v1.cross(v2).unit();
-                })();
+                // calc normal vector
+                var v1 = verts[1].sub(center);
+                var v2 = verts[2].sub(center);
+                var norm = v1.cross(v2).unit();
 
                 var lightPower = norm.dot(center.unit());
                 var diffusePower = 0.7;
@@ -641,6 +635,8 @@ class Polygon extends AbstractModel {
                 return false;
             }
         }
+
+
 
         var colorStr = '#' + color.toHexString();
 
@@ -729,8 +725,12 @@ class Model extends AbstractModel {
     }
 
     override function draw(engine:Engine) : boolean {
-        // TODO: Z-sort
+        var polygons = this.polygons;
+
         if (this.enabledZSort) {
+            polygons = polygons.sort((a,b) -> {
+                return a.vCenter.z - b.vCenter.z;
+            });
         }
 
         for (var i=0; i<this.polygons.length; i++) {
@@ -861,6 +861,8 @@ class SmoothTexture extends Polygon {
             // 座標の位置は、(world or screen) + (left or right or center) + (top or bottom or center)を組み合わせて表現する
             // 例: world-left-top -> wlp
 
+            // if (AbstractModel.isHiddenXY([slt,slb,srb,srt], engine)) return;
+
             var hypotenuse = (a:number, b:number):number -> {
                 return Math.sqrt(a*a+b*b);
             };
@@ -876,11 +878,8 @@ class SmoothTexture extends Polygon {
             if (widthRatio  < 1) widthRatio  = 1 / widthRatio;
             if (heightRatio < 1) heightRatio = 1 / heightRatio;
 
-            // var splittingHorizontal = Math.abs(sBottomWidth - sTopWidth)   > 4,
-            // splittingVertical   = Math.abs(sRightHeight - sLeftHeight) > 4;
             var splittingHorizontal = widthRatio > 1.01;
             var splittingVertical   = heightRatio > 1.01;
-
 
             if (depth <= 2 || (depth <=4 && splittingHorizontal && splittingVertical)) {
                 var wct = wlt.add(wrt).divSelf(2);
@@ -1061,13 +1060,13 @@ final class _Main {
             engine.addModel(billboard);
         }
 
-        // var texture = new SmoothTexture([
-        //     new Vector(-30, -20, 0),
-        //     new Vector( 30, -20, 0),
-        //     new Vector( 30,  20, 0),
-        //     new Vector(-30,  20, 0)
-        // ], './image/so-nya.png');
-        // engine.addModel(texture);
+        var texture = new SmoothTexture([
+            new Vector(-30, -20, 0),
+            new Vector( 30, -20, 0),
+            new Vector( 30,  20, 0),
+            new Vector(-30,  20, 0)
+        ], './image/so-nya.png');
+        engine.addModel(texture);
 
 
         engine.update();

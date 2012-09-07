@@ -831,6 +831,10 @@ Polygon.prototype.draw$LEngine$ = function (engine) {
 			/** @type {Vector} */
 			var center;
 			/** @type {Vector} */
+			var v1;
+			/** @type {Vector} */
+			var v2;
+			/** @type {Vector} */
 			var norm;
 			/** @type {!number} */
 			var lightPower;
@@ -846,26 +850,10 @@ Polygon.prototype.draw$LEngine$ = function (engine) {
 			var g;
 			/** @type {!number} */
 			var b;
-			center = (function () {
-				/** @type {Vector} */
-				var posSum;
-				/** @type {!number} */
-				var i;
-				posSum = new Vector$NNN(0, 0, 0);
-				for (i = 0; i < verts.length; i++) {
-					posSum.addSelf$LVector$(verts[i]);
-				}
-				return posSum.div$N(verts.length);
-			})();
-			norm = (function () {
-				/** @type {Vector} */
-				var v1;
-				/** @type {Vector} */
-				var v2;
-				v1 = verts[1].sub$LVector$(center);
-				v2 = verts[2].sub$LVector$(center);
-				return v1.cross$LVector$(v2).unit$();
-			})();
+			center = $this.vCenter;
+			v1 = verts[1].sub$LVector$(center);
+			v2 = verts[2].sub$LVector$(center);
+			norm = v1.cross$LVector$(v2).unit$();
 			lightPower = norm.dot$LVector$(center.unit$());
 			diffusePower = 0.7;
 			diffuseCoefficient = 0.8;
@@ -1015,11 +1003,18 @@ Model.prototype.rotateZ$N = function (rad) {
  * @return {!boolean}
  */
 Model.prototype.draw$LEngine$ = function (engine) {
+	var $this = this;
+	/** @type {Array.<undefined|Polygon>} */
+	var polygons;
 	/** @type {!number} */
 	var i;
 	/** @type {Polygon} */
 	var polygon;
+	polygons = this.polygons;
 	if (this.enabledZSort) {
+		polygons = polygons.sort((function (a, b) {
+			return a.vCenter.z - b.vCenter.z;
+		}));
 	}
 	for (i = 0; i < this.polygons.length; i++) {
 		polygon = this.polygons[i];
@@ -1395,6 +1390,8 @@ _Main.main$AS = function (args) {
 	var z;
 	/** @type {Billboard} */
 	var billboard;
+	/** @type {SmoothTexture} */
+	var texture;
 	/** @type {!boolean} */
 	var dragging;
 	/** @type {!number} */
@@ -1430,6 +1427,8 @@ _Main.main$AS = function (args) {
 		billboard = new Billboard$LVector$NNS(new Vector$NNN(x, - 3, z), 50, 35, './image/tree.png');
 		engine.addModel$LAbstractModel$(billboard);
 	}
+	texture = new SmoothTexture$ALVector$S([ new Vector$NNN(- 30, - 20, 0), new Vector$NNN(30, - 20, 0), new Vector$NNN(30, 20, 0), new Vector$NNN(- 30, 20, 0) ], './image/so-nya.png');
+	engine.addModel$LAbstractModel$(texture);
 	engine.update$();
 	dragging = false;
 	old_x = 0;
