@@ -4,24 +4,22 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width" />
   <title></title>
-  <script type="text/javascript" src="js/vector.js"></script>
-  <script type="text/javascript" src="js/matrix.js"></script>
-  <script type="text/javascript" src="js/engine.js"></script>
+  <script type="text/javascript" src="jsx/engine.jsx.js"></script>
   <style type="text/css">
     * { margin: 0px; }
     body { background-color: #E0E0E0; }
+    span#fps { position: absolute; top: 0px; left: 0px; }
   </style>
 </head>
 <body>
-  <center>
-    <!-- iPhone -->
-    <!-- <canvas id="canvas" width="320" height="416" /> -->
-    <!-- PC -->
-    <canvas id="canvas" width="1200" height="800" />
-  </center>
+  <span id="fps">100fps</span>
   <!-- iPhone -->
-  <!-- <canvas id="tmp_canvas" width="320" height="416" style="display:none;" /> -->
+  <canvas id="canvas" width="320" height="416" />
   <!-- PC -->
-  <canvas id="tmp_canvas" width="1200" height="800" style="display:none;" />
+  <!-- <canvas id="canvas" width="1200" height="800" /> -->
+  <!-- iPhone -->
+  <canvas id="tmp_canvas" width="320" height="416" style="display:none;" />
+  <!-- PC -->
+  <!-- <canvas id="tmp_canvas" width="1200" height="800" style="display:none;" /> -->
 </body>
 </html>

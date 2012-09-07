@@ -1,6 +1,7 @@
 import "./vector.jsx";
 import "./matrix.jsx";
 import "js/web.jsx";
+import "timer.jsx";
 
 
 
@@ -8,6 +9,126 @@ class Math2D {
     static function cross(x1:number, y1:number, x2:number, y2:number) : number {
         return x1*y2 - x2*y1;
     }
+}
+
+
+
+// クラス名をTimerにしたかった・・・
+class Stopwatch {
+
+    var elapsedMsec : number;
+    var startedMsec : Nullable.<number>;
+    var lastLapMsec : Nullable.<number>;
+
+    function constructor() {
+        this.elapsedMsec = 0;
+        this.startedMsec = null;
+    }
+
+    function currentMsec() : number {
+        return (new Date).getTime();
+    }
+
+    function start() : void {
+        if (this.startedMsec!=null) {
+            throw "Stopwatch#start : invalid operation, timer is already running.";
+        }
+        this.startedMsec = this.lastLapMsec = this.currentMsec();
+    }
+
+    function stop() : void {
+        if (this.startedMsec==null) {
+            throw "Stopwatch#stop : invalid operation, timer is not started.";
+        }
+        this.elapsedMsec += this.currentMsec() - this.startedMsec;
+        this.startedMsec = null;
+        this.lastLapMsec = null;
+    }
+
+    function isStarted() : boolean {
+        return this.startedMsec != null;
+    }
+
+    function isStopped() : boolean {
+        return this.startedMsec == null;
+    }
+
+    function lap() : number {
+        if (this.lastLapMsec==null) {
+            throw "Stopwatch#lap : invalid operation, timer is not started.";
+        }
+        var currentMsec = this.currentMsec();
+        var lapMsec = currentMsec - this.lastLapMsec;
+        this.lastLapMsec = currentMsec;
+
+        return lapMsec;
+    }
+
+    function getElapsedMsec() : number {
+        return this.elapsedMsec;
+    }
+
+}
+
+
+
+class FpsManager {
+
+    var stopwatch : Stopwatch;
+    var recentlyMsecLog : number[];
+    var fpsElement : Nullable.<HTMLElement>;
+    var enabledHtmlLog : boolean;
+    var enabledConsoleLog : boolean;
+
+    function constructor() {
+        this.fpsElement = null;
+        this.stopwatch = new Stopwatch;
+        this.recentlyMsecLog = [] : number[];
+
+        this.enabledHtmlLog = false;
+        this.enabledConsoleLog = true;
+    }
+    
+    function constructor(spanId:string) {
+        this.fpsElement = dom.id(spanId);
+        this.stopwatch = new Stopwatch;
+        this.recentlyMsecLog = [] : number[];
+
+        this.enabledHtmlLog = true;
+        this.enabledConsoleLog = false;
+    }
+
+    function start() : void {
+        this.stopwatch.start();
+    }
+
+    function update() : void {
+        if (this.stopwatch.isStopped()) {
+            throw "FpsManager#update : invalid operation, FpsManager is not started.";
+        }
+
+        if (this.recentlyMsecLog.length < 1) {
+            this.recentlyMsecLog.push(this.stopwatch.lap());
+        } else {
+            this.recentlyMsecLog.push(this.stopwatch.lap());
+            this.recentlyMsecLog.shift();
+        }
+
+        var length = this.recentlyMsecLog.length;
+
+        var totalMsec = 0;
+        for (var i=0; i<length; i++) {
+            totalMsec += this.recentlyMsecLog[i];
+        }
+        var fps = length / (totalMsec / 1000);
+
+        if (this.fpsElement!=null && this.enabledHtmlLog) {
+            this.fpsElement.innerHTML = fps.toFixed(1) + "fps";
+        } else if (this.enabledConsoleLog) {
+            log fps.toFixed(1) + "fps";
+        }
+    }
+
 }
 
 
@@ -776,7 +897,7 @@ final class _Main {
                         new Vector((i+1)*50, -20,     j*50),
                         new Vector((i+1)*50, -20, (j+1)*50),
                         new Vector(    i*50, -20, (j+1)*50)
-                        ], new Color(128, 255, 128));
+                    ], new Color(128, 255, 128));
                     polygon.depth = 8;
                     polygons.push(polygon);
                 }
@@ -864,22 +985,26 @@ final class _Main {
                     engine.camera.rotateY(Math.PI/32);
                     engine.updateMatrix();
                     break;
-            case 106: // 'j'
-                break;
-            case 107: // 'k'
-                break;
-        }
-        engine.update();
-    };
+                case 106: // 'j'
+                    break;
+                case 107: // 'k'
+                    break;
+            }
+            engine.update();
+        };
 
-    // var move = function () {
-    //     engine.camera.move(new Vector(0, 0, 5));
-    //     engine.camera.rotateY((Math.random()) * Math.PI / 32);
-    //     engine.updateMatrix();
-    //     engine.update();
-    //     setTimeout(move, 50);
-    // };
-    // setTimeout(move, 50);
+        // var fpsManager = new FpsManager('fps');
+        // fpsManager.start();
+
+        // var move = ():void -> {
+        //     fpsManager.update();
+        //     engine.camera.move(new Vector(0, 0, 5));
+        //     engine.camera.rotateY((Math.random()) * Math.PI / 32);
+        //     engine.updateMatrix();
+        //     engine.update();
+        //     Timer.setTimeout(move, 10);
+        // };
+        // Timer.setTimeout(move, 10);
     }
 
 }
