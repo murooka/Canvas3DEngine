@@ -43,12 +43,26 @@ class Vector {
         );
     }
 
+    function addSelf(other:Vector) : Vector {
+        this.x += other.x;
+        this.y += other.y;
+        this.z += other.z;
+        return this;
+    }
+
     function sub(other:Vector) : Vector {
         return new Vector(
             this.x - other.x,
             this.y - other.y,
             this.z - other.z
         );
+    }
+
+    function subSelf(other:Vector) : Vector {
+        this.x -= other.x;
+        this.y -= other.y;
+        this.z -= other.z;
+        return this;
     }
 
     function mul(other:number) : Vector {
@@ -59,12 +73,26 @@ class Vector {
         );
     }
 
+    function mulSelf(other:number) : Vector {
+        this.x *= other;
+        this.y *= other;
+        this.z *= other;
+        return this;
+    }
+
     function div(other:number) : Vector {
         return new Vector(
             this.x / other,
             this.y / other,
             this.z / other
         );
+    }
+
+    function divSelf(other:number) : Vector {
+        this.x /= other;
+        this.y /= other;
+        this.z /= other;
+        return this;
     }
 
     function dot(other:Vector) : number {
@@ -83,6 +111,12 @@ class Vector {
         var length = this.abs();
         if (length < 1e-9) return new Vector(0, 0, 0);
         return this.div(length);
+    }
+
+    function unitSelf() : Vector {
+        var length = this.abs();
+        if (length < 1e-9) return new Vector(0, 0, 0);
+        return this.divSelf(length);
     }
 
     function sqabs() : number {
