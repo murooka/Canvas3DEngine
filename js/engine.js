@@ -1028,7 +1028,6 @@ Billboard.prototype.draw = function (canvas) {
 
     if (!this.image.loaded) return false;
 
-
     var projectionAndScreenMatrix = canvas.screenMatrix.compose(canvas.camera.projectionMatrix);
 
     // TODO: 座標系のチェック

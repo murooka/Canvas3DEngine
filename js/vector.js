@@ -11,25 +11,13 @@ var radianWithTwoPoint = function (p1, p2) {
  * @param {Number} z z成分
  * @returns {Vector}
  */
-var Vector = function () {
-    if (arguments.length===3) {
-        this.x = arguments[0];
-        this.y = arguments[1];
-        this.z = arguments[2];
-        this.w = 1;
-    } else if (arguments.length===4) {
-        var w = arguments[3];
-        this.x = arguments[0] / w;
-        this.y = arguments[1] / w;
-        this.z = arguments[2] / w;
-        this.w = arguments[3] / w;
-    }
-    this.v = [
-        this.x,
-        this.y,
-        this.z,
-        this.w
-    ];
+var Vector = function (x, y, z, w) {
+    this.w = w || 1;
+    this.x = x / this.w || 0;
+    this.y = y / this.w || 0;
+    this.z = z / this.w || 0;
+    this.w = 1;
+
 };
 Vector.origin = function () {
     return new Vector(0, 0, 0);

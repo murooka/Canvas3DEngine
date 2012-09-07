@@ -71,6 +71,21 @@ describe("Matrix((1,2,3,4),(5,6,7,8),(9,10,11,12),(13,14,15,16))", function () {
         matrix = new Matrix([1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16]);
     });
 
+    describe("when multiplied by Vector(3,4,5)", function () {
+        var vector;
+        var newmat;
+
+        beforeEach(function () {
+            vector = new Vector(3,4,5);
+            newmat = matrix.mul(vector);
+        });
+
+        it("should become Vector(30,82,134,186)", function () {
+            expect(newmat).toEqualToVector(new Vector(30,82,134,186));
+        });
+
+    });
+
     describe("when multiplied by Matrix((1,2,3,4),(5,6,7,8),(9,10,11,12),(13,14,15,16))", function () {
 
         it("should be equals to Matrix((90,100,110,120),(202,228,254,280),(314,356,398,440),(426,484,542,600))", function () {
