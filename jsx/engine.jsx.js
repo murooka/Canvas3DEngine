@@ -440,7 +440,7 @@ Engine.prototype.update$ = function () {
  * @param {!number} height
  */
 Engine.prototype.setScreenMatrix$NN = function (width, height) {
-	this.screenMatrix = Matrix$translating$NNN(width / 2, height / 2, 0).compose$LMatrix$(Matrix$scaling$NNN(width / 2, height / 2, 1));
+	this.screenMatrix = Matrix$translating$NNN(width / 2, height / 2, 0).composeSelf$LMatrix$(Matrix$scaling$NNN(width / 2, height / 2, 1));
 };
 
 /**
@@ -492,8 +492,8 @@ Camera.prototype.move$LVector$ = function (v) {
 	/** @type {Vector} */
 	var vector;
 	vector = this.rotatingMatrix.mul$LVector$(v);
-	this.view = this.view.add$LVector$(vector);
-	this.target = this.target.add$LVector$(vector);
+	this.view.addSelf$LVector$(vector);
+	this.target.addSelf$LVector$(vector);
 };
 
 /**
@@ -505,7 +505,7 @@ Camera.prototype.rotateY$N = function (rad) {
 	lookingVec = this.target.sub$LVector$(this.view);
 	lookingVec = Matrix$rotatingY$N(rad).mul$LVector$(lookingVec);
 	this.target = lookingVec.add$LVector$(this.view);
-	this.rotatingMatrix = Matrix$rotatingY$N(rad).compose$LMatrix$(this.rotatingMatrix);
+	this.rotatingMatrix = Matrix$rotatingY$N(rad).composeSelf$LMatrix$(this.rotatingMatrix);
 };
 
 /**
@@ -1567,8 +1567,30 @@ Vector.prototype.add$LVector$ = function (other) {
  * @param {Vector} other
  * @return {Vector}
  */
+Vector.prototype.addSelf$LVector$ = function (other) {
+	this.x += other.x;
+	this.y += other.y;
+	this.z += other.z;
+	return this;
+};
+
+/**
+ * @param {Vector} other
+ * @return {Vector}
+ */
 Vector.prototype.sub$LVector$ = function (other) {
 	return new Vector$NNN(this.x - other.x, this.y - other.y, this.z - other.z);
+};
+
+/**
+ * @param {Vector} other
+ * @return {Vector}
+ */
+Vector.prototype.subSelf$LVector$ = function (other) {
+	this.x -= other.x;
+	this.y -= other.y;
+	this.z -= other.z;
+	return this;
 };
 
 /**
@@ -1583,8 +1605,30 @@ Vector.prototype.mul$N = function (other) {
  * @param {!number} other
  * @return {Vector}
  */
+Vector.prototype.mulSelf$N = function (other) {
+	this.x *= other;
+	this.y *= other;
+	this.z *= other;
+	return this;
+};
+
+/**
+ * @param {!number} other
+ * @return {Vector}
+ */
 Vector.prototype.div$N = function (other) {
 	return new Vector$NNN(this.x / other, this.y / other, this.z / other);
+};
+
+/**
+ * @param {!number} other
+ * @return {Vector}
+ */
+Vector.prototype.divSelf$N = function (other) {
+	this.x /= other;
+	this.y /= other;
+	this.z /= other;
+	return this;
 };
 
 /**
@@ -1614,6 +1658,19 @@ Vector.prototype.unit$ = function () {
 		return new Vector$NNN(0, 0, 0);
 	}
 	return this.div$N(length);
+};
+
+/**
+ * @return {Vector}
+ */
+Vector.prototype.unitSelf$ = function () {
+	/** @type {!number} */
+	var length;
+	length = this.abs$();
+	if (length < 1e-9) {
+		return new Vector$NNN(0, 0, 0);
+	}
+	return this.divSelf$N(length);
 };
 
 /**
@@ -2014,6 +2071,78 @@ Matrix.prototype.compose$LMatrix$ = function (other) {
 };
 
 /**
+ * @param {Matrix} other
+ * @return {Matrix}
+ */
+Matrix.prototype.composeSelf$LMatrix$ = function (other) {
+	/** @type {!number} */
+	var m11;
+	/** @type {!number} */
+	var m12;
+	/** @type {!number} */
+	var m13;
+	/** @type {!number} */
+	var m14;
+	/** @type {!number} */
+	var m21;
+	/** @type {!number} */
+	var m22;
+	/** @type {!number} */
+	var m23;
+	/** @type {!number} */
+	var m24;
+	/** @type {!number} */
+	var m31;
+	/** @type {!number} */
+	var m32;
+	/** @type {!number} */
+	var m33;
+	/** @type {!number} */
+	var m34;
+	/** @type {!number} */
+	var m41;
+	/** @type {!number} */
+	var m42;
+	/** @type {!number} */
+	var m43;
+	/** @type {!number} */
+	var m44;
+	m11 = this.m11;
+	m12 = this.m12;
+	m13 = this.m13;
+	m14 = this.m14;
+	m21 = this.m21;
+	m22 = this.m22;
+	m23 = this.m23;
+	m24 = this.m24;
+	m31 = this.m31;
+	m32 = this.m32;
+	m33 = this.m33;
+	m34 = this.m34;
+	m41 = this.m41;
+	m42 = this.m42;
+	m43 = this.m43;
+	m44 = this.m44;
+	this.m11 = m11 * other.m11 + m12 * other.m21 + m13 * other.m31 + m14 * other.m41;
+	this.m12 = m11 * other.m12 + m12 * other.m22 + m13 * other.m32 + m14 * other.m42;
+	this.m13 = m11 * other.m13 + m12 * other.m23 + m13 * other.m33 + m14 * other.m43;
+	this.m14 = m11 * other.m14 + m12 * other.m24 + m13 * other.m34 + m14 * other.m44;
+	this.m21 = m21 * other.m11 + m22 * other.m21 + m23 * other.m31 + m24 * other.m41;
+	this.m22 = m21 * other.m12 + m22 * other.m22 + m23 * other.m32 + m24 * other.m42;
+	this.m23 = m21 * other.m13 + m22 * other.m23 + m23 * other.m33 + m24 * other.m43;
+	this.m24 = m21 * other.m14 + m22 * other.m24 + m23 * other.m34 + m24 * other.m44;
+	this.m31 = m31 * other.m11 + m32 * other.m21 + m33 * other.m31 + m34 * other.m41;
+	this.m32 = m31 * other.m12 + m32 * other.m22 + m33 * other.m32 + m34 * other.m42;
+	this.m33 = m31 * other.m13 + m32 * other.m23 + m33 * other.m33 + m34 * other.m43;
+	this.m34 = m31 * other.m14 + m32 * other.m24 + m33 * other.m34 + m34 * other.m44;
+	this.m41 = m41 * other.m11 + m42 * other.m21 + m43 * other.m31 + m44 * other.m41;
+	this.m42 = m41 * other.m12 + m42 * other.m22 + m43 * other.m32 + m44 * other.m42;
+	this.m43 = m41 * other.m13 + m42 * other.m23 + m43 * other.m33 + m44 * other.m43;
+	this.m44 = m41 * other.m14 + m42 * other.m24 + m43 * other.m34 + m44 * other.m44;
+	return this;
+};
+
+/**
  * @return {!string}
  */
 Matrix.prototype.toString = function () {
@@ -2071,26 +2200,26 @@ Matrix.prototype.invert$ = function () {
 			mat[i * 4 + j] = (function (v) {
 				if (! (v != null)) {
 					debugger;
-					throw new Error("[jsx/matrix.jsx:199] null access");
+					throw new Error("[jsx/matrix.jsx:240] null access");
 				}
 				return v;
 			}(mat[i * 4 + j])) / (function (v) {
 				if (! (v != null)) {
 					debugger;
-					throw new Error("[jsx/matrix.jsx:199] null access");
+					throw new Error("[jsx/matrix.jsx:240] null access");
 				}
 				return v;
 			}(e));
 			inv[i * 4 + j] = (function (v) {
 				if (! (v != null)) {
 					debugger;
-					throw new Error("[jsx/matrix.jsx:200] null access");
+					throw new Error("[jsx/matrix.jsx:241] null access");
 				}
 				return v;
 			}(inv[i * 4 + j])) / (function (v) {
 				if (! (v != null)) {
 					debugger;
-					throw new Error("[jsx/matrix.jsx:200] null access");
+					throw new Error("[jsx/matrix.jsx:241] null access");
 				}
 				return v;
 			}(e));
@@ -2101,26 +2230,26 @@ Matrix.prototype.invert$ = function () {
 				mat[j * 4 + k] -= (function (v) {
 					if (! (v != null)) {
 						debugger;
-						throw new Error("[jsx/matrix.jsx:205] null access");
+						throw new Error("[jsx/matrix.jsx:246] null access");
 					}
 					return v;
 				}(mat[i * 4 + k])) * (function (v) {
 					if (! (v != null)) {
 						debugger;
-						throw new Error("[jsx/matrix.jsx:205] null access");
+						throw new Error("[jsx/matrix.jsx:246] null access");
 					}
 					return v;
 				}(s));
 				inv[j * 4 + k] -= (function (v) {
 					if (! (v != null)) {
 						debugger;
-						throw new Error("[jsx/matrix.jsx:206] null access");
+						throw new Error("[jsx/matrix.jsx:247] null access");
 					}
 					return v;
 				}(inv[i * 4 + k])) * (function (v) {
 					if (! (v != null)) {
 						debugger;
-						throw new Error("[jsx/matrix.jsx:206] null access");
+						throw new Error("[jsx/matrix.jsx:247] null access");
 					}
 					return v;
 				}(s));
@@ -2134,26 +2263,26 @@ Matrix.prototype.invert$ = function () {
 				mat[j * 4 + k] -= (function (v) {
 					if (! (v != null)) {
 						debugger;
-						throw new Error("[jsx/matrix.jsx:216] null access");
+						throw new Error("[jsx/matrix.jsx:257] null access");
 					}
 					return v;
 				}(mat[i * 4 + k])) * (function (v) {
 					if (! (v != null)) {
 						debugger;
-						throw new Error("[jsx/matrix.jsx:216] null access");
+						throw new Error("[jsx/matrix.jsx:257] null access");
 					}
 					return v;
 				}(t));
 				inv[j * 4 + k] -= (function (v) {
 					if (! (v != null)) {
 						debugger;
-						throw new Error("[jsx/matrix.jsx:217] null access");
+						throw new Error("[jsx/matrix.jsx:258] null access");
 					}
 					return v;
 				}(inv[i * 4 + k])) * (function (v) {
 					if (! (v != null)) {
 						debugger;
-						throw new Error("[jsx/matrix.jsx:217] null access");
+						throw new Error("[jsx/matrix.jsx:258] null access");
 					}
 					return v;
 				}(t));

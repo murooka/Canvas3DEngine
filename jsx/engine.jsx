@@ -236,7 +236,7 @@ class Engine {
 
     function setScreenMatrix(width:number, height:number) : void {
         this.screenMatrix =
-            Matrix.translating(width/2, height/2, 0).compose(
+            Matrix.translating(width/2, height/2, 0).composeSelf(
                 Matrix.scaling(width/2, height/2, 1));
     }
 
@@ -280,16 +280,16 @@ class Camera {
 
     function move(v:Vector) : void {
         var vector = this.rotatingMatrix.mul(v);
-        this.view = this.view.add(vector);
-        this.target = this.target.add(vector);
+        this.view.addSelf(vector);
+        this.target.addSelf(vector);
     }
 
     function rotateY(rad:number) : void {
         var lookingVec =  this.target.sub(this.view);
-        lookingVec = Matrix.rotatingY(rad).mul(lookingVec);
-        this.target = lookingVec.add(this.view);
+        lookingVec = Matrix.rotatingY(rad).mulSelf(lookingVec);
+        this.target = lookingVec.addSelf(this.view);
 
-        this.rotatingMatrix = Matrix.rotatingY(rad).compose(this.rotatingMatrix);
+        this.rotatingMatrix = Matrix.rotatingY(rad).composeSelf(this.rotatingMatrix);
     }
 
     function updateMatrix() : void {
@@ -302,9 +302,9 @@ class Camera {
         var aspectRatio = this.aspectRatio;
 
         var viewMatrix = (function () : Matrix {
-            var zaxis = view.sub(target).unit();
-            var xaxis = upper.cross(zaxis).unit();
-            var yaxis = zaxis.cross(xaxis).unit();
+            var zaxis = view.sub(target).unitSelf();
+            var xaxis = upper.cross(zaxis).unitSelf();
+            var yaxis = zaxis.cross(xaxis).unitSelf();
 
             return new Matrix([
                 xaxis.x, xaxis.y, xaxis.z, -xaxis.dot(view),
@@ -406,9 +406,9 @@ class Polygon extends AbstractModel {
         for (var i=0; i<this.vertices.length; i++) {
             var vVertex = viewMatrix.mul(this.vertices[i]);
             vVertices.push(vVertex);
-            vSumPos = vSumPos.add(vVertex);
+            vSumPos.addSelf(vVertex);
         }
-        this.vCenter = vSumPos.div(this.vertices.length);
+        this.vCenter = vSumPos.divSelf(this.vertices.length);
         this.vVertices = vVertices;
     }
 
@@ -419,28 +419,28 @@ class Polygon extends AbstractModel {
 
     function move(v:Vector) : void {
         for (var i=0; i<this.vertices.length; i++) {
-            this.vertices[i] = this.vertices[i].add(v);
+            this.vertices[i].addSelf(v);
         }
         this.updateCenter();
     }
 
     function rotateX(center:Vector, rad:number) : void {
         for (var i=0; i<this.vertices.length; i++) {
-            this.vertices[i] = this.vertices[i].sub(center).rotateX(rad).add(center);
+            this.vertices[i].subSelf(center).rotateXSelf(rad).addSelf(center);
         }
         this.updateCenter();
     }
 
     function rotateY(center:Vector, rad:number) : void {
         for (var i=0; i<this.vertices.length; i++) {
-            this.vertices[i] = this.vertices[i].sub(center).rotateY(rad).add(center);
+            this.vertices[i].subSelf(center).rotateYSelf(rad).addSelf(center);
         }
         this.updateCenter();
     }
 
     function rotateZ(center:Vector, rad:number) : void {
         for (var i=0; i<this.vertices.length; i++) {
-            this.vertices[i] = this.vertices[i].sub(center).rotateZ(rad).add(center);
+            this.vertices[i].subSelf(center).rotateZSelf(rad).addSelf(center);
         }
         this.updateCenter();
     }
@@ -448,9 +448,9 @@ class Polygon extends AbstractModel {
     function updateCenter() : void {
         var sumVector = new Vector(0,0,0);
         for (var i=0; i<this.vertices.length; i++) {
-            sumVector = sumVector.add(this.vertices[i]);
+            sumVector.addSelf(this.vertices[i]);
         }
-        this.center = sumVector.div(this.vertices.length);
+        this.center = sumVector.divSelf(this.vertices.length);
     }
 
     override function toString() : string {
@@ -471,16 +471,16 @@ class Polygon extends AbstractModel {
         var center = (():Vector -> {
             var posSum = new Vector(0, 0, 0);
             for (var i=0; i<verts.length; i++) {
-                posSum = posSum.add(verts[i]);
+                posSum.addSelf(verts[i]);
             }
-            return posSum.div(verts.length);
+            return posSum.divSelf(verts.length);
         })();
 
         var norm = (():Vector -> {
             var v1 = verts[1].sub(center);
             var v2 = verts[2].sub(center);
 
-            return v1.cross(v2).unit();
+            return v1.cross(v2).unitSelf();
         })();
 
         var lightPower = norm.dot(center.unit());
@@ -662,21 +662,21 @@ class SmoothTexture extends Polygon {
 
     function rotateX(rad:number, center:Vector) : void {
         for (var i=0; i<this.vertices.length; i++) {
-            this.vertices[i] = this.vertices[i].sub(center).rotateX(rad).add(center);
+            this.vertices[i].subSelf(center).rotateXSelf(rad).addSelf(center);
         }
         this.updateCenter();
     }
 
     function rotateY(rad:number, center:Vector) : void {
         for (var i=0; i<this.vertices.length; i++) {
-            this.vertices[i] = this.vertices[i].sub(center).rotateY(rad).add(center);
+            this.vertices[i].subSelf(center).rotateYSelf(rad).addSelf(center);
         }
         this.updateCenter();
     }
 
     function rotateZ(rad:number, center:Vector) : void {
         for (var i=0; i<this.vertices.length; i++) {
-            this.vertices[i] = this.vertices[i].sub(center).rotateZ(rad).add(center);
+            this.vertices[i].subSelf(center).rotateZSelf(rad).addSelf(center);
         }
         this.updateCenter();
     }
@@ -695,7 +695,7 @@ class SmoothTexture extends Polygon {
         // ビュー・透視・スクリーン変換行列
         var matrix =
             engine.screenMatrix.compose(
-                    engine.camera.projectionMatrix.compose(
+                    engine.camera.projectionMatrix.composeSelf(
                         engine.camera.viewMatrix));
 
         // screen + left or right + top or bottom
@@ -759,11 +759,11 @@ class SmoothTexture extends Polygon {
 
 
             if (depth <= 2 || (depth <=4 && splittingHorizontal && splittingVertical)) {
-                var wct = wlt.add(wrt).div(2);
-                var wcb = wlb.add(wrb).div(2);
-                var wlc = wlt.add(wlb).div(2);
-                var wrc = wrt.add(wrb).div(2);
-                var wcc = wlt.add(wrb).div(2);
+                var wct = wlt.add(wrt).divSelf(2);
+                var wcb = wlb.add(wrb).divSelf(2);
+                var wlc = wlt.add(wlb).divSelf(2);
+                var wrc = wrt.add(wrb).divSelf(2);
+                var wcc = wlt.add(wrb).divSelf(2);
 
                 var sct = matrix.mul(wct);
                 var scb = matrix.mul(wcb);
@@ -776,8 +776,8 @@ class SmoothTexture extends Polygon {
                 divideAndDrawImage(image, wct, wcc, wrc, wrt, sct, scc, src, srt, depth+1, sx+sw/2, sy     , sw/2, sh/2); // 右上部分
                 divideAndDrawImage(image, wcc, wcb, wrb, wrc, scc, scb, srb, src, depth+1, sx+sw/2, sy+sh/2, sw/2, sh/2); // 右下部分
             } else if (depth <= 6 && splittingVertical) {
-                var wct = wlt.add(wrt).div(2);
-                var wcb = wlb.add(wrb).div(2);
+                var wct = wlt.add(wrt).divSelf(2);
+                var wcb = wlb.add(wrb).divSelf(2);
 
                 var sct = matrix.mul(wct);
                 var scb = matrix.mul(wcb);
@@ -785,8 +785,8 @@ class SmoothTexture extends Polygon {
                 divideAndDrawImage(image, wlt, wlb, wcb, wct, slt, slb, scb, sct, depth+1,      sx, sy, sw/2, sh); // 左側部分
                 divideAndDrawImage(image, wct, wcb, wrb, wrt, sct, scb, srb, srt, depth+1, sx+sw/2, sy, sw/2, sh); // 右側部分
             } else if (depth <= 6 && splittingHorizontal) {
-                var wlc = wlt.add(wlb).div(2);
-                var wrc = wrt.add(wrb).div(2);
+                var wlc = wlt.add(wlb).divSelf(2);
+                var wrc = wrt.add(wrb).divSelf(2);
 
                 var slc = matrix.mul(wlc);
                 var src = matrix.mul(wrc);

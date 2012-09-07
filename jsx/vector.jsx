@@ -107,6 +107,16 @@ class Vector {
         );
     }
 
+    function crossSelf(other:Vector) : Vector {
+        var x = this.y*other.z - this.z*other.y;
+        var y = this.z*other.x - this.x*other.z;
+        var z = this.x*other.y - this.y*other.x;
+        this.x = x;
+        this.y = y;
+        this.z = z;
+        return this;
+    }
+
     function unit() : Vector {
         var length = this.abs();
         if (length < 1e-9) return new Vector(0, 0, 0);
@@ -137,6 +147,16 @@ class Vector {
         );
     }
 
+    function rotateXSelf(rad:number) : Vector {
+        var sin = Math.sin(rad);
+        var cos = Math.cos(rad);
+        var y = this.y*cos - this.z*sin;
+        var z = this.z*cos + this.y*sin;
+        this.y = y;
+        this.z = z;
+        return this;
+    }
+
     function rotateY(rad:number) : Vector {
         var sin = Math.sin(rad);
         var cos = Math.cos(rad);
@@ -147,6 +167,16 @@ class Vector {
         );
     }
 
+    function rotateYSelf(rad:number) : Vector {
+        var sin = Math.sin(rad);
+        var cos = Math.cos(rad);
+        var x = this.x*cos + this.z*sin;
+        var z = this.z*cos - this.x*sin;
+        this.x = x;
+        this.z = z;
+        return this;
+    }
+
     function rotateZ(rad:number) : Vector {
         var sin = Math.sin(rad);
         var cos = Math.cos(rad);
@@ -155,6 +185,16 @@ class Vector {
             this.y*cos + this.z*sin,
             this.z
         );
+    }
+
+    function rotateZSelf(rad:number) : Vector {
+        var sin = Math.sin(rad);
+        var cos = Math.cos(rad);
+        var x = this.x*cos - this.y*sin;
+        var y = this.y*cos + this.z*sin;
+        this.x = x;
+        this.y = y;
+        return this;
     }
 
     override function toString() : string {
