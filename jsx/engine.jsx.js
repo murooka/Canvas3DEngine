@@ -1396,6 +1396,9 @@ _Main.main$AS = function (args) {
 	var old_x;
 	/** @type {!number} */
 	var old_y;
+	/** @type {FpsManager} */
+	var fpsManager;
+	var move;
 	engine = new Engine$S('canvas');
 	Engine$loadImages$AS([ './image/tree.png', './image/so-nya.png' ]);
 	model = (function () {
@@ -1487,6 +1490,17 @@ _Main.main$AS = function (args) {
 		}
 		engine.update$();
 	});
+	fpsManager = new FpsManager$S('fps');
+	fpsManager.start$();
+	move = (function () {
+		fpsManager.update$();
+		engine.camera.move$LVector$(new Vector$NNN(0, 0, 5));
+		engine.camera.rotateY$N(Math.random() * Math.PI / 32);
+		engine.updateMatrix$();
+		engine.update$();
+		Timer$setTimeout$F$V$N(move, 10);
+	});
+	Timer$setTimeout$F$V$N(move, 10);
 };
 
 var _Main$main$AS = _Main.main$AS;

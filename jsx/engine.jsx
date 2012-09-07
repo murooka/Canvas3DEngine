@@ -5,15 +5,26 @@ import "timer.jsx";
 
 
 
+/**
+ * @class 二次元平面での汎用関数をまとめたクラス
+ */
 class Math2D {
+
+    /**
+     * ベクトルの外積
+     */
     static function cross(x1:number, y1:number, x2:number, y2:number) : number {
         return x1*y2 - x2*y1;
     }
+
 }
 
 
 
-// $B%/%i%9L>$r(BTimer$B$K$7$?$+$C$?!&!&!&(B
+// クラス名をTimerにしたかった・・・
+/**
+ * @class 時間計測を行うタイマークラス
+ */
 class Stopwatch {
 
     var elapsedMsec : number;
@@ -53,6 +64,10 @@ class Stopwatch {
         return this.startedMsec == null;
     }
 
+    /**
+     * 前回lap関数を呼んだ時間(またはスタートさせた時間)からの経過時間をミリ秒で返す
+     * @returns {number} 経過時間
+     */
     function lap() : number {
         if (this.lastLapMsec==null) {
             throw "Stopwatch#lap : invalid operation, timer is not started.";
@@ -71,7 +86,9 @@ class Stopwatch {
 }
 
 
-
+/**
+ * @class ゲームでの１秒辺りのフレームの更新回数を計測するクラス
+ */
 class FpsManager {
 
     var stopwatch : Stopwatch;
@@ -88,7 +105,7 @@ class FpsManager {
         this.enabledHtmlLog = false;
         this.enabledConsoleLog = true;
     }
-    
+
     function constructor(spanId:string) {
         this.fpsElement = dom.id(spanId);
         this.stopwatch = new Stopwatch;
@@ -102,6 +119,9 @@ class FpsManager {
         this.stopwatch.start();
     }
 
+    /**
+     * フレームを更新したタイミングで呼ぶことで、fpsを計算しdom要素またはconsoleに表示する
+     */
     function update() : void {
         if (this.stopwatch.isStopped()) {
             throw "FpsManager#update : invalid operation, FpsManager is not started.";
@@ -133,6 +153,18 @@ class FpsManager {
 
 
 
+/**
+ * @class 擬似3Dを実現するためのゲームエンジンクラス
+ *
+ * @property {HTMLCanvasElement} canvas 描画するキャンバスへの参照
+ * @property {CanvasRenderingContext2D} ctx キャンバスのコンテキストへの参照
+ * @property {number}  width   キャンバスの横幅
+ * @property {number}  height  キャンバスの縦幅
+ * @property {Model[]} objects 描画する3Dオブジェクトモデルの配列
+ * @property {Camera}  camera  視点管理用のカメラ
+ * @property {Matrix}  screenMatrix スクリーン変換行列
+ * @property {Matrix}  transformationMatrix ワールド変換、透視変換、スクリーン変換行列を合成した変換行列
+ */
 class Engine {
 
     var canvas : HTMLCanvasElement;
@@ -146,6 +178,10 @@ class Engine {
 
     var objects : AbstractModel[];
 
+    /**
+     * @constructor
+     * @param {String} canvas_id 利用するcanvas(DOM)のid
+     */
     function constructor(canvasId:string) {
         this.canvas = dom.id(canvasId) as HTMLCanvasElement;
         this.ctx = this.canvas.getContext('2d') as CanvasRenderingContext2D;
@@ -249,6 +285,13 @@ class Engine {
 
 
 
+/**
+ * @class ワールド座標系上での物の見方を表すカメラクラス
+ *
+ * @property {Matrix} viewMatrix       ビュー変換行列
+ * @property {Matrix} projectionMatrix 透視変換行列
+ * @property {Matrix} matrix           ビュー変換と透視変換行列を合成した変換行列
+ */
 class Camera {
 
     var rotatingMatrix : Matrix;
@@ -264,6 +307,16 @@ class Camera {
     var farZ : number;
     var aspectRatio : number;
 
+    /**
+     * @constructor
+     * @param {Vector} view   視点座標
+     * @param {Vector} target 注視点座標
+     * @param {Vecotr} upper  上方向ベクトル
+     * @param {number} fovyX  横方向の視野角
+     * @param {number} nearZ  物が見える範囲のうち、最も近い距離
+     * @param {number} farZ   物が見える範囲のうち、最も遠い距離
+     * @param {number} apect_ratio カメラ画面のheight/widthの値
+     */
     function constructor(view:Vector, target:Vector, upper:Vector, fovyX:number, nearZ:number, farZ:number, aspectRatio:number) {
         this.view   = view;
         this.target = target;
@@ -278,12 +331,20 @@ class Camera {
         this.updateMatrix();
     }
 
+    /**
+     * カメラの位置を移動させる
+     * @param {Vector} v 移動させる方向ベクトル
+     */
     function move(v:Vector) : void {
         var vector = this.rotatingMatrix.mul(v);
         this.view.addSelf(vector);
         this.target.addSelf(vector);
     }
 
+    /**
+     * Y軸を中心に反時計回りにカメラの向きを反時計回りに回転させる
+     * @param {number} rad 回転量
+     */
     function rotateY(rad:number) : void {
         var lookingVec =  this.target.sub(this.view);
         lookingVec = Matrix.rotatingY(rad).mul(lookingVec);
@@ -292,6 +353,10 @@ class Camera {
         this.rotatingMatrix = Matrix.rotatingY(rad).composeSelf(this.rotatingMatrix);
     }
 
+    /**
+     * カメラ情報に基づいて変換行列を更新する
+     * 変換行列はビュー変換->透視変換を行う
+     */
     function updateMatrix() : void {
         var view = this.view;
         var target = this.target;
@@ -337,12 +402,21 @@ class Camera {
 
 
 
+/**
+ * @class RGB表現の色クラス
+ */
 class Color {
     
     var r : int;
     var g : int;
     var b : int;
     
+    /**
+     * @constructor
+     * @param {number} r rgbのr要素
+     * @param {number} g rgbのg要素
+     * @param {number} b rgbのb要素
+     */
     function constructor(r:int, g:int, b:int) {
         this.r = r;
         this.g = g;
@@ -359,6 +433,10 @@ class Color {
         return to2digitHex(this.r) + to2digitHex(this.g) + to2digitHex(this.b);
     }
 
+    /**
+     * r, g, bをg, b, rにする
+     * ポリゴンの裏面の色を得るためのテスト的な関数
+     */
     function negative() : Color {
         return new Color(this.g, this.b, this.r);
     }
@@ -366,16 +444,41 @@ class Color {
 
 
 
+/**
+ * @class Engine上で表示するモデルの抽象クラス
+ * @description このクラスを継承するクラスは、draw関数、applyViewMatrix関数、isHidden関数、centerプロパティ、vCenterプロパティ、depthプロパティを実装する必要がある
+ * @property {Vector} center  Zソートを行うためのモデルの中心座標
+ * @property {Vector} vCenter view変換を行ったあとのcenter
+ * @property {number} depth   centerとは無関係に描画順序を決定するための値
+ *                            小さいほど手前に表示され、大きいほど奥に表示される
+ *                            デフォルトで値は5とする
+ */
 abstract class AbstractModel {
 
     var center : Vector;
     var vCenter : Vector;
     var depth : int = 5;
 
+    /**
+     * @description 引数に渡されたviewMatrixを用いて、ビュー座標系でのcenter(vCenter)を更新する
+     * @param {Matrix} viewMatrix ビュー変換行列
+     */
     abstract function applyViewMatrix(viewMatrix:Matrix) : void;
+    /**
+     * @description 透視変換後の座標を用いて、Zvalueが見える範囲にあるか(nearZ以上farZ以下か)を確認する
+     * @param {Camera} camera Zvalueの範囲情報を持つCamera
+     */
     abstract function isHidden(camera:Camera) : boolean;
+    /**
+     * @description 渡されたcanvasにモデルを描画する
+     *              描画を行った場合はtrueを、行う必要がなかった場合はfalseを返す
+     */
     abstract function draw(engine:Engine) : boolean;
 
+    /**
+     * @description スクリーン座標系の頂点がcanvas内に描画する必要があるかどうかを確認する
+     *              描画する必要がないならばtrueを返す
+     */
     static function isHiddenXY(vertices:Vector[], engine:Engine) : boolean {
         for (var i=0; i<vertices.length; i++) {
             var v = vertices[i];
@@ -389,12 +492,22 @@ abstract class AbstractModel {
 
 
 
+/**
+ * @class Engineで利用する多角形クラス
+ */
 class Polygon extends AbstractModel {
 
     var vertices : Vector[];
     var vVertices : Vector[];
     var color : Color;
 
+    /**
+     * 1つの面に対して1つの色情報を持つ
+     * NOTICE: 引数のverticesは同一平面上に無いと歪む可能性がある
+     * NOTICE: verticesは反時計回りに指定する
+     * @param {Vector[]} vertices 多角形の頂点座標の配列
+     * @param {Color}    color    多角形の色
+     */
     function constructor(vertices:Vector[], color:Color) {
         this.vertices = vertices;
         this.color = color;
@@ -466,8 +579,8 @@ class Polygon extends AbstractModel {
         var verts = this.vVertices;
 
 
-        // TODO: $B8w$N;HMQ$r%f!<%6$,L58z2=$G$-$k$h$&$K$9$k(B
-        // $BF);kJQ49$NA0$K8w$N7W;;$r$7$F$*$/(B
+        // TODO: 光の使用をユーザが無効化できるようにする
+        // 透視変換の前に光の計算をしておく
         var center = (():Vector -> {
             var posSum = new Vector(0, 0, 0);
             for (var i=0; i<verts.length; i++) {
@@ -494,22 +607,22 @@ class Polygon extends AbstractModel {
 
 
 
-        // $BF);kJQ49(B
+        // 透視変換
         for (var i=0; i<len; i++) {
             verts[i] = engine.camera.projectionMatrix.mul(verts[i]);
         }
 
-        // $B%9%/%j!<%sJQ49(B
+        // スクリーン変換
         for (var i=0; i<len; i++) {
             verts[i] = engine.screenMatrix.mul(verts[i]);
         }
 
-        // canvas$B$N30B&$K0LCV$9$k>l9g$OI=<($7$J$$(B
+        // canvasの外側に位置する場合は表示しない
 
         var isHiddenXY = AbstractModel.isHiddenXY(verts, engine);
         if (isHiddenXY) return false;
 
-        // $BN"B&$+$i8+$?%]%j%4%s$OI=<($7$J$$(B
+        // 裏側から見たポリゴンは表示しない
         if (Math2D.cross(verts[1].x-verts[0].x,
                     verts[1].y-verts[0].y,
                     verts[2].x-verts[0].x,
@@ -563,11 +676,19 @@ class Polygon extends AbstractModel {
 
 
 
+/**
+ * @class 複数のPolygonを内包するオブジェクトモデルクラス
+ * @description 各Polygonの移動・回転を一括して行う
+ */
 class Model extends AbstractModel {
 
     var polygons : Polygon[];
     var enabledZSort : boolean;
 
+    /*
+     * @param {Polygon[]}  polygons Polygonの配列
+     * @param {Vector}     center   world座標系での原点からの相対ベクトル
+     */
     function constructor(polygons:Polygon[], center:Vector) {
         this.polygons = polygons;
         this.center = center;
@@ -631,6 +752,10 @@ class Model extends AbstractModel {
 
 
 
+/**
+ * @class アフィン変換を用いて高速にテクスチャを描画するクラス
+ * TODO: 継承関係を直す
+ */
 class SmoothTexture extends Polygon {
 
     var src : string;
@@ -638,6 +763,12 @@ class SmoothTexture extends Polygon {
     var width : number;
     var height : number;
 
+    /**
+     * @constructor
+     * @description verticesは画像の左下に対応する点から、反時計回りで指定する
+     * @param {Vector[]}  vertices ポリゴンの頂点座標の配列
+     * @param {String}    src      テクスチャに使う画像ファイル名
+     */
     function constructor(vertices:Vector[], src:string) {
         super(vertices, new Color(0, 0, 0));
 
@@ -692,7 +823,7 @@ class SmoothTexture extends Polygon {
         var wrbImage = this.vertices[1];
         var wrtImage = this.vertices[2];
 
-        // $B%S%e!<!&F);k!&%9%/%j!<%sJQ499TNs(B
+        // ビュー・透視・スクリーン変換行列
         var matrix =
             engine.screenMatrix.compose(
                     engine.camera.projectionMatrix.compose(
@@ -706,16 +837,16 @@ class SmoothTexture extends Polygon {
 
         /**
          * @function
-         * @description $B2hA|$r%"%U%#%sJQ49$N$_$rMQ$$$FBf7A$XJQ49$7IA2h$9$k(B
-         * @description $BJQ498e$NBf7A$,6KC<$KOD$s$G$$$k>l9g$OJ,3d$r9T$$!"$3$N4X?t$r:F5"E*$KFI$s$GIA2h$9$k(B
-         * @param {Image}  image           $BIA2h$9$k2hA|(B
-         * @param {Vector} wlt wlb wrb wrt $B%o!<%k%I:BI87O>e$N!"2hA|$N:8>e!":82<!"1&2<!"1&>e$N:BI8(B
-         * @param {Vector} slt slb srb srt $BJQ498e$N%9%/%j!<%s:BI87O>e$N!"2hA|$N:8>e!":82<!"1&2<!"1&>e$N:BI8(B
-         * @param {number} depth           $B$3$N4X?t$N:F5"8F$S=P$7$N2s?t!":G=i$N8F$S=P$7$G$O(B1$B$r;XDj(B
-         * @param {number} dx              $B2hA|$rIA2h$9$kItJ,$N(Bx$B<4J}8~$N%*%U%;%C%H(B
-         * @param {number} dy              $B2hA|$rIA2h$9$kItJ,$N(By$B<4J}8~$N%*%U%;%C%H(B
-         * @param {number} dw              $B2hA|$rIA2h$9$kItJ,$N2#I}(B
-         * @param {number} dh              $B2hA|$rIA2h$9$kItJ,$N=DI}(B
+         * @description 画像をアフィン変換のみを用いて台形へ変換し描画する
+         * @description 変換後の台形が極端に歪んでいる場合は分割を行い、この関数を再帰的に読んで描画する
+         * @param {Image}  image           描画する画像
+         * @param {Vector} wlt wlb wrb wrt ワールド座標系上の、画像の左上、左下、右下、右上の座標
+         * @param {Vector} slt slb srb srt 変換後のスクリーン座標系上の、画像の左上、左下、右下、右上の座標
+         * @param {number} depth           この関数の再帰呼び出しの回数、最初の呼び出しでは1を指定
+         * @param {number} dx              画像を描画する部分のx軸方向のオフセット
+         * @param {number} dy              画像を描画する部分のy軸方向のオフセット
+         * @param {number} dw              画像を描画する部分の横幅
+         * @param {number} dh              画像を描画する部分の縦幅
          */
         var divideAndDrawImage = (
             image:HTMLImageElement,
@@ -733,9 +864,9 @@ class SmoothTexture extends Polygon {
             sw:number,
             sh:number
         ) : void -> {
-            // $B%Y%/%H%k$d5wN%$K$O!"(Bprefix$B$K(Bw$B$+(Bs$B$rIU$1(Bworld$B:BI87O$+(Bscreen$B:BI87O$+$r6hJL$9$k(B
-            // $B:BI8$N0LCV$O!"(B(world or screen) + (left or right or center) + (top or bottom or center)$B$rAH$_9g$o$;$FI=8=$9$k(B
-            // $BNc(B: world-left-top -> wlp
+            // ベクトルや距離には、prefixにwかsを付けworld座標系かscreen座標系かを区別する
+            // 座標の位置は、(world or screen) + (left or right or center) + (top or bottom or center)を組み合わせて表現する
+            // 例: world-left-top -> wlp
 
             var hypotenuse = (a:number, b:number):number -> {
                 return Math.sqrt(a*a+b*b);
@@ -771,10 +902,10 @@ class SmoothTexture extends Polygon {
                 var src = matrix.mul(wrc);
                 var scc = matrix.mul(wcc);
 
-                divideAndDrawImage(image, wlt, wlc, wcc, wct, slt, slc, scc, sct, depth+1,      sx, sy     , sw/2, sh/2); // $B:8>eItJ,(B
-                divideAndDrawImage(image, wlc, wlb, wcb, wcc, slc, slb, scb, scc, depth+1,      sx, sy+sh/2, sw/2, sh/2); // $B:82<ItJ,(B
-                divideAndDrawImage(image, wct, wcc, wrc, wrt, sct, scc, src, srt, depth+1, sx+sw/2, sy     , sw/2, sh/2); // $B1&>eItJ,(B
-                divideAndDrawImage(image, wcc, wcb, wrb, wrc, scc, scb, srb, src, depth+1, sx+sw/2, sy+sh/2, sw/2, sh/2); // $B1&2<ItJ,(B
+                divideAndDrawImage(image, wlt, wlc, wcc, wct, slt, slc, scc, sct, depth+1,      sx, sy     , sw/2, sh/2); // 左上部分
+                divideAndDrawImage(image, wlc, wlb, wcb, wcc, slc, slb, scb, scc, depth+1,      sx, sy+sh/2, sw/2, sh/2); // 左下部分
+                divideAndDrawImage(image, wct, wcc, wrc, wrt, sct, scc, src, srt, depth+1, sx+sw/2, sy     , sw/2, sh/2); // 右上部分
+                divideAndDrawImage(image, wcc, wcb, wrb, wrc, scc, scb, srb, src, depth+1, sx+sw/2, sy+sh/2, sw/2, sh/2); // 右下部分
             } else if (depth <= 6 && splittingVertical) {
                 var wct = wlt.add(wrt).divSelf(2);
                 var wcb = wlb.add(wrb).divSelf(2);
@@ -782,8 +913,8 @@ class SmoothTexture extends Polygon {
                 var sct = matrix.mul(wct);
                 var scb = matrix.mul(wcb);
 
-                divideAndDrawImage(image, wlt, wlb, wcb, wct, slt, slb, scb, sct, depth+1,      sx, sy, sw/2, sh); // $B:8B&ItJ,(B
-                divideAndDrawImage(image, wct, wcb, wrb, wrt, sct, scb, srb, srt, depth+1, sx+sw/2, sy, sw/2, sh); // $B1&B&ItJ,(B
+                divideAndDrawImage(image, wlt, wlb, wcb, wct, slt, slb, scb, sct, depth+1,      sx, sy, sw/2, sh); // 左側部分
+                divideAndDrawImage(image, wct, wcb, wrb, wrt, sct, scb, srb, srt, depth+1, sx+sw/2, sy, sw/2, sh); // 右側部分
             } else if (depth <= 6 && splittingHorizontal) {
                 var wlc = wlt.add(wlb).divSelf(2);
                 var wrc = wrt.add(wrb).divSelf(2);
@@ -791,8 +922,8 @@ class SmoothTexture extends Polygon {
                 var slc = matrix.mul(wlc);
                 var src = matrix.mul(wrc);
 
-                divideAndDrawImage(image, wlt, wlc, wrc, wrt, slt, slc, src, srt, depth+1, sx,      sy, sw, sh/2); // $B>eB&ItJ,(B
-                divideAndDrawImage(image, wlc, wlb, wrb, wrc, slc, slb, srb, src, depth+1, sx, sy+sh/2, sw, sh/2); // $B2<B&ItJ,(B
+                divideAndDrawImage(image, wlt, wlc, wrc, wrt, slt, slc, src, srt, depth+1, sx,      sy, sw, sh/2); // 上側部分
+                divideAndDrawImage(image, wlc, wlb, wrb, wrc, slc, slb, srb, src, depth+1, sx, sy+sh/2, sw, sh/2); // 下側部分
             } else {
 
                 var maxX = Math.max(slt.x, slb.x, srb.x, srt.x);
@@ -824,6 +955,9 @@ class SmoothTexture extends Polygon {
 
 
 
+/**
+ * @class billboard(どの方向から見ても同じ画像を表示するオブジェクト)を表すクラス
+ */
 class Billboard extends AbstractModel {
 
     var width : number;
@@ -831,6 +965,12 @@ class Billboard extends AbstractModel {
     var src : string;
     var image : HTMLImageElement;
 
+    /**
+     * @param {Vector} center world座標系でのBillboardの中心座標
+     * @param {number} width  world座標系でのBillboardの横幅
+     * @param {number} height world座標系でのBillboardの縦幅
+     * @param {String} src    Billboardで使う画像のファイル名
+     */
     function constructor(center:Vector, width:number, height:number, src:string) {
         this.width = width;
         this.height = height;
@@ -856,7 +996,7 @@ class Billboard extends AbstractModel {
 
         var projectionAndScreenMatrix = engine.screenMatrix.compose(engine.camera.projectionMatrix);
 
-        // TODO: $B:BI87O$N%A%'%C%/(B
+        // TODO: 座標系のチェック
         var vRightTop = this.vCenter.sub(new Vector(this.width/2, this.height/2, 0));
 
         var vpCenter = projectionAndScreenMatrix.mul(this.vCenter);
@@ -869,7 +1009,7 @@ class Billboard extends AbstractModel {
 
         ctx.setTransform(scaleX, 0, 0, scaleY, 0, 0);
 
-        // TODO: $BIA2h0LCV$r7h$a$J$/$F$b!"%"%U%#%sJQ49$G$J$s$H$+$J$k$+$b(B
+        // TODO: 描画位置を決めなくても、アフィン変換でなんとかなるかも
         ctx.drawImage(this.image, (vpCenter.x-vpHalfWidth)/scaleX, (vpCenter.y-vpHalfHeight)/scaleY);
 
         ctx.setTransform(1, 0, 0, 1, 0, 0);
