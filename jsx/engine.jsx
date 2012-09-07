@@ -6,6 +6,12 @@ import "timer.jsx";
 
 
 /**
+ * 座標系は右手座標系
+ */
+
+
+
+/**
  * @class 二次元平面での汎用関数をまとめたクラス
  */
 class Math2D {
@@ -193,9 +199,9 @@ class Engine {
         this.objects = [] : AbstractModel[];
 
 
-        var viewPosition   = new Vector(0, 0, -100);
-        var targetPosition = new Vector(0, 0,    0);
-        var upperVector    = new Vector(0, 1, 0);
+        var viewPosition   = new Vector(0,  0,100);
+        var targetPosition = new Vector(0,  0,  0);
+        var upperVector    = new Vector(0,  1,  0);
         var fovyX          = Math.PI / 3;
         var nearZ          = 0;
         var farZ           = 500;
@@ -273,7 +279,7 @@ class Engine {
     function setScreenMatrix(width:number, height:number) : void {
         this.screenMatrix =
             Matrix.translating(width/2, height/2, 0).composeSelf(
-                Matrix.scaling(width/2, height/2, 1));
+                Matrix.scaling(width/2,-height/2, 1));
     }
 
     function updateMatrix() : void {
@@ -389,7 +395,7 @@ class Camera {
                 sx,  0,  0,  0,
                  0, sy,  0,  0,
                  0,  0, sz, mz,
-                 0,  0,  1,  1
+                 0,  0, -1,  0
             ]);
         })();
 
@@ -591,9 +597,9 @@ class Polygon extends AbstractModel {
                 var center = this.vCenter;
 
                 // calc normal vector
-                var v1 = verts[1].sub(center);
-                var v2 = verts[2].sub(center);
-                var norm = v1.cross(v2).unit();
+                var v1 = verts[0].sub(center);
+                var v2 = verts[1].sub(center);
+                var norm = v2.cross(v1).unit();
 
                 var lightPower = norm.dot(center.unit());
                 var diffusePower = 0.7;
@@ -1015,6 +1021,7 @@ class Billboard extends AbstractModel {
 
 final class _Main {
     static function main(args:string[]) : void {
+
         var engine = new Engine('canvas');
 
         Engine.loadImages(['./image/tree.png', './image/so-nya.png']);
@@ -1026,9 +1033,9 @@ final class _Main {
                 for (var j=-10; j<10; j++) {
                     var polygon = new Polygon([
                         new Vector(    i*50, -20,     j*50),
-                        new Vector((i+1)*50, -20,     j*50),
+                        new Vector(    i*50, -20, (j+1)*50),
                         new Vector((i+1)*50, -20, (j+1)*50),
-                        new Vector(    i*50, -20, (j+1)*50)
+                        new Vector((i+1)*50, -20,     j*50)
                     ], new Color(128, 255, 128));
                     polygon.depth = 8;
                     polygons.push(polygon);
@@ -1053,7 +1060,7 @@ final class _Main {
         // }
 
 
-        for (var i=0; i<1; i++) {
+        for (var i=0; i<100; i++) {
             var x = Math.floor((Math.random()-0.5)*20)*25;
             var z = Math.floor((Math.random()-0.5)*20)*25;
             var billboard = new Billboard(new Vector(x, -3, z), 50, 35, './image/tree.png');
@@ -1102,19 +1109,19 @@ final class _Main {
             // console.log(e.keyCode);
             switch (ke.keyCode) {
                 case 119: // 'w'
-                    engine.camera.move(new Vector(0, 0, 10));
+                    engine.camera.move(new Vector(0, 0,-10));
                     engine.updateMatrix();
                     break;
                 case 115: // 's'
-                    engine.camera.move(new Vector(0, 0, -10));
+                    engine.camera.move(new Vector(0, 0, 10));
                     engine.updateMatrix();
                     break;
                 case 97:  // 'a'
-                    engine.camera.rotateY(-Math.PI/32);
+                    engine.camera.rotateY(Math.PI/32);
                     engine.updateMatrix();
                     break;
                 case 100: // 'd'
-                    engine.camera.rotateY(Math.PI/32);
+                    engine.camera.rotateY(-Math.PI/32);
                     engine.updateMatrix();
                     break;
                 case 106: // 'j'

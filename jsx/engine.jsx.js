@@ -156,7 +156,7 @@ Stopwatch.prototype.stop$ = function () {
 	this.elapsedMsec += this.currentMsec$() - (function (v) {
 		if (! (v != null)) {
 			debugger;
-			throw new Error("[jsx/engine.jsx:54] null access");
+			throw new Error("[jsx/engine.jsx:61] null access");
 		}
 		return v;
 	}(this.startedMsec));
@@ -193,7 +193,7 @@ Stopwatch.prototype.lap$ = function () {
 	lapMsec = currentMsec - (function (v) {
 		if (! (v != null)) {
 			debugger;
-			throw new Error("[jsx/engine.jsx:76] null access");
+			throw new Error("[jsx/engine.jsx:83] null access");
 		}
 		return v;
 	}(this.lastLapMsec));
@@ -275,7 +275,7 @@ FpsManager.prototype.update$ = function () {
 		totalMsec += (function (v) {
 			if (! (v != null)) {
 				debugger;
-				throw new Error("[jsx/engine.jsx:141] null access");
+				throw new Error("[jsx/engine.jsx:148] null access");
 			}
 			return v;
 		}(this.recentlyMsecLog[i]));
@@ -327,7 +327,7 @@ function Engine$S(canvasId) {
 	this.height = this.canvas.height;
 	this.setScreenMatrix$NN(this.width, this.height);
 	this.objects = [  ];
-	viewPosition = new Vector$NNN(0, 0, - 100);
+	viewPosition = new Vector$NNN(0, 0, 100);
 	targetPosition = new Vector$NNN(0, 0, 0);
 	upperVector = new Vector$NNN(0, 1, 0);
 	fovyX = Math.PI / 3;
@@ -373,7 +373,7 @@ Engine.loadImages$AS = function (srcs) {
 		image.src = (function (v) {
 			if (! (v != null)) {
 				debugger;
-				throw new Error("[jsx/engine.jsx:238] null access");
+				throw new Error("[jsx/engine.jsx:245] null access");
 			}
 			return v;
 		}(src));
@@ -382,7 +382,7 @@ Engine.loadImages$AS = function (srcs) {
 		setOnload((function (v) {
 			if (! (v != null)) {
 				debugger;
-				throw new Error("[jsx/engine.jsx:241] null access");
+				throw new Error("[jsx/engine.jsx:248] null access");
 			}
 			return v;
 		}(src)));
@@ -440,7 +440,7 @@ Engine.prototype.update$ = function () {
  * @param {!number} height
  */
 Engine.prototype.setScreenMatrix$NN = function (width, height) {
-	this.screenMatrix = Matrix$translating$NNN(width / 2, height / 2, 0).composeSelf$LMatrix$(Matrix$scaling$NNN(width / 2, height / 2, 1));
+	this.screenMatrix = Matrix$translating$NNN(width / 2, height / 2, 0).composeSelf$LMatrix$(Matrix$scaling$NNN(width / 2, - height / 2, 1));
 };
 
 /**
@@ -562,7 +562,7 @@ Camera.prototype.updateMatrix$ = function () {
 		sy = sx / aspectRatio;
 		sz = farZ / (farZ - nearZ);
 		mz = - sz * nearZ;
-		return new Matrix$AN([ sx, 0, 0, 0, 0, sy, 0, 0, 0, 0, sz, mz, 0, 0, 1, 1 ]);
+		return new Matrix$AN([ sx, 0, 0, 0, 0, sy, 0, 0, 0, 0, sz, mz, 0, 0, - 1, 0 ]);
 	})();
 	this.viewMatrix = viewMatrix;
 	this.projectionMatrix = projectionMatrix;
@@ -851,9 +851,9 @@ Polygon.prototype.draw$LEngine$ = function (engine) {
 			/** @type {!number} */
 			var b;
 			center = $this.vCenter;
-			v1 = verts[1].sub$LVector$(center);
-			v2 = verts[2].sub$LVector$(center);
-			norm = v1.cross$LVector$(v2).unit$();
+			v1 = verts[0].sub$LVector$(center);
+			v2 = verts[1].sub$LVector$(center);
+			norm = v2.cross$LVector$(v1).unit$();
 			lightPower = norm.dot$LVector$(center.unit$());
 			diffusePower = 0.7;
 			diffuseCoefficient = 0.8;
@@ -1412,7 +1412,7 @@ _Main.main$AS = function (args) {
 		polygons = [  ];
 		for (i = - 10; i < 10; i++) {
 			for (j = - 10; j < 10; j++) {
-				polygon = new Polygon$ALVector$LColor$([ new Vector$NNN(i * 50, - 20, j * 50), new Vector$NNN((i + 1) * 50, - 20, j * 50), new Vector$NNN((i + 1) * 50, - 20, (j + 1) * 50), new Vector$NNN(i * 50, - 20, (j + 1) * 50) ], new Color$III(128, 255, 128));
+				polygon = new Polygon$ALVector$LColor$([ new Vector$NNN(i * 50, - 20, j * 50), new Vector$NNN(i * 50, - 20, (j + 1) * 50), new Vector$NNN((i + 1) * 50, - 20, (j + 1) * 50), new Vector$NNN((i + 1) * 50, - 20, j * 50) ], new Color$III(128, 255, 128));
 				polygon.depth = 8;
 				polygons.push(polygon);
 			}
@@ -1421,7 +1421,7 @@ _Main.main$AS = function (args) {
 	})();
 	model.depth = 8;
 	engine.addModel$LAbstractModel$(model);
-	for (i = 0; i < 1; i++) {
+	for (i = 0; i < 100; i++) {
 		x = Math.floor((Math.random() - 0.5) * 20) * 25;
 		z = Math.floor((Math.random() - 0.5) * 20) * 25;
 		billboard = new Billboard$LVector$NNS(new Vector$NNN(x, - 3, z), 50, 35, './image/tree.png');
@@ -1467,19 +1467,19 @@ _Main.main$AS = function (args) {
 		ke = (function (o) { return o instanceof KeyboardEvent ? o : null; })(e);
 		switch (ke.keyCode) {
 		case 119:
-			engine.camera.move$LVector$(new Vector$NNN(0, 0, 10));
-			engine.updateMatrix$();
-			break;
-		case 115:
 			engine.camera.move$LVector$(new Vector$NNN(0, 0, - 10));
 			engine.updateMatrix$();
 			break;
+		case 115:
+			engine.camera.move$LVector$(new Vector$NNN(0, 0, 10));
+			engine.updateMatrix$();
+			break;
 		case 97:
-			engine.camera.rotateY$N(- Math.PI / 32);
+			engine.camera.rotateY$N(Math.PI / 32);
 			engine.updateMatrix$();
 			break;
 		case 100:
-			engine.camera.rotateY$N(Math.PI / 32);
+			engine.camera.rotateY$N(- Math.PI / 32);
 			engine.updateMatrix$();
 			break;
 		case 106:
