@@ -408,7 +408,7 @@ class Polygon extends AbstractModel {
             vVertices.push(vVertex);
             vSumPos.addSelf(vVertex);
         }
-        this.vCenter = vSumPos.divSelf(this.vertices.length);
+        this.vCenter = vSumPos.div(this.vertices.length);
         this.vVertices = vVertices;
     }
 
@@ -450,7 +450,7 @@ class Polygon extends AbstractModel {
         for (var i=0; i<this.vertices.length; i++) {
             sumVector.addSelf(this.vertices[i]);
         }
-        this.center = sumVector.divSelf(this.vertices.length);
+        this.center = sumVector.div(this.vertices.length);
     }
 
     override function toString() : string {
@@ -473,14 +473,14 @@ class Polygon extends AbstractModel {
             for (var i=0; i<verts.length; i++) {
                 posSum.addSelf(verts[i]);
             }
-            return posSum.divSelf(verts.length);
+            return posSum.div(verts.length);
         })();
 
         var norm = (():Vector -> {
             var v1 = verts[1].sub(center);
             var v2 = verts[2].sub(center);
 
-            return v1.cross(v2).unitSelf();
+            return v1.cross(v2).unit();
         })();
 
         var lightPower = norm.dot(center.unit());
@@ -695,7 +695,7 @@ class SmoothTexture extends Polygon {
         // ビュー・透視・スクリーン変換行列
         var matrix =
             engine.screenMatrix.compose(
-                    engine.camera.projectionMatrix.composeSelf(
+                    engine.camera.projectionMatrix.compose(
                         engine.camera.viewMatrix));
 
         // screen + left or right + top or bottom

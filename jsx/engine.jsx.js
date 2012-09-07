@@ -697,7 +697,7 @@ Polygon.prototype.applyViewMatrix$LMatrix$ = function (viewMatrix) {
 		vVertices.push(vVertex);
 		vSumPos.addSelf$LVector$(vVertex);
 	}
-	this.vCenter = vSumPos.divSelf$N(this.vertices.length);
+	this.vCenter = vSumPos.div$N(this.vertices.length);
 	this.vVertices = vVertices;
 };
 
@@ -774,7 +774,7 @@ Polygon.prototype.updateCenter$ = function () {
 	for (i = 0; i < this.vertices.length; i++) {
 		sumVector.addSelf$LVector$(this.vertices[i]);
 	}
-	this.center = sumVector.divSelf$N(this.vertices.length);
+	this.center = sumVector.div$N(this.vertices.length);
 };
 
 /**
@@ -845,7 +845,7 @@ Polygon.prototype.draw$LEngine$ = function (engine) {
 		for (i = 0; i < verts.length; i++) {
 			posSum.addSelf$LVector$(verts[i]);
 		}
-		return posSum.divSelf$N(verts.length);
+		return posSum.div$N(verts.length);
 	})();
 	norm = (function () {
 		/** @type {Vector} */
@@ -854,7 +854,7 @@ Polygon.prototype.draw$LEngine$ = function (engine) {
 		var v2;
 		v1 = verts[1].sub$LVector$(center);
 		v2 = verts[2].sub$LVector$(center);
-		return v1.cross$LVector$(v2).unitSelf$();
+		return v1.cross$LVector$(v2).unit$();
 	})();
 	lightPower = norm.dot$LVector$(center.unit$());
 	diffusePower = 0.7;
@@ -1142,7 +1142,7 @@ SmoothTexture.prototype.draw$LEngine$ = function (engine) {
 	wlbImage = this.vertices[0];
 	wrbImage = this.vertices[1];
 	wrtImage = this.vertices[2];
-	matrix = engine.screenMatrix.compose$LMatrix$(engine.camera.projectionMatrix.composeSelf$LMatrix$(engine.camera.viewMatrix));
+	matrix = engine.screenMatrix.compose$LMatrix$(engine.camera.projectionMatrix.compose$LMatrix$(engine.camera.viewMatrix));
 	sltImage = matrix.mul$LVector$(wltImage);
 	slbImage = matrix.mul$LVector$(wlbImage);
 	srbImage = matrix.mul$LVector$(wrbImage);
