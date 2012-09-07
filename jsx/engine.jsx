@@ -6,7 +6,7 @@ import "timer.jsx";
 
 
 /**
- * 座標系は右手座標系
+ * 座標系は左手座標系
  */
 
 
@@ -199,7 +199,7 @@ class Engine {
         this.objects = [] : AbstractModel[];
 
 
-        var viewPosition   = new Vector(0,  0,100);
+        var viewPosition   = new Vector(0,  0,-90);
         var targetPosition = new Vector(0,  0,  0);
         var upperVector    = new Vector(0,  1,  0);
         var fovyX          = Math.PI / 3;
@@ -265,7 +265,7 @@ class Engine {
         }
 
         objects = objects.sort((a:AbstractModel, b:AbstractModel) -> {
-            if (a.depth==b.depth) return a.vCenter.z - b.vCenter.z;
+            if (a.depth==b.depth) return b.vCenter.z - a.vCenter.z;
             return b.depth - a.depth;
         });
 
@@ -373,7 +373,7 @@ class Camera {
         var aspectRatio = this.aspectRatio;
 
         var viewMatrix = (function () : Matrix {
-            var zaxis = view.sub(target).unitSelf();
+            var zaxis = target.sub(view).unitSelf();
             var xaxis = upper.cross(zaxis).unitSelf();
             var yaxis = zaxis.cross(xaxis).unitSelf();
 
@@ -395,7 +395,7 @@ class Camera {
                 sx,  0,  0,  0,
                  0, sy,  0,  0,
                  0,  0, sz, mz,
-                 0,  0, -1,  0
+                 0,  0,  1,  0
             ]);
         })();
 
@@ -537,7 +537,7 @@ class Polygon extends AbstractModel {
     }
 
     override function isHidden(camera:Camera) : boolean {
-        if (camera.nearZ < -this.vCenter.z && -this.vCenter.z < camera.farZ) return false;
+        if (camera.nearZ < this.vCenter.z && this.vCenter.z < camera.farZ) return false;
         return true;
     }
 
@@ -637,7 +637,7 @@ class Polygon extends AbstractModel {
             if (Math2D.cross(verts[i1].x-verts[i].x,
                         verts[i1].y-verts[i].y,
                         verts[i2].x-verts[i].x,
-                        verts[i2].y-verts[i].y) > 0) {
+                        verts[i2].y-verts[i].y) < 0) {
                 return false;
             }
         }
@@ -786,7 +786,7 @@ class SmoothTexture extends Polygon {
     }
 
     override function isHidden(camera:Camera) : boolean {
-        if (camera.nearZ < -this.vCenter.z && -this.vCenter.z < camera.farZ) return false;
+        if (camera.nearZ < this.vCenter.z && this.vCenter.z < camera.farZ) return false;
         return true;
     }
 
@@ -983,7 +983,7 @@ class Billboard extends AbstractModel {
     }
 
     override function isHidden(camera:Camera) : boolean {
-        if (camera.nearZ < -this.vCenter.z && -this.vCenter.z < camera.farZ) return false;
+        if (camera.nearZ < this.vCenter.z && this.vCenter.z < camera.farZ) return false;
         return true;
     }
 
@@ -1021,6 +1021,55 @@ class Billboard extends AbstractModel {
 
 final class _Main {
     static function main(args:string[]) : void {
+
+
+        (():void -> {
+            var viewPosition   = new Vector(0,  0,-90);
+            var targetPosition = new Vector(0,  0,  0);
+            var upperVector    = new Vector(0,  1,  0);
+            var fovyX          = Math.PI / 3;
+            var nearZ          = 0;
+            var farZ           = 500;
+            var aspectRatio    = 1.0 * 600 / 800;
+
+            var camera = new Camera(
+                viewPosition,
+                targetPosition,
+                upperVector,
+                fovyX,
+                nearZ,
+                farZ,
+                aspectRatio
+            );
+
+            camera.updateMatrix();
+
+            var lt = new Vector(-20, 20,  0);
+            var lb = new Vector(-20,-20,  0);
+            var rb = new Vector( 20,-20,  0);
+            var rt = new Vector( 20, 20,  0);
+
+            var vlt = camera.viewMatrix.mul(lt);
+            var vlb = camera.viewMatrix.mul(lb);
+            var vrb = camera.viewMatrix.mul(rb);
+            var vrt = camera.viewMatrix.mul(rt);
+
+            log vlt.toString();
+            log vlb.toString();
+            log vrb.toString();
+            log vrt.toString();
+            log '########################################';
+
+            var plt = camera.projectionMatrix.mul(vlt);
+            var plb = camera.projectionMatrix.mul(vlb);
+            var prb = camera.projectionMatrix.mul(vrb);
+            var prt = camera.projectionMatrix.mul(vrt);
+
+            log plt.toString();
+            log plb.toString();
+            log prb.toString();
+            log prt.toString();
+        })();
 
         var engine = new Engine('canvas');
 
@@ -1109,19 +1158,19 @@ final class _Main {
             // console.log(e.keyCode);
             switch (ke.keyCode) {
                 case 119: // 'w'
-                    engine.camera.move(new Vector(0, 0,-10));
-                    engine.updateMatrix();
-                    break;
-                case 115: // 's'
                     engine.camera.move(new Vector(0, 0, 10));
                     engine.updateMatrix();
                     break;
+                case 115: // 's'
+                    engine.camera.move(new Vector(0, 0,-10));
+                    engine.updateMatrix();
+                    break;
                 case 97:  // 'a'
-                    engine.camera.rotateY(Math.PI/32);
+                    engine.camera.rotateY(-Math.PI/32);
                     engine.updateMatrix();
                     break;
                 case 100: // 'd'
-                    engine.camera.rotateY(-Math.PI/32);
+                    engine.camera.rotateY(Math.PI/32);
                     engine.updateMatrix();
                     break;
                 case 106: // 'j'

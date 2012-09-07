@@ -156,7 +156,7 @@ Stopwatch.prototype.stop$ = function () {
 	this.elapsedMsec += this.currentMsec$() - (function (v) {
 		if (! (v != null)) {
 			debugger;
-			throw new Error("[jsx/engine.jsx:61] null access");
+			throw new Error("[jsx/engine.jsx:60] null access");
 		}
 		return v;
 	}(this.startedMsec));
@@ -193,7 +193,7 @@ Stopwatch.prototype.lap$ = function () {
 	lapMsec = currentMsec - (function (v) {
 		if (! (v != null)) {
 			debugger;
-			throw new Error("[jsx/engine.jsx:83] null access");
+			throw new Error("[jsx/engine.jsx:82] null access");
 		}
 		return v;
 	}(this.lastLapMsec));
@@ -275,7 +275,7 @@ FpsManager.prototype.update$ = function () {
 		totalMsec += (function (v) {
 			if (! (v != null)) {
 				debugger;
-				throw new Error("[jsx/engine.jsx:148] null access");
+				throw new Error("[jsx/engine.jsx:147] null access");
 			}
 			return v;
 		}(this.recentlyMsecLog[i]));
@@ -327,7 +327,7 @@ function Engine$S(canvasId) {
 	this.height = this.canvas.height;
 	this.setScreenMatrix$NN(this.width, this.height);
 	this.objects = [  ];
-	viewPosition = new Vector$NNN(0, 0, 100);
+	viewPosition = new Vector$NNN(0, 0, - 90);
 	targetPosition = new Vector$NNN(0, 0, 0);
 	upperVector = new Vector$NNN(0, 1, 0);
 	fovyX = Math.PI / 3;
@@ -373,7 +373,7 @@ Engine.loadImages$AS = function (srcs) {
 		image.src = (function (v) {
 			if (! (v != null)) {
 				debugger;
-				throw new Error("[jsx/engine.jsx:245] null access");
+				throw new Error("[jsx/engine.jsx:244] null access");
 			}
 			return v;
 		}(src));
@@ -382,7 +382,7 @@ Engine.loadImages$AS = function (srcs) {
 		setOnload((function (v) {
 			if (! (v != null)) {
 				debugger;
-				throw new Error("[jsx/engine.jsx:248] null access");
+				throw new Error("[jsx/engine.jsx:247] null access");
 			}
 			return v;
 		}(src)));
@@ -422,7 +422,7 @@ Engine.prototype.update$ = function () {
 	}
 	objects = objects.sort((function (a, b) {
 		if (a.depth === b.depth) {
-			return a.vCenter.z - b.vCenter.z;
+			return b.vCenter.z - a.vCenter.z;
 		}
 		return b.depth - a.depth;
 	}));
@@ -544,7 +544,7 @@ Camera.prototype.updateMatrix$ = function () {
 		var xaxis;
 		/** @type {Vector} */
 		var yaxis;
-		zaxis = view.sub$LVector$(target).unitSelf$();
+		zaxis = target.sub$LVector$(view).unitSelf$();
 		xaxis = upper.cross$LVector$(zaxis).unitSelf$();
 		yaxis = zaxis.cross$LVector$(xaxis).unitSelf$();
 		return new Matrix$AN([ xaxis.x, xaxis.y, xaxis.z, - xaxis.dot$LVector$(view), yaxis.x, yaxis.y, yaxis.z, - yaxis.dot$LVector$(view), zaxis.x, zaxis.y, zaxis.z, - zaxis.dot$LVector$(view), 0, 0, 0, 1 ]);
@@ -562,7 +562,7 @@ Camera.prototype.updateMatrix$ = function () {
 		sy = sx / aspectRatio;
 		sz = farZ / (farZ - nearZ);
 		mz = - sz * nearZ;
-		return new Matrix$AN([ sx, 0, 0, 0, 0, sy, 0, 0, 0, 0, sz, mz, 0, 0, - 1, 0 ]);
+		return new Matrix$AN([ sx, 0, 0, 0, 0, sy, 0, 0, 0, 0, sz, mz, 0, 0, 1, 0 ]);
 	})();
 	this.viewMatrix = viewMatrix;
 	this.projectionMatrix = projectionMatrix;
@@ -707,7 +707,7 @@ Polygon.prototype.applyViewMatrix$LMatrix$ = function (viewMatrix) {
  * @return {!boolean}
  */
 Polygon.prototype.isHidden$LCamera$ = function (camera) {
-	if (camera.nearZ < - this.vCenter.z && - this.vCenter.z < camera.farZ) {
+	if (camera.nearZ < this.vCenter.z && this.vCenter.z < camera.farZ) {
 		return false;
 	}
 	return true;
@@ -877,7 +877,7 @@ Polygon.prototype.draw$LEngine$ = function (engine) {
 	for (i = 0; i < verts.length; i++) {
 		i1 = (i + 1) % verts.length;
 		i2 = (i + 2) % verts.length;
-		if (Math2D$cross$NNNN(verts[i1].x - verts[i].x, verts[i1].y - verts[i].y, verts[i2].x - verts[i].x, verts[i2].y - verts[i].y) > 0) {
+		if (Math2D$cross$NNNN(verts[i1].x - verts[i].x, verts[i1].y - verts[i].y, verts[i2].x - verts[i].x, verts[i2].y - verts[i].y) < 0) {
 			return false;
 		}
 	}
@@ -1064,7 +1064,7 @@ SmoothTexture.prototype.applyViewMatrix$LMatrix$ = function (viewMatrix) {
  * @return {!boolean}
  */
 SmoothTexture.prototype.isHidden$LCamera$ = function (camera) {
-	if (camera.nearZ < - this.vCenter.z && - this.vCenter.z < camera.farZ) {
+	if (camera.nearZ < this.vCenter.z && this.vCenter.z < camera.farZ) {
 		return false;
 	}
 	return true;
@@ -1311,7 +1311,7 @@ Billboard.prototype.applyViewMatrix$LMatrix$ = function (viewMatrix) {
  * @return {!boolean}
  */
 Billboard.prototype.isHidden$LCamera$ = function (camera) {
-	if (camera.nearZ < - this.vCenter.z && - this.vCenter.z < camera.farZ) {
+	if (camera.nearZ < this.vCenter.z && this.vCenter.z < camera.farZ) {
 		return false;
 	}
 	return true;
@@ -1398,6 +1398,78 @@ _Main.main$AS = function (args) {
 	var old_x;
 	/** @type {!number} */
 	var old_y;
+	(function () {
+		/** @type {Vector} */
+		var viewPosition;
+		/** @type {Vector} */
+		var targetPosition;
+		/** @type {Vector} */
+		var upperVector;
+		/** @type {!number} */
+		var fovyX;
+		/** @type {!number} */
+		var nearZ;
+		/** @type {!number} */
+		var farZ;
+		/** @type {!number} */
+		var aspectRatio;
+		/** @type {Camera} */
+		var camera;
+		/** @type {Vector} */
+		var lt;
+		/** @type {Vector} */
+		var lb;
+		/** @type {Vector} */
+		var rb;
+		/** @type {Vector} */
+		var rt;
+		/** @type {Vector} */
+		var vlt;
+		/** @type {Vector} */
+		var vlb;
+		/** @type {Vector} */
+		var vrb;
+		/** @type {Vector} */
+		var vrt;
+		/** @type {Vector} */
+		var plt;
+		/** @type {Vector} */
+		var plb;
+		/** @type {Vector} */
+		var prb;
+		/** @type {Vector} */
+		var prt;
+		viewPosition = new Vector$NNN(0, 0, - 90);
+		targetPosition = new Vector$NNN(0, 0, 0);
+		upperVector = new Vector$NNN(0, 1, 0);
+		fovyX = Math.PI / 3;
+		nearZ = 0;
+		farZ = 500;
+		aspectRatio = 600 / 800;
+		camera = new Camera$LVector$LVector$LVector$NNNN(viewPosition, targetPosition, upperVector, fovyX, nearZ, farZ, aspectRatio);
+		camera.updateMatrix$();
+		lt = new Vector$NNN(- 20, 20, 0);
+		lb = new Vector$NNN(- 20, - 20, 0);
+		rb = new Vector$NNN(20, - 20, 0);
+		rt = new Vector$NNN(20, 20, 0);
+		vlt = camera.viewMatrix.mul$LVector$(lt);
+		vlb = camera.viewMatrix.mul$LVector$(lb);
+		vrb = camera.viewMatrix.mul$LVector$(rb);
+		vrt = camera.viewMatrix.mul$LVector$(rt);
+		console.log(vlt.toString());
+		console.log(vlb.toString());
+		console.log(vrb.toString());
+		console.log(vrt.toString());
+		console.log('########################################');
+		plt = camera.projectionMatrix.mul$LVector$(vlt);
+		plb = camera.projectionMatrix.mul$LVector$(vlb);
+		prb = camera.projectionMatrix.mul$LVector$(vrb);
+		prt = camera.projectionMatrix.mul$LVector$(vrt);
+		console.log(plt.toString());
+		console.log(plb.toString());
+		console.log(prb.toString());
+		console.log(prt.toString());
+	})();
 	engine = new Engine$S('canvas');
 	Engine$loadImages$AS([ './image/tree.png', './image/so-nya.png' ]);
 	model = (function () {
@@ -1467,19 +1539,19 @@ _Main.main$AS = function (args) {
 		ke = (function (o) { return o instanceof KeyboardEvent ? o : null; })(e);
 		switch (ke.keyCode) {
 		case 119:
-			engine.camera.move$LVector$(new Vector$NNN(0, 0, - 10));
-			engine.updateMatrix$();
-			break;
-		case 115:
 			engine.camera.move$LVector$(new Vector$NNN(0, 0, 10));
 			engine.updateMatrix$();
 			break;
+		case 115:
+			engine.camera.move$LVector$(new Vector$NNN(0, 0, - 10));
+			engine.updateMatrix$();
+			break;
 		case 97:
-			engine.camera.rotateY$N(Math.PI / 32);
+			engine.camera.rotateY$N(- Math.PI / 32);
 			engine.updateMatrix$();
 			break;
 		case 100:
-			engine.camera.rotateY$N(- Math.PI / 32);
+			engine.camera.rotateY$N(Math.PI / 32);
 			engine.updateMatrix$();
 			break;
 		case 106:
