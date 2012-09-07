@@ -504,7 +504,7 @@ Camera.prototype.rotateY$N = function (rad) {
 	var lookingVec;
 	lookingVec = this.target.sub$LVector$(this.view);
 	lookingVec = Matrix$rotatingY$N(rad).mul$LVector$(lookingVec);
-	this.target = lookingVec.add$LVector$(this.view);
+	this.target = lookingVec.addSelf$LVector$(this.view);
 	this.rotatingMatrix = Matrix$rotatingY$N(rad).composeSelf$LMatrix$(this.rotatingMatrix);
 };
 
@@ -544,9 +544,9 @@ Camera.prototype.updateMatrix$ = function () {
 		var xaxis;
 		/** @type {Vector} */
 		var yaxis;
-		zaxis = view.sub$LVector$(target).unit$();
-		xaxis = upper.cross$LVector$(zaxis).unit$();
-		yaxis = zaxis.cross$LVector$(xaxis).unit$();
+		zaxis = view.sub$LVector$(target).unitSelf$();
+		xaxis = upper.cross$LVector$(zaxis).unitSelf$();
+		yaxis = zaxis.cross$LVector$(xaxis).unitSelf$();
 		return new Matrix$AN([ xaxis.x, xaxis.y, xaxis.z, - xaxis.dot$LVector$(view), yaxis.x, yaxis.y, yaxis.z, - yaxis.dot$LVector$(view), zaxis.x, zaxis.y, zaxis.z, - zaxis.dot$LVector$(view), 0, 0, 0, 1 ]);
 	})();
 	projectionMatrix = (function () {
@@ -695,9 +695,9 @@ Polygon.prototype.applyViewMatrix$LMatrix$ = function (viewMatrix) {
 	for (i = 0; i < this.vertices.length; i++) {
 		vVertex = viewMatrix.mul$LVector$(this.vertices[i]);
 		vVertices.push(vVertex);
-		vSumPos = vSumPos.add$LVector$(vVertex);
+		vSumPos.addSelf$LVector$(vVertex);
 	}
-	this.vCenter = vSumPos.div$N(this.vertices.length);
+	this.vCenter = vSumPos.divSelf$N(this.vertices.length);
 	this.vVertices = vVertices;
 };
 
@@ -719,7 +719,7 @@ Polygon.prototype.move$LVector$ = function (v) {
 	/** @type {!number} */
 	var i;
 	for (i = 0; i < this.vertices.length; i++) {
-		this.vertices[i] = this.vertices[i].add$LVector$(v);
+		this.vertices[i].addSelf$LVector$(v);
 	}
 	this.updateCenter$();
 };
@@ -732,7 +732,7 @@ Polygon.prototype.rotateX$LVector$N = function (center, rad) {
 	/** @type {!number} */
 	var i;
 	for (i = 0; i < this.vertices.length; i++) {
-		this.vertices[i] = this.vertices[i].sub$LVector$(center).rotateX$N(rad).add$LVector$(center);
+		this.vertices[i].subSelf$LVector$(center).rotateXSelf$N(rad).addSelf$LVector$(center);
 	}
 	this.updateCenter$();
 };
@@ -745,7 +745,7 @@ Polygon.prototype.rotateY$LVector$N = function (center, rad) {
 	/** @type {!number} */
 	var i;
 	for (i = 0; i < this.vertices.length; i++) {
-		this.vertices[i] = this.vertices[i].sub$LVector$(center).rotateY$N(rad).add$LVector$(center);
+		this.vertices[i].subSelf$LVector$(center).rotateYSelf$N(rad).addSelf$LVector$(center);
 	}
 	this.updateCenter$();
 };
@@ -758,7 +758,7 @@ Polygon.prototype.rotateZ$LVector$N = function (center, rad) {
 	/** @type {!number} */
 	var i;
 	for (i = 0; i < this.vertices.length; i++) {
-		this.vertices[i] = this.vertices[i].sub$LVector$(center).rotateZ$N(rad).add$LVector$(center);
+		this.vertices[i].subSelf$LVector$(center).rotateZSelf$N(rad).addSelf$LVector$(center);
 	}
 	this.updateCenter$();
 };
@@ -772,9 +772,9 @@ Polygon.prototype.updateCenter$ = function () {
 	var i;
 	sumVector = new Vector$NNN(0, 0, 0);
 	for (i = 0; i < this.vertices.length; i++) {
-		sumVector = sumVector.add$LVector$(this.vertices[i]);
+		sumVector.addSelf$LVector$(this.vertices[i]);
 	}
-	this.center = sumVector.div$N(this.vertices.length);
+	this.center = sumVector.divSelf$N(this.vertices.length);
 };
 
 /**
@@ -843,9 +843,9 @@ Polygon.prototype.draw$LEngine$ = function (engine) {
 		var i;
 		posSum = new Vector$NNN(0, 0, 0);
 		for (i = 0; i < verts.length; i++) {
-			posSum = posSum.add$LVector$(verts[i]);
+			posSum.addSelf$LVector$(verts[i]);
 		}
-		return posSum.div$N(verts.length);
+		return posSum.divSelf$N(verts.length);
 	})();
 	norm = (function () {
 		/** @type {Vector} */
@@ -854,7 +854,7 @@ Polygon.prototype.draw$LEngine$ = function (engine) {
 		var v2;
 		v1 = verts[1].sub$LVector$(center);
 		v2 = verts[2].sub$LVector$(center);
-		return v1.cross$LVector$(v2).unit$();
+		return v1.cross$LVector$(v2).unitSelf$();
 	})();
 	lightPower = norm.dot$LVector$(center.unit$());
 	diffusePower = 0.7;
@@ -1076,7 +1076,7 @@ SmoothTexture.prototype.rotateX$NLVector$ = function (rad, center) {
 	/** @type {!number} */
 	var i;
 	for (i = 0; i < this.vertices.length; i++) {
-		this.vertices[i] = this.vertices[i].sub$LVector$(center).rotateX$N(rad).add$LVector$(center);
+		this.vertices[i].subSelf$LVector$(center).rotateXSelf$N(rad).addSelf$LVector$(center);
 	}
 	this.updateCenter$();
 };
@@ -1089,7 +1089,7 @@ SmoothTexture.prototype.rotateY$NLVector$ = function (rad, center) {
 	/** @type {!number} */
 	var i;
 	for (i = 0; i < this.vertices.length; i++) {
-		this.vertices[i] = this.vertices[i].sub$LVector$(center).rotateY$N(rad).add$LVector$(center);
+		this.vertices[i].subSelf$LVector$(center).rotateYSelf$N(rad).addSelf$LVector$(center);
 	}
 	this.updateCenter$();
 };
@@ -1102,7 +1102,7 @@ SmoothTexture.prototype.rotateZ$NLVector$ = function (rad, center) {
 	/** @type {!number} */
 	var i;
 	for (i = 0; i < this.vertices.length; i++) {
-		this.vertices[i] = this.vertices[i].sub$LVector$(center).rotateZ$N(rad).add$LVector$(center);
+		this.vertices[i].subSelf$LVector$(center).rotateZSelf$N(rad).addSelf$LVector$(center);
 	}
 	this.updateCenter$();
 };
@@ -1142,7 +1142,7 @@ SmoothTexture.prototype.draw$LEngine$ = function (engine) {
 	wlbImage = this.vertices[0];
 	wrbImage = this.vertices[1];
 	wrtImage = this.vertices[2];
-	matrix = engine.screenMatrix.compose$LMatrix$(engine.camera.projectionMatrix.compose$LMatrix$(engine.camera.viewMatrix));
+	matrix = engine.screenMatrix.compose$LMatrix$(engine.camera.projectionMatrix.composeSelf$LMatrix$(engine.camera.viewMatrix));
 	sltImage = matrix.mul$LVector$(wltImage);
 	slbImage = matrix.mul$LVector$(wlbImage);
 	srbImage = matrix.mul$LVector$(wrbImage);
@@ -1219,11 +1219,11 @@ SmoothTexture.prototype.draw$LEngine$ = function (engine) {
 		splittingHorizontal = widthRatio > 1.01;
 		splittingVertical = heightRatio > 1.01;
 		if (depth <= 2 || depth <= 4 && splittingHorizontal && splittingVertical) {
-			wct = wlt.add$LVector$(wrt).div$N(2);
-			wcb = wlb.add$LVector$(wrb).div$N(2);
-			wlc = wlt.add$LVector$(wlb).div$N(2);
-			wrc = wrt.add$LVector$(wrb).div$N(2);
-			wcc = wlt.add$LVector$(wrb).div$N(2);
+			wct = wlt.add$LVector$(wrt).divSelf$N(2);
+			wcb = wlb.add$LVector$(wrb).divSelf$N(2);
+			wlc = wlt.add$LVector$(wlb).divSelf$N(2);
+			wrc = wrt.add$LVector$(wrb).divSelf$N(2);
+			wcc = wlt.add$LVector$(wrb).divSelf$N(2);
 			sct = matrix.mul$LVector$(wct);
 			scb = matrix.mul$LVector$(wcb);
 			slc = matrix.mul$LVector$(wlc);
@@ -1235,16 +1235,16 @@ SmoothTexture.prototype.draw$LEngine$ = function (engine) {
 			divideAndDrawImage(image, wcc, wcb, wrb, wrc, scc, scb, srb, src, depth + 1, sx + sw / 2, sy + sh / 2, sw / 2, sh / 2);
 		} else {
 			if (depth <= 6 && splittingVertical) {
-				wct = wlt.add$LVector$(wrt).div$N(2);
-				wcb = wlb.add$LVector$(wrb).div$N(2);
+				wct = wlt.add$LVector$(wrt).divSelf$N(2);
+				wcb = wlb.add$LVector$(wrb).divSelf$N(2);
 				sct = matrix.mul$LVector$(wct);
 				scb = matrix.mul$LVector$(wcb);
 				divideAndDrawImage(image, wlt, wlb, wcb, wct, slt, slb, scb, sct, depth + 1, sx, sy, sw / 2, sh);
 				divideAndDrawImage(image, wct, wcb, wrb, wrt, sct, scb, srb, srt, depth + 1, sx + sw / 2, sy, sw / 2, sh);
 			} else {
 				if (depth <= 6 && splittingHorizontal) {
-					wlc = wlt.add$LVector$(wlb).div$N(2);
-					wrc = wrt.add$LVector$(wrb).div$N(2);
+					wlc = wlt.add$LVector$(wlb).divSelf$N(2);
+					wrc = wrt.add$LVector$(wrb).divSelf$N(2);
 					slc = matrix.mul$LVector$(wlc);
 					src = matrix.mul$LVector$(wrc);
 					divideAndDrawImage(image, wlt, wlc, wrc, wrt, slt, slc, src, srt, depth + 1, sx, sy, sw, sh / 2);
@@ -1648,6 +1648,26 @@ Vector.prototype.cross$LVector$ = function (other) {
 };
 
 /**
+ * @param {Vector} other
+ * @return {Vector}
+ */
+Vector.prototype.crossSelf$LVector$ = function (other) {
+	/** @type {!number} */
+	var x;
+	/** @type {!number} */
+	var y;
+	/** @type {!number} */
+	var z;
+	x = this.y * other.z - this.z * other.y;
+	y = this.z * other.x - this.x * other.z;
+	z = this.x * other.y - this.y * other.x;
+	this.x = x;
+	this.y = y;
+	this.z = z;
+	return this;
+};
+
+/**
  * @return {Vector}
  */
 Vector.prototype.unit$ = function () {
@@ -1705,6 +1725,28 @@ Vector.prototype.rotateX$N = function (rad) {
  * @param {!number} rad
  * @return {Vector}
  */
+Vector.prototype.rotateXSelf$N = function (rad) {
+	/** @type {!number} */
+	var sin;
+	/** @type {!number} */
+	var cos;
+	/** @type {!number} */
+	var y;
+	/** @type {!number} */
+	var z;
+	sin = Math.sin(rad);
+	cos = Math.cos(rad);
+	y = this.y * cos - this.z * sin;
+	z = this.z * cos + this.y * sin;
+	this.y = y;
+	this.z = z;
+	return this;
+};
+
+/**
+ * @param {!number} rad
+ * @return {Vector}
+ */
 Vector.prototype.rotateY$N = function (rad) {
 	/** @type {!number} */
 	var sin;
@@ -1719,6 +1761,28 @@ Vector.prototype.rotateY$N = function (rad) {
  * @param {!number} rad
  * @return {Vector}
  */
+Vector.prototype.rotateYSelf$N = function (rad) {
+	/** @type {!number} */
+	var sin;
+	/** @type {!number} */
+	var cos;
+	/** @type {!number} */
+	var x;
+	/** @type {!number} */
+	var z;
+	sin = Math.sin(rad);
+	cos = Math.cos(rad);
+	x = this.x * cos + this.z * sin;
+	z = this.z * cos - this.x * sin;
+	this.x = x;
+	this.z = z;
+	return this;
+};
+
+/**
+ * @param {!number} rad
+ * @return {Vector}
+ */
 Vector.prototype.rotateZ$N = function (rad) {
 	/** @type {!number} */
 	var sin;
@@ -1727,6 +1791,28 @@ Vector.prototype.rotateZ$N = function (rad) {
 	sin = Math.sin(rad);
 	cos = Math.cos(rad);
 	return new Vector$NNN(this.x * cos - this.y * sin, this.y * cos + this.z * sin, this.z);
+};
+
+/**
+ * @param {!number} rad
+ * @return {Vector}
+ */
+Vector.prototype.rotateZSelf$N = function (rad) {
+	/** @type {!number} */
+	var sin;
+	/** @type {!number} */
+	var cos;
+	/** @type {!number} */
+	var x;
+	/** @type {!number} */
+	var y;
+	sin = Math.sin(rad);
+	cos = Math.cos(rad);
+	x = this.x * cos - this.y * sin;
+	y = this.y * cos + this.z * sin;
+	this.x = x;
+	this.y = y;
+	return this;
 };
 
 /**

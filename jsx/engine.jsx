@@ -286,7 +286,7 @@ class Camera {
 
     function rotateY(rad:number) : void {
         var lookingVec =  this.target.sub(this.view);
-        lookingVec = Matrix.rotatingY(rad).mulSelf(lookingVec);
+        lookingVec = Matrix.rotatingY(rad).mul(lookingVec);
         this.target = lookingVec.addSelf(this.view);
 
         this.rotatingMatrix = Matrix.rotatingY(rad).composeSelf(this.rotatingMatrix);
