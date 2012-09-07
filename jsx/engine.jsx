@@ -464,11 +464,13 @@ abstract class AbstractModel {
      * @param {Matrix} viewMatrix ビュー変換行列
      */
     abstract function applyViewMatrix(viewMatrix:Matrix) : void;
+
     /**
      * @description 透視変換後の座標を用いて、Zvalueが見える範囲にあるか(nearZ以上farZ以下か)を確認する
      * @param {Camera} camera Zvalueの範囲情報を持つCamera
      */
     abstract function isHidden(camera:Camera) : boolean;
+
     /**
      * @description 渡されたcanvasにモデルを描画する
      *              描画を行った場合はtrueを、行う必要がなかった場合はfalseを返す
@@ -494,12 +496,14 @@ abstract class AbstractModel {
 
 /**
  * @class Engineで利用する多角形クラス
+ * @property {boolean} enabledLighting 環境光、拡散光の有効無効を切り替えるフラグ
  */
 class Polygon extends AbstractModel {
 
     var vertices : Vector[];
     var vVertices : Vector[];
     var color : Color;
+    var enabledLighting : boolean;
 
     /**
      * 1つの面に対して1つの色情報を持つ
@@ -511,6 +515,7 @@ class Polygon extends AbstractModel {
     function constructor(vertices:Vector[], color:Color) {
         this.vertices = vertices;
         this.color = color;
+        this.enabledLighting = true;
     }
 
     override function applyViewMatrix(viewMatrix:Matrix) : void {
@@ -579,32 +584,35 @@ class Polygon extends AbstractModel {
         var verts = this.vVertices;
 
 
-        // TODO: 光の使用をユーザが無効化できるようにする
         // 透視変換の前に光の計算をしておく
-        var center = (():Vector -> {
-            var posSum = new Vector(0, 0, 0);
-            for (var i=0; i<verts.length; i++) {
-                posSum.addSelf(verts[i]);
-            }
-            return posSum.div(verts.length);
-        })();
+        var color = this.color;
+        if (this.enabledLighting) {
+            color = (():Color -> {
+                var center = (():Vector -> {
+                    var posSum = new Vector(0, 0, 0);
+                    for (var i=0; i<verts.length; i++) posSum.addSelf(verts[i]);
+                    return posSum.div(verts.length);
+                })();
 
-        var norm = (():Vector -> {
-            var v1 = verts[1].sub(center);
-            var v2 = verts[2].sub(center);
+                var norm = (():Vector -> {
+                    var v1 = verts[1].sub(center);
+                    var v2 = verts[2].sub(center);
 
-            return v1.cross(v2).unit();
-        })();
+                    return v1.cross(v2).unit();
+                })();
 
-        var lightPower = norm.dot(center.unit());
-        var diffusePower = 0.7;
-        var diffuseCoefficient = 0.8;
-        var ambientPower = 0.5;
+                var lightPower = norm.dot(center.unit());
+                var diffusePower = 0.7;
+                var diffuseCoefficient = 0.8;
+                var ambientPower = 0.5;
 
-        var colorR = Math.min(255, (diffusePower * diffuseCoefficient * lightPower + ambientPower) * this.color.r);
-        var colorG = Math.min(255, (diffusePower * diffuseCoefficient * lightPower + ambientPower) * this.color.g);
-        var colorB = Math.min(255, (diffusePower * diffuseCoefficient * lightPower + ambientPower) * this.color.b);
+                var r = Math.min(255, (diffusePower * diffuseCoefficient * lightPower + ambientPower) * this.color.r);
+                var g = Math.min(255, (diffusePower * diffuseCoefficient * lightPower + ambientPower) * this.color.g);
+                var b = Math.min(255, (diffusePower * diffuseCoefficient * lightPower + ambientPower) * this.color.b);
 
+                return new Color(r, g, b);
+            })();
+        }
 
 
         // 透視変換
@@ -623,35 +631,20 @@ class Polygon extends AbstractModel {
         if (isHiddenXY) return false;
 
         // 裏側から見たポリゴンは表示しない
-        if (Math2D.cross(verts[1].x-verts[0].x,
-                    verts[1].y-verts[0].y,
-                    verts[2].x-verts[0].x,
-                    verts[2].y-verts[0].y) > 0) {
-            return false;
-        }
-        if (Math2D.cross(verts[2].x-verts[1].x,
-                    verts[2].y-verts[1].y,
-                    verts[3].x-verts[1].x,
-                    verts[3].y-verts[1].y) > 0) {
-            return false;
-        }
-        if (Math2D.cross(verts[3].x-verts[2].x,
-                    verts[3].y-verts[2].y,
-                    verts[0].x-verts[2].x,
-                    verts[0].y-verts[2].y) > 0) {
-            return false;
-        }
-        if (Math2D.cross(verts[0].x-verts[3].x,
-                    verts[0].y-verts[3].y,
-                    verts[1].x-verts[3].x,
-                    verts[1].y-verts[3].y) > 0) {
-            return false;
+        for (var i=0; i<verts.length; i++) {
+            var i1 = (i+1) % verts.length;
+            var i2 = (i+2) % verts.length;
+            if (Math2D.cross(verts[i1].x-verts[i].x,
+                        verts[i1].y-verts[i].y,
+                        verts[i2].x-verts[i].x,
+                        verts[i2].y-verts[i].y) > 0) {
+                return false;
+            }
         }
 
-        var color = '#';
-        color += new Color(colorR, colorG, colorB).toHexString();
+        var colorStr = '#' + color.toHexString();
 
-        ctx.strokeStyle = color;
+        ctx.strokeStyle = colorStr;
         for (var i=0; i<len; i++) {
             ctx.beginPath();
             ctx.moveTo(verts[i].x, verts[i].y);
@@ -659,7 +652,7 @@ class Polygon extends AbstractModel {
             ctx.stroke();
         }
 
-        ctx.fillStyle = color;
+        ctx.fillStyle = colorStr;
         ctx.beginPath();
         for (var i=0; i<len; i++) {
             var x = verts[i].x;
@@ -1062,19 +1055,19 @@ final class _Main {
 
 
         for (var i=0; i<100; i++) {
-            var x = (Math.floor(Math.random()*20)-10)*25;
-            var z = (Math.floor(Math.random()*20)-10)*25;
+            var x = Math.floor((Math.random()-0.5)*20)*25;
+            var z = Math.floor((Math.random()-0.5)*20)*25;
             var billboard = new Billboard(new Vector(x, -3, z), 50, 35, './image/tree.png');
             engine.addModel(billboard);
         }
 
-        var texture = new SmoothTexture([
-            new Vector(-30, -20, 0),
-            new Vector( 30, -20, 0),
-            new Vector( 30,  20, 0),
-            new Vector(-30,  20, 0)
-        ], './image/so-nya.png');
-        engine.addModel(texture);
+        // var texture = new SmoothTexture([
+        //     new Vector(-30, -20, 0),
+        //     new Vector( 30, -20, 0),
+        //     new Vector( 30,  20, 0),
+        //     new Vector(-30,  20, 0)
+        // ], './image/so-nya.png');
+        // engine.addModel(texture);
 
 
         engine.update();

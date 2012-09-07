@@ -156,7 +156,7 @@ Stopwatch.prototype.stop$ = function () {
 	this.elapsedMsec += this.currentMsec$() - (function (v) {
 		if (! (v != null)) {
 			debugger;
-			throw new Error("[jsx/engine.jsx:43] null access");
+			throw new Error("[jsx/engine.jsx:54] null access");
 		}
 		return v;
 	}(this.startedMsec));
@@ -193,7 +193,7 @@ Stopwatch.prototype.lap$ = function () {
 	lapMsec = currentMsec - (function (v) {
 		if (! (v != null)) {
 			debugger;
-			throw new Error("[jsx/engine.jsx:61] null access");
+			throw new Error("[jsx/engine.jsx:76] null access");
 		}
 		return v;
 	}(this.lastLapMsec));
@@ -275,7 +275,7 @@ FpsManager.prototype.update$ = function () {
 		totalMsec += (function (v) {
 			if (! (v != null)) {
 				debugger;
-				throw new Error("[jsx/engine.jsx:121] null access");
+				throw new Error("[jsx/engine.jsx:141] null access");
 			}
 			return v;
 		}(this.recentlyMsecLog[i]));
@@ -373,7 +373,7 @@ Engine.loadImages$AS = function (srcs) {
 		image.src = (function (v) {
 			if (! (v != null)) {
 				debugger;
-				throw new Error("[jsx/engine.jsx:202] null access");
+				throw new Error("[jsx/engine.jsx:238] null access");
 			}
 			return v;
 		}(src));
@@ -382,7 +382,7 @@ Engine.loadImages$AS = function (srcs) {
 		setOnload((function (v) {
 			if (! (v != null)) {
 				debugger;
-				throw new Error("[jsx/engine.jsx:205] null access");
+				throw new Error("[jsx/engine.jsx:241] null access");
 			}
 			return v;
 		}(src)));
@@ -674,6 +674,7 @@ function Polygon$ALVector$LColor$(vertices, color) {
 	this.vVertices = null;
 	this.vertices = vertices;
 	this.color = color;
+	this.enabledLighting = true;
 };
 
 Polygon$ALVector$LColor$.prototype = new Polygon;
@@ -805,30 +806,18 @@ Polygon.prototype.draw$LEngine$ = function (engine) {
 	var len;
 	/** @type {Array.<undefined|Vector>} */
 	var verts;
-	/** @type {Vector} */
-	var center;
-	/** @type {Vector} */
-	var norm;
-	/** @type {!number} */
-	var lightPower;
-	/** @type {!number} */
-	var diffusePower;
-	/** @type {!number} */
-	var diffuseCoefficient;
-	/** @type {!number} */
-	var ambientPower;
-	/** @type {!number} */
-	var colorR;
-	/** @type {!number} */
-	var colorG;
-	/** @type {!number} */
-	var colorB;
+	/** @type {Color} */
+	var color;
 	/** @type {!number} */
 	var i;
 	/** @type {!boolean} */
 	var isHiddenXY;
+	/** @type {!number} */
+	var i1;
+	/** @type {!number} */
+	var i2;
 	/** @type {!string} */
-	var color;
+	var colorStr;
 	/** @type {!number} */
 	var x;
 	/** @type {!number} */
@@ -836,33 +825,57 @@ Polygon.prototype.draw$LEngine$ = function (engine) {
 	ctx = engine.ctx;
 	len = this.vertices.length;
 	verts = this.vVertices;
-	center = (function () {
-		/** @type {Vector} */
-		var posSum;
-		/** @type {!number} */
-		var i;
-		posSum = new Vector$NNN(0, 0, 0);
-		for (i = 0; i < verts.length; i++) {
-			posSum.addSelf$LVector$(verts[i]);
-		}
-		return posSum.div$N(verts.length);
-	})();
-	norm = (function () {
-		/** @type {Vector} */
-		var v1;
-		/** @type {Vector} */
-		var v2;
-		v1 = verts[1].sub$LVector$(center);
-		v2 = verts[2].sub$LVector$(center);
-		return v1.cross$LVector$(v2).unit$();
-	})();
-	lightPower = norm.dot$LVector$(center.unit$());
-	diffusePower = 0.7;
-	diffuseCoefficient = 0.8;
-	ambientPower = 0.5;
-	colorR = Math.min(255, (diffusePower * diffuseCoefficient * lightPower + ambientPower) * this.color.r);
-	colorG = Math.min(255, (diffusePower * diffuseCoefficient * lightPower + ambientPower) * this.color.g);
-	colorB = Math.min(255, (diffusePower * diffuseCoefficient * lightPower + ambientPower) * this.color.b);
+	color = this.color;
+	if (this.enabledLighting) {
+		color = (function () {
+			/** @type {Vector} */
+			var center;
+			/** @type {Vector} */
+			var norm;
+			/** @type {!number} */
+			var lightPower;
+			/** @type {!number} */
+			var diffusePower;
+			/** @type {!number} */
+			var diffuseCoefficient;
+			/** @type {!number} */
+			var ambientPower;
+			/** @type {!number} */
+			var r;
+			/** @type {!number} */
+			var g;
+			/** @type {!number} */
+			var b;
+			center = (function () {
+				/** @type {Vector} */
+				var posSum;
+				/** @type {!number} */
+				var i;
+				posSum = new Vector$NNN(0, 0, 0);
+				for (i = 0; i < verts.length; i++) {
+					posSum.addSelf$LVector$(verts[i]);
+				}
+				return posSum.div$N(verts.length);
+			})();
+			norm = (function () {
+				/** @type {Vector} */
+				var v1;
+				/** @type {Vector} */
+				var v2;
+				v1 = verts[1].sub$LVector$(center);
+				v2 = verts[2].sub$LVector$(center);
+				return v1.cross$LVector$(v2).unit$();
+			})();
+			lightPower = norm.dot$LVector$(center.unit$());
+			diffusePower = 0.7;
+			diffuseCoefficient = 0.8;
+			ambientPower = 0.5;
+			r = Math.min(255, (diffusePower * diffuseCoefficient * lightPower + ambientPower) * $this.color.r);
+			g = Math.min(255, (diffusePower * diffuseCoefficient * lightPower + ambientPower) * $this.color.g);
+			b = Math.min(255, (diffusePower * diffuseCoefficient * lightPower + ambientPower) * $this.color.b);
+			return new Color$III(r, g, b);
+		})();
+	}
 	for (i = 0; i < len; i++) {
 		verts[i] = engine.camera.projectionMatrix.mul$LVector$(verts[i]);
 	}
@@ -873,28 +886,22 @@ Polygon.prototype.draw$LEngine$ = function (engine) {
 	if (isHiddenXY) {
 		return false;
 	}
-	if (Math2D$cross$NNNN(verts[1].x - verts[0].x, verts[1].y - verts[0].y, verts[2].x - verts[0].x, verts[2].y - verts[0].y) > 0) {
-		return false;
+	for (i = 0; i < verts.length; i++) {
+		i1 = (i + 1) % verts.length;
+		i2 = (i + 2) % verts.length;
+		if (Math2D$cross$NNNN(verts[i1].x - verts[i].x, verts[i1].y - verts[i].y, verts[i2].x - verts[i].x, verts[i2].y - verts[i].y) > 0) {
+			return false;
+		}
 	}
-	if (Math2D$cross$NNNN(verts[2].x - verts[1].x, verts[2].y - verts[1].y, verts[3].x - verts[1].x, verts[3].y - verts[1].y) > 0) {
-		return false;
-	}
-	if (Math2D$cross$NNNN(verts[3].x - verts[2].x, verts[3].y - verts[2].y, verts[0].x - verts[2].x, verts[0].y - verts[2].y) > 0) {
-		return false;
-	}
-	if (Math2D$cross$NNNN(verts[0].x - verts[3].x, verts[0].y - verts[3].y, verts[1].x - verts[3].x, verts[1].y - verts[3].y) > 0) {
-		return false;
-	}
-	color = '#';
-	color += new Color$III(colorR, colorG, colorB).toHexString$();
-	ctx.strokeStyle = color;
+	colorStr = '#' + color.toHexString$();
+	ctx.strokeStyle = colorStr;
 	for (i = 0; i < len; i++) {
 		ctx.beginPath();
 		ctx.moveTo(verts[i].x, verts[i].y);
 		ctx.lineTo(verts[(i + 1) % len].x, verts[(i + 1) % len].y);
 		ctx.stroke();
 	}
-	ctx.fillStyle = color;
+	ctx.fillStyle = colorStr;
 	ctx.beginPath();
 	for (i = 0; i < len; i++) {
 		x = verts[i].x;
@@ -1388,17 +1395,12 @@ _Main.main$AS = function (args) {
 	var z;
 	/** @type {Billboard} */
 	var billboard;
-	/** @type {SmoothTexture} */
-	var texture;
 	/** @type {!boolean} */
 	var dragging;
 	/** @type {!number} */
 	var old_x;
 	/** @type {!number} */
 	var old_y;
-	/** @type {FpsManager} */
-	var fpsManager;
-	var move;
 	engine = new Engine$S('canvas');
 	Engine$loadImages$AS([ './image/tree.png', './image/so-nya.png' ]);
 	model = (function () {
@@ -1423,13 +1425,11 @@ _Main.main$AS = function (args) {
 	model.depth = 8;
 	engine.addModel$LAbstractModel$(model);
 	for (i = 0; i < 100; i++) {
-		x = (Math.floor(Math.random() * 20) - 10) * 25;
-		z = (Math.floor(Math.random() * 20) - 10) * 25;
+		x = Math.floor((Math.random() - 0.5) * 20) * 25;
+		z = Math.floor((Math.random() - 0.5) * 20) * 25;
 		billboard = new Billboard$LVector$NNS(new Vector$NNN(x, - 3, z), 50, 35, './image/tree.png');
 		engine.addModel$LAbstractModel$(billboard);
 	}
-	texture = new SmoothTexture$ALVector$S([ new Vector$NNN(- 30, - 20, 0), new Vector$NNN(30, - 20, 0), new Vector$NNN(30, 20, 0), new Vector$NNN(- 30, 20, 0) ], './image/so-nya.png');
-	engine.addModel$LAbstractModel$(texture);
 	engine.update$();
 	dragging = false;
 	old_x = 0;
@@ -1490,17 +1490,6 @@ _Main.main$AS = function (args) {
 		}
 		engine.update$();
 	});
-	fpsManager = new FpsManager$S('fps');
-	fpsManager.start$();
-	move = (function () {
-		fpsManager.update$();
-		engine.camera.move$LVector$(new Vector$NNN(0, 0, 5));
-		engine.camera.rotateY$N(Math.random() * Math.PI / 32);
-		engine.updateMatrix$();
-		engine.update$();
-		Timer$setTimeout$F$V$N(move, 10);
-	});
-	Timer$setTimeout$F$V$N(move, 10);
 };
 
 var _Main$main$AS = _Main.main$AS;
