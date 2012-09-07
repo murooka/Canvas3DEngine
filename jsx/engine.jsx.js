@@ -560,9 +560,9 @@ Camera.prototype.updateMatrix$ = function () {
 		var mz;
 		sx = 1 / Math.tan(fovyX / 2);
 		sy = sx / aspectRatio;
-		sz = farZ / (farZ - nearZ);
+		sz = - farZ / (farZ - nearZ);
 		mz = - sz * nearZ;
-		return new Matrix$AN([ sx, 0, 0, 0, 0, sy, 0, 0, 0, 0, sz, mz, 0, 0, 1, 1 ]);
+		return new Matrix$AN([ sx, 0, 0, 0, 0, sy, 0, 0, 0, 0, sz, mz, 0, 0, 1, 0 ]);
 	})();
 	this.viewMatrix = viewMatrix;
 	this.projectionMatrix = projectionMatrix;
@@ -1327,15 +1327,15 @@ Billboard.prototype.draw$LEngine$ = function (engine) {
 	/** @type {Matrix} */
 	var projectionAndScreenMatrix;
 	/** @type {Vector} */
-	var vRightTop;
+	var vLeftBottom;
 	/** @type {Vector} */
-	var vpCenter;
+	var sCenter;
 	/** @type {Vector} */
-	var vpRightTop;
+	var sLeftBottom;
 	/** @type {!number} */
-	var vpHalfWidth;
+	var sHalfWidth;
 	/** @type {!number} */
-	var vpHalfHeight;
+	var sHalfHeight;
 	/** @type {!number} */
 	var scaleX;
 	/** @type {!number} */
@@ -1345,15 +1345,20 @@ Billboard.prototype.draw$LEngine$ = function (engine) {
 	}
 	ctx = engine.ctx;
 	projectionAndScreenMatrix = engine.screenMatrix.compose$LMatrix$(engine.camera.projectionMatrix);
-	vRightTop = this.vCenter.sub$LVector$(new Vector$NNN(this.width / 2, this.height / 2, 0));
-	vpCenter = projectionAndScreenMatrix.mul$LVector$(this.vCenter);
-	vpRightTop = projectionAndScreenMatrix.mul$LVector$(vRightTop);
-	vpHalfWidth = vpRightTop.x - vpCenter.x;
-	vpHalfHeight = vpRightTop.y - vpCenter.y;
-	scaleX = vpHalfWidth / this.image.width * 2;
-	scaleY = vpHalfHeight / this.image.height * 2;
+	vLeftBottom = this.vCenter.sub$LVector$(new Vector$NNN(this.width / 2, this.height / 2, 0));
+	console.log(engine.camera.projectionMatrix.toString());
+	console.log('v center:' + this.vCenter.toString());
+	console.log('p center:' + engine.camera.projectionMatrix.mul$LVector$(this.vCenter).toString());
+	console.log('v left bottom:' + vLeftBottom.toString());
+	console.log('p left bottom:' + engine.camera.projectionMatrix.mul$LVector$(vLeftBottom).toString());
+	sCenter = projectionAndScreenMatrix.mul$LVector$(this.vCenter);
+	sLeftBottom = projectionAndScreenMatrix.mul$LVector$(vLeftBottom);
+	sHalfWidth = sLeftBottom.x - sCenter.x;
+	sHalfHeight = sLeftBottom.y - sCenter.y;
+	scaleX = sHalfWidth / this.image.width * 2;
+	scaleY = sHalfHeight / this.image.height * 2;
 	ctx.setTransform(scaleX, 0, 0, scaleY, 0, 0);
-	ctx.drawImage(this.image, (vpCenter.x - vpHalfWidth) / scaleX, (vpCenter.y - vpHalfHeight) / scaleY);
+	ctx.drawImage(this.image, (sCenter.x - sHalfWidth) / scaleX, (sCenter.y - sHalfHeight) / scaleY);
 	ctx.setTransform(1, 0, 0, 1, 0, 0);
 	return true;
 };
@@ -1382,6 +1387,8 @@ _Main.main$AS = function (args) {
 	var engine;
 	/** @type {Model} */
 	var model;
+	/** @type {Polygon} */
+	var polygon;
 	/** @type {!number} */
 	var i;
 	/** @type {!number} */
@@ -1421,6 +1428,8 @@ _Main.main$AS = function (args) {
 	})();
 	model.depth = 8;
 	engine.addModel$LAbstractModel$(model);
+	polygon = new Polygon$ALVector$LColor$([ new Vector$NNN(- 20, - 20, 0), new Vector$NNN(20, - 20, 0), new Vector$NNN(0, 20, 0) ], new Color$III(0, 0, 255));
+	engine.addModel$LAbstractModel$(polygon);
 	for (i = 0; i < 100; i++) {
 		x = Math.floor((Math.random() - 0.5) * 20) * 25;
 		z = Math.floor((Math.random() - 0.5) * 20) * 25;
@@ -1428,7 +1437,6 @@ _Main.main$AS = function (args) {
 		engine.addModel$LAbstractModel$(billboard);
 	}
 	texture = new SmoothTexture$ALVector$S([ new Vector$NNN(- 30, - 20, 0), new Vector$NNN(30, - 20, 0), new Vector$NNN(30, 20, 0), new Vector$NNN(- 30, 20, 0) ], './image/so-nya.png');
-	engine.addModel$LAbstractModel$(texture);
 	engine.update$();
 	dragging = false;
 	old_x = 0;

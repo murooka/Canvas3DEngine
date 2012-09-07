@@ -382,14 +382,14 @@ class Camera {
         var projectionMatrix = (function () : Matrix {
             var sx = 1 / Math.tan(fovyX/2);
             var sy = sx / aspectRatio;
-            var sz = farZ / (farZ-nearZ);
+            var sz = -farZ / (farZ-nearZ);
             var mz = -sz*nearZ;
 
             return new Matrix([
                 sx,  0,  0,  0,
                  0, sy,  0,  0,
                  0,  0, sz, mz,
-                 0,  0,  1,  1
+                 0,  0,  1,  0
             ]);
         })();
 
@@ -989,20 +989,26 @@ class Billboard extends AbstractModel {
         var projectionAndScreenMatrix = engine.screenMatrix.compose(engine.camera.projectionMatrix);
 
         // TODO: 座標系のチェック
-        var vRightTop = this.vCenter.sub(new Vector(this.width/2, this.height/2, 0));
+        var vLeftBottom = this.vCenter.sub(new Vector(this.width/2, this.height/2, 0));
 
-        var vpCenter = projectionAndScreenMatrix.mul(this.vCenter);
-        var vpRightTop = projectionAndScreenMatrix.mul(vRightTop);
-        var vpHalfWidth = vpRightTop.x - vpCenter.x;
-        var vpHalfHeight = vpRightTop.y - vpCenter.y;
+        log engine.camera.projectionMatrix.toString();
+        log 'v center:' + this.vCenter.toString();
+        log 'p center:' + engine.camera.projectionMatrix.mul(this.vCenter).toString();
+        log 'v left bottom:' + vLeftBottom.toString();
+        log 'p left bottom:' + engine.camera.projectionMatrix.mul(vLeftBottom).toString();
 
-        var scaleX = vpHalfWidth  / this.image.width  * 2;
-        var scaleY = vpHalfHeight / this.image.height * 2;
+        var sCenter = projectionAndScreenMatrix.mul(this.vCenter);
+        var sLeftBottom = projectionAndScreenMatrix.mul(vLeftBottom);
+        var sHalfWidth  = sLeftBottom.x - sCenter.x;
+        var sHalfHeight = sLeftBottom.y - sCenter.y;
+
+        var scaleX = sHalfWidth  / this.image.width  * 2;
+        var scaleY = sHalfHeight / this.image.height * 2;
 
         ctx.setTransform(scaleX, 0, 0, scaleY, 0, 0);
 
         // TODO: 描画位置を決めなくても、アフィン変換でなんとかなるかも
-        ctx.drawImage(this.image, (vpCenter.x-vpHalfWidth)/scaleX, (vpCenter.y-vpHalfHeight)/scaleY);
+        ctx.drawImage(this.image, (sCenter.x-sHalfWidth)/scaleX, (sCenter.y-sHalfHeight)/scaleY);
 
         ctx.setTransform(1, 0, 0, 1, 0, 0);
 
@@ -1039,19 +1045,12 @@ final class _Main {
         model.depth = 8;
         engine.addModel(model);
 
-        // for (var i=-10; i<10; i++) {
-        //     for (var j=-10; j<10; j++) {
-        //         var polygon = new Polygon([
-        //             new Vector(    i*50, -20,     j*50),
-        //             new Vector((i+1)*50, -20,     j*50),
-        //             new Vector((i+1)*50, -20, (j+1)*50),
-        //             new Vector(    i*50, -20, (j+1)*50)
-        //         ], new Color(128, 255, 128));
-        //         polygon.depth = 8;
-        //         engine.addModel(polygon);
-        //     }
-        // }
-
+        var polygon = new Polygon([
+            new Vector(-20, -20,  0),
+            new Vector( 20, -20,  0),
+            new Vector(  0,  20,  0)
+        ], new Color(0, 0, 255));
+        engine.addModel(polygon);
 
         for (var i=0; i<100; i++) {
             var x = Math.floor((Math.random()-0.5)*20)*25;
@@ -1066,7 +1065,7 @@ final class _Main {
             new Vector( 30,  20, 0),
             new Vector(-30,  20, 0)
         ], './image/so-nya.png');
-        engine.addModel(texture);
+        /* engine.addModel(texture); */
 
 
         engine.update();
