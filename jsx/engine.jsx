@@ -1022,55 +1022,6 @@ class Billboard extends AbstractModel {
 final class _Main {
     static function main(args:string[]) : void {
 
-
-        (():void -> {
-            var viewPosition   = new Vector(0,  0,-90);
-            var targetPosition = new Vector(0,  0,  0);
-            var upperVector    = new Vector(0,  1,  0);
-            var fovyX          = Math.PI / 3;
-            var nearZ          = 0;
-            var farZ           = 500;
-            var aspectRatio    = 1.0 * 600 / 800;
-
-            var camera = new Camera(
-                viewPosition,
-                targetPosition,
-                upperVector,
-                fovyX,
-                nearZ,
-                farZ,
-                aspectRatio
-            );
-
-            camera.updateMatrix();
-
-            var lt = new Vector(-20, 20,  0);
-            var lb = new Vector(-20,-20,  0);
-            var rb = new Vector( 20,-20,  0);
-            var rt = new Vector( 20, 20,  0);
-
-            var vlt = camera.viewMatrix.mul(lt);
-            var vlb = camera.viewMatrix.mul(lb);
-            var vrb = camera.viewMatrix.mul(rb);
-            var vrt = camera.viewMatrix.mul(rt);
-
-            log vlt.toString();
-            log vlb.toString();
-            log vrb.toString();
-            log vrt.toString();
-            log '########################################';
-
-            var plt = camera.projectionMatrix.mul(vlt);
-            var plb = camera.projectionMatrix.mul(vlb);
-            var prb = camera.projectionMatrix.mul(vrb);
-            var prt = camera.projectionMatrix.mul(vrt);
-
-            log plt.toString();
-            log plb.toString();
-            log prb.toString();
-            log prt.toString();
-        })();
-
         var engine = new Engine('canvas');
 
         Engine.loadImages(['./image/tree.png', './image/so-nya.png']);
@@ -1187,7 +1138,7 @@ final class _Main {
         // var move = ():void -> {
         //     fpsManager.update();
         //     engine.camera.move(new Vector(0, 0, 5));
-        //     engine.camera.rotateY((Math.random()) * Math.PI / 32);
+        //     engine.camera.rotateY(Math.PI / 64);
         //     engine.updateMatrix();
         //     engine.update();
         //     Timer.setTimeout(move, 10);
