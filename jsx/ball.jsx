@@ -1,6 +1,7 @@
 import "./vector.jsx";
 import "./matrix.jsx";
 import "./engine.jsx";
+import "./list.jsx";
 import "js/web.jsx";
 import "timer.jsx";
 
@@ -168,13 +169,13 @@ final class _Main {
         //     engine.update();
         // };
 
-        var move = ():void -> {
-            engine.camera.move(new Vector(0, 0, 5));
-            engine.camera.rotateY(Math.PI / 64);
-            engine.updateMatrix();
-            Timer.setTimeout(move, 10);
-        };
-        Timer.setTimeout(move, 10);
+        // var move = ():void -> {
+        //     engine.camera.move(new Vector(0, 0, 5));
+        //     engine.camera.rotateY(Math.PI / 64);
+        //     engine.updateMatrix();
+        //     Timer.setTimeout(move, 10);
+        // };
+        // Timer.setTimeout(move, 10);
     }
 
 }
