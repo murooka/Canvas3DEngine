@@ -253,6 +253,7 @@ class Engine {
     function start() : void {
         var fpsManager = new FpsManager('fps');
         fpsManager.start();
+
         var self = this;
         var update = ():void -> {
             fpsManager.update();
@@ -271,6 +272,7 @@ class Engine {
 
             Timer.setTimeout(update, 0);
         };
+
         Timer.setTimeout(update, 0);
     }
 
