@@ -1,5 +1,6 @@
 import "./vector.jsx";
 import "./matrix.jsx";
+import "./quaternion.jsx";
 import "./engine.jsx";
 import "./list.jsx";
 import "js/web.jsx";
@@ -68,10 +69,15 @@ final class _Main {
             trees.push(new Vector(x, -3, z));
         }
 
+
+        var q = Quaternion.rotating(Math.PI/2, 1, 0, 0);
+
         engine.onRender = (context:Context3D):void -> {
 
-            context.translate(0, -16, 0);
-            Util3D.sphere(context, 4, 8);
+            context.translate(0, -12, 0);
+            q.mulSelf(Quaternion.rotating(0.01, 1, 0, 0));
+            context.rotate(q);
+            Util3D.sphere(context, 8, 12);
             context.resetMatrix();
 
             // context.renderTexture([

@@ -62,18 +62,25 @@ class Quaternion {
         var y2 = 2 * this.y * this.y;
         var z2 = 2 * this.z * this.z;
         var xy = 2 * this.x * this.y;
-        var xz = 2 * this.x * this.z;
+        var zx = 2 * this.x * this.z;
         var yz = 2 * this.y * this.z;
         var xt = 2 * this.x * this.t;
         var yt = 2 * this.y * this.t;
         var zt = 2 * this.z * this.t;
 
         return new Matrix([
-            1-y2-z2,   xy+zt,   xz-yt,     0,
+            1-y2-z2,   xy+zt,   zx-yt,     0,
               xy-zt, 1-x2-z2,   yz+xt,     0,
-              xz+yt,   yz-xt, 1-x2-y2,     0,
+              zx+yt,   yz-xt, 1-x2-y2,     0,
                   0,       0,       0,     1
         ]);
+    }
+
+    static function rotating(rad:number, x:number, y:number, z:number) : Quaternion {
+        var cos = Math.cos(rad/2);
+        var sin = Math.sin(rad/2);
+
+        return new Quaternion(cos, x*sin, y*sin, z*sin);
     }
 
     static function rotate(src:Vector, axis:Vector, rad:number) : Vector {

@@ -1,5 +1,6 @@
 import "./vector.jsx";
 import "./matrix.jsx";
+import "./quaternion.jsx";
 import "./list.jsx";
 import "js/web.jsx";
 import "timer.jsx";
@@ -333,6 +334,14 @@ class Context3D {
             this.worldMatrix = Matrix.scaling(x, y, z);
         } else {
             this.worldMatrix.composeSelf(Matrix.scaling(x, y, z));
+        }
+    }
+
+    function rotate(q:Quaternion) : void {
+        if (this.worldMatrix == null) {
+            this.worldMatrix = q.toMatrix();
+        } else {
+            this.worldMatrix.composeSelf(q.toMatrix());
         }
     }
 
