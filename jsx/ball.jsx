@@ -7,12 +7,11 @@ import "timer.jsx";
 
 class Util3D {
 
-    static function sphere(context:Context3D, div:int) : void {
+    static function sphere(context:Context3D, size:number, div:int) : void {
         var ver = div;
         var hor = div*2;
         var sin = Math.sin;
         var cos = Math.cos;
-        var size = 1;
         var pi = Math.PI;
         for (var i=0; i<hor; i++) {
             var i1 = 0;
@@ -71,7 +70,9 @@ final class _Main {
 
         engine.onRender = (context:Context3D):void -> {
 
-            Util3D.sphere(context, 6);
+            context.translate(0, -16, 0);
+            Util3D.sphere(context, 4, 8);
+            context.resetMatrix();
 
             // context.renderTexture([
             //     new Vector(-30, -20, 0),

@@ -296,6 +296,7 @@ class Engine {
  */
 class Context3D {
 
+    var worldMatrix : Nullable.<Matrix>;
     var camera : Camera;
     var depth : int;
     var modelList1 = List.<AbstractModel>;
@@ -305,6 +306,7 @@ class Context3D {
     var modelList5 = List.<AbstractModel>;
 
     function constructor(camera:Camera) {
+        this.worldMatrix = null;
         this.camera = camera;
         this.depth = 3;
         this.modelList1 = new List.<AbstractModel>();
@@ -312,6 +314,26 @@ class Context3D {
         this.modelList3 = new List.<AbstractModel>();
         this.modelList4 = new List.<AbstractModel>();
         this.modelList5 = new List.<AbstractModel>();
+    }
+
+    function resetMatrix() : void {
+        this.worldMatrix = null;
+    }
+
+    function translate(x:number, y:number, z:number) : void {
+        if (this.worldMatrix == null) {
+            this.worldMatrix = Matrix.translating(x, y, z);
+        } else {
+            this.worldMatrix.composeSelf(Matrix.translating(x, y, z));
+        }
+    }
+
+    function scale(x:number, y:number, z:number) : void {
+        if (this.worldMatrix == null) {
+            this.worldMatrix = Matrix.scaling(x, y, z);
+        } else {
+            this.worldMatrix.composeSelf(Matrix.scaling(x, y, z));
+        }
     }
 
     function renderPolygon(vertices:Vector[], color:Color) : void {
@@ -327,6 +349,7 @@ class Context3D {
     }
 
     function renderModel(model:AbstractModel) : void {
+        if (this.worldMatrix != null) model.applyWorldMatrix(this.worldMatrix);
         model.applyViewMatrix(this.camera.viewMatrix);
         if (model.isHidden(this.camera)) return;
 
@@ -530,6 +553,13 @@ abstract class AbstractModel {
     var depth : int = 3;
 
     /**
+     * @description 引数に渡されたworldMatrixを用いて、モデリングオブジェクトをワールド座標系に移動させる
+     *              この関数を実装する場合は、verticesやcenterの値を直接書き換える
+     * @param {Matrix} worldMatrix ワールド変換行列
+     */
+    abstract function applyWorldMatrix(worldMatrix:Matrix) : void;
+
+    /**
      * @description 引数に渡されたviewMatrixを用いて、ビュー座標系でのcenter(vCenter)を更新する
      * @param {Matrix} viewMatrix ビュー変換行列
      */
@@ -586,6 +616,14 @@ class Polygon extends AbstractModel {
         this.vertices = vertices;
         this.color = color;
         this.enabledLighting = true;
+        this.updateCenter();
+    }
+
+    override function applyWorldMatrix(worldMatrix:Matrix) : void {
+        for (var i=0; i<this.vertices.length; i++) {
+            this.vertices[i] = worldMatrix.mul(this.vertices[i]);
+        }
+        this.updateCenter();
     }
 
     override function applyViewMatrix(viewMatrix:Matrix) : void {
@@ -754,6 +792,13 @@ class Model extends AbstractModel {
         this.enabledZSort = false;
     }
 
+    override function applyWorldMatrix(worldMatrix:Matrix) : void {
+        for (var i=0; i<this.polygons.length; i++) {
+            this.polygons[i].applyWorldMatrix(worldMatrix);
+        }
+        this.center = worldMatrix.mul(this.center);
+    }
+
     override function applyViewMatrix(viewMatrix:Matrix) : void {
         this.vCenter = viewMatrix.mul(this.center);
         for (var i=0; i<this.polygons.length; i++) {
@@ -843,6 +888,13 @@ class SmoothTexture extends Polygon {
         this.height = Math.abs(vertices[2].sub(vertices[1]).abs());
 
         this.updateCenter();
+    }
+
+    override function applyWorldMatrix(worldMatrix:Matrix) : void {
+        for (var i=0; i<this.vertices.length; i++) {
+            this.vertices[i] = worldMatrix.mul(this.vertices[i]);
+        }
+        this.center = worldMatrix.mul(this.center);
     }
 
     override function applyViewMatrix(viewMatrix:Matrix) : void {
@@ -1040,6 +1092,9 @@ class Billboard extends AbstractModel {
         this.image = Engine.images[src];
 
         this.center = center;
+    }
+    override function applyWorldMatrix(worldMatrix:Matrix) : void {
+        this.center = worldMatrix.mul(this.center);
     }
 
     override function applyViewMatrix(viewMatrix:Matrix) : void {
