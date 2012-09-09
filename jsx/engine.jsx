@@ -1,5 +1,6 @@
 import "./vector.jsx";
 import "./matrix.jsx";
+import "./list.jsx";
 import "js/web.jsx";
 import "timer.jsx";
 
@@ -254,53 +255,24 @@ class Engine {
         fpsManager.start();
         var self = this;
         var update = ():void -> {
-            log "render";
-
             fpsManager.update();
 
             this.ctx.fillStyle = 'rgb(255, 255, 255)';
             this.ctx.fillRect(0, 0, this.width, this.height);
 
-            var context = new Context3D();
+            var context = new Context3D(self.camera);
             self.onRender(context);
 
-            for (var i=5; i>=0; i--) {
-                var modelList = context.models[i];
-                for (var j=0; j<modelList.length; j++) {
-                    var model = modelList[j];
-                    model.applyViewMatrix(self.camera.viewMatrix);
-                    if (!model.isHidden(self.camera)) model.draw(self);
-                }
-            }
+            for (var n=context.modelList5.head; n!=null; n=n.next()) n.value.draw(self);
+            for (var n=context.modelList4.head; n!=null; n=n.next()) n.value.draw(self);
+            for (var n=context.modelList3.head; n!=null; n=n.next()) n.value.draw(self);
+            for (var n=context.modelList2.head; n!=null; n=n.next()) n.value.draw(self);
+            for (var n=context.modelList1.head; n!=null; n=n.next()) n.value.draw(self);
 
             Timer.setTimeout(update, 0);
         };
         Timer.setTimeout(update, 0);
     }
-
-    // function update() : void {
-    //     this.ctx.fillStyle = 'rgb(255, 255, 255)';
-    //     this.ctx.fillRect(0, 0, this.width, this.height);
-
-    //     var camera = this.camera;
-
-    //     var objects = [] : AbstractModel[];
-    //     for (var i=0; i<this.objects.length; i++) {
-    //         this.objects[i].applyViewMatrix(camera.viewMatrix);
-    //         if (!this.objects[i].isHidden(camera)) objects.push(this.objects[i]);
-    //     }
-
-    //     objects = objects.sort((a:AbstractModel, b:AbstractModel) -> {
-    //         if (a.depth==b.depth) return b.vCenter.z - a.vCenter.z;
-    //         return b.depth - a.depth;
-    //     });
-
-    //     var count = 0;
-    //     for (var i=0; i<objects.length; i++) {
-    //         if (objects[i].draw(this)) count++;
-    //     }
-    //     log 'draw ' + (count as string) + ' models';
-    // }
 
     function setScreenMatrix(width:number, height:number) : void {
         this.screenMatrix =
@@ -322,31 +294,60 @@ class Engine {
  */
 class Context3D {
 
+    var camera : Camera;
     var depth : int;
-    var models : AbstractModel[][];
+    var modelList1 = List.<AbstractModel>;
+    var modelList2 = List.<AbstractModel>;
+    var modelList3 = List.<AbstractModel>;
+    var modelList4 = List.<AbstractModel>;
+    var modelList5 = List.<AbstractModel>;
 
-    function constructor() {
+    function constructor(camera:Camera) {
+        this.camera = camera;
         this.depth = 3;
-        this.models = [
-            [] : AbstractModel[],
-            [] : AbstractModel[],
-            [] : AbstractModel[],
-            [] : AbstractModel[],
-            [] : AbstractModel[],
-            [] : AbstractModel[]
-        ] : AbstractModel[][];
+        this.modelList1 = new List.<AbstractModel>();
+        this.modelList2 = new List.<AbstractModel>();
+        this.modelList3 = new List.<AbstractModel>();
+        this.modelList4 = new List.<AbstractModel>();
+        this.modelList5 = new List.<AbstractModel>();
     }
 
     function renderPolygon(vertices:Vector[], color:Color) : void {
-        this.models[this.depth].push(new Polygon(vertices, color));
+        this.renderModel(new Polygon(vertices, color));
     }
 
     function renderBillboard(center:Vector, width:int, height:int, src:string) : void {
-        this.models[this.depth].push(new Billboard(center, width, height, src));
+        this.renderModel(new Billboard(center, width, height, src));
     }
 
     function renderTexture(vertices:Vector[], src:string) : void {
-        this.models[this.depth].push(new SmoothTexture(vertices, src));
+        this.renderModel(new SmoothTexture(vertices, src));
+    }
+
+    function renderModel(model:AbstractModel) : void {
+        model.applyViewMatrix(this.camera.viewMatrix);
+        if (model.isHidden(this.camera)) return;
+
+        switch (this.depth) {
+            case 1: this.insertModelByZValue(this.modelList1, model); break;
+            case 2: this.insertModelByZValue(this.modelList2, model); break;
+            case 3: this.insertModelByZValue(this.modelList3, model); break;
+            case 4: this.insertModelByZValue(this.modelList4, model); break;
+            case 5: this.insertModelByZValue(this.modelList5, model); break;
+        }
+    }
+
+    function insertModelByZValue(list:List.<AbstractModel>, model:AbstractModel) : void {
+        var inserted = false;
+        for (var n=list.head; n!=null; n=n.next()) {
+            if (n.value.vCenter.z < model.vCenter.z) {
+                list.insertBefore(n, model);
+                inserted = true;
+                break;
+            }
+        }
+
+        if (!inserted) list.append(model);
     }
 }
 
