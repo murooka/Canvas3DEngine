@@ -73,9 +73,8 @@ class Stopwatch {
      * @returns {number} 経過時間
      */
     function lap() : number {
-        if (this.lastLapMsec==null) {
-            throw "Stopwatch#lap : invalid operation, timer is not started.";
-        }
+        assert this.lastLapMsec != null;
+
         var currentMsec = this.currentMsec();
         var lapMsec = currentMsec - this.lastLapMsec;
         this.lastLapMsec = currentMsec;
@@ -127,9 +126,7 @@ class FpsManager {
      * フレームを更新したタイミングで呼ぶことで、fpsを計算しdom要素またはconsoleに表示する
      */
     function update() : void {
-        if (this.stopwatch.isStopped()) {
-            throw "FpsManager#update : invalid operation, FpsManager is not started.";
-        }
+        assert !this.stopwatch.isStopped();
 
         if (this.recentlyMsecLog.length < 1) {
             this.recentlyMsecLog.push(this.stopwatch.lap());
@@ -181,6 +178,8 @@ class Engine {
     var transformationMatrix : Matrix;
 
     var objects : AbstractModel[];
+
+    var onRender : function(:Context3D):void;
 
     /**
      * @constructor
@@ -250,29 +249,58 @@ class Engine {
         this.objects.push(o);
     }
 
-    function update() : void {
-        this.ctx.fillStyle = 'rgb(255, 255, 255)';
-        this.ctx.fillRect(0, 0, this.width, this.height);
+    function start() : void {
+        var fpsManager = new FpsManager('fps');
+        fpsManager.start();
+        var self = this;
+        var update = ():void -> {
+            log "render";
 
-        var camera = this.camera;
+            fpsManager.update();
 
-        var objects = [] : AbstractModel[];
-        for (var i=0; i<this.objects.length; i++) {
-            this.objects[i].applyViewMatrix(camera.viewMatrix);
-            if (!this.objects[i].isHidden(camera)) objects.push(this.objects[i]);
-        }
+            this.ctx.fillStyle = 'rgb(255, 255, 255)';
+            this.ctx.fillRect(0, 0, this.width, this.height);
 
-        objects = objects.sort((a:AbstractModel, b:AbstractModel) -> {
-            if (a.depth==b.depth) return b.vCenter.z - a.vCenter.z;
-            return b.depth - a.depth;
-        });
+            var context = new Context3D();
+            self.onRender(context);
 
-        var count = 0;
-        for (var i=0; i<objects.length; i++) {
-            if (objects[i].draw(this)) count++;
-        }
-        log 'draw ' + (count as string) + ' models';
+            for (var i=5; i>=0; i--) {
+                var modelList = context.models[i];
+                for (var j=0; j<modelList.length; j++) {
+                    var model = modelList[j];
+                    model.applyViewMatrix(self.camera.viewMatrix);
+                    if (!model.isHidden(self.camera)) model.draw(self);
+                }
+            }
+
+            Timer.setTimeout(update, 0);
+        };
+        Timer.setTimeout(update, 0);
     }
+
+    // function update() : void {
+    //     this.ctx.fillStyle = 'rgb(255, 255, 255)';
+    //     this.ctx.fillRect(0, 0, this.width, this.height);
+
+    //     var camera = this.camera;
+
+    //     var objects = [] : AbstractModel[];
+    //     for (var i=0; i<this.objects.length; i++) {
+    //         this.objects[i].applyViewMatrix(camera.viewMatrix);
+    //         if (!this.objects[i].isHidden(camera)) objects.push(this.objects[i]);
+    //     }
+
+    //     objects = objects.sort((a:AbstractModel, b:AbstractModel) -> {
+    //         if (a.depth==b.depth) return b.vCenter.z - a.vCenter.z;
+    //         return b.depth - a.depth;
+    //     });
+
+    //     var count = 0;
+    //     for (var i=0; i<objects.length; i++) {
+    //         if (objects[i].draw(this)) count++;
+    //     }
+    //     log 'draw ' + (count as string) + ' models';
+    // }
 
     function setScreenMatrix(width:number, height:number) : void {
         this.screenMatrix =
@@ -285,6 +313,41 @@ class Engine {
         this.transformationMatrix = this.screenMatrix.compose(this.camera.matrix);
     }
 
+}
+
+
+
+/**
+ * @class 3DのRenderingContextクラス
+ */
+class Context3D {
+
+    var depth : int;
+    var models : AbstractModel[][];
+
+    function constructor() {
+        this.depth = 3;
+        this.models = [
+            [] : AbstractModel[],
+            [] : AbstractModel[],
+            [] : AbstractModel[],
+            [] : AbstractModel[],
+            [] : AbstractModel[],
+            [] : AbstractModel[]
+        ] : AbstractModel[][];
+    }
+
+    function renderPolygon(vertices:Vector[], color:Color) : void {
+        this.models[this.depth].push(new Polygon(vertices, color));
+    }
+
+    function renderBillboard(center:Vector, width:int, height:int, src:string) : void {
+        this.models[this.depth].push(new Billboard(center, width, height, src));
+    }
+
+    function renderTexture(vertices:Vector[], src:string) : void {
+        this.models[this.depth].push(new SmoothTexture(vertices, src));
+    }
 }
 
 
@@ -346,7 +409,7 @@ class Camera {
     }
 
     /**
-     * Y軸を中心に反時計回りにカメラの向きを反時計回りに回転させる
+     * Y軸を中心にカメラの向きを反時計回りに回転させる
      * @param {number} rad 回転量
      */
     function rotateY(rad:number) : void {
@@ -455,13 +518,13 @@ class Color {
  * @property {Vector} vCenter view変換を行ったあとのcenter
  * @property {number} depth   centerとは無関係に描画順序を決定するための値
  *                            小さいほど手前に表示され、大きいほど奥に表示される
- *                            デフォルトで値は5とする
+ *                            デフォルトで値は3とする
  */
 abstract class AbstractModel {
 
     var center : Vector;
     var vCenter : Vector;
-    var depth : int = 5;
+    var depth : int = 3;
 
     /**
      * @description 引数に渡されたviewMatrixを用いて、ビュー座標系でのcenter(vCenter)を更新する
