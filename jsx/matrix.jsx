@@ -1,5 +1,9 @@
 import "./vector.jsx";
 
+/*
+ * @class 3次元ベクトルのための変換行列
+ * @description 高速化するため、行列の要素は配列でなくプロパティで持つ
+ */
 class Matrix {
 
     var m11 : number;
