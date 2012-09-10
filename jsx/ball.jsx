@@ -85,6 +85,28 @@ class Player {
         this.rot = Quaternion.rotating(0, 1, 0, 0);
     }
 
+    function moveForward() : void {
+        this.move(50, 0);
+    }
+
+    function move(dz:number, dx:number) : void {
+        var x = this.vx;
+        var z = this.vz;
+        var len = Math.sqrt(x*x+z*z);
+
+        // z, x 自体がsin, cos ?
+        if (Math.abs(z)>1e-9) z /= len;
+        if (Math.abs(x)>1e-9) x /= len;
+
+        var rad = Math.atan2(x, z);
+
+        var sin = Math.sin(rad);
+        var cos = Math.cos(rad);
+
+        this.az = cos*dz - sin*dx;
+        this.ax = sin*dz + cos*dx;
+    }
+
     function update(elapsedMsec:number) : void {
         var sec = elapsedMsec / 1000;
 
@@ -136,16 +158,38 @@ final class _Main {
 
             player.update(elapsedMsec);
 
-        };
+            var target = new Vector(player.x, player.y, player.z);
+            var view = (():Vector -> {
+                var z = - player.vz;
+                var x = - player.vx;
+                var len = Math.sqrt(z*z + x*x);
+                if (len<1e-9) {
+                    z = 1;
+                    x = 0;
+                } else {
+                    z /= len;
+                    x /= len;
+                }
 
-        log Quaternion.rotating(0.1, 1, 0, 0).mul(Quaternion.rotating(0.1, 1, 0, 0)).toString();
+                return new Vector(
+                    player.x + x*50,
+                    player.y + 20,
+                    player.z + z*50
+                );
+            })();
+            
+            log view.toString();
+
+            engine.camera.target = target;
+            engine.camera.view = view;
+            engine.camera.updateMatrix();
+
+        };
 
         var q = Quaternion.rotating(0, 0, 0, 0);
 
         engine.onRender = (context:Context3D):void -> {
-            log player.rot.toMatrix().toString();
-
-            context.translate(player.x, player.y, player.z);
+            context.translate(player.x, player.y-12, player.z);
             context.rotate(player.rot);
             Util3D.sphere(context, 8, 8);
             context.resetMatrix();
@@ -180,22 +224,26 @@ final class _Main {
             // console.log(e.keyCode);
             switch (ke.keyCode) {
                 case 119: // 'w'
-                    player.az = 50;
+                    // player.az = 50;
+                    player.move(50, 0);
                     // engine.camera.move(new Vector(0, 0, 10));
                     // engine.updateMatrix();
                     break;
                 case 115: // 's'
-                    player.az = -50;
+                    // player.az = -50;
+                    player.move(-50, 0);
                     // engine.camera.move(new Vector(0, 0,-10));
                     // engine.updateMatrix();
                     break;
                 case 97:  // 'a'
-                    player.ax = -50;
+                    // player.ax = -50;
+                    player.move(0,-50);
                     // engine.camera.rotateY(-Math.PI/32);
                     // engine.updateMatrix();
                     break;
                 case 100: // 'd'
-                    player.ax = 50;
+                    // player.ax = 50;
+                    player.move(0, 50);
                     // engine.camera.rotateY(Math.PI/32);
                     // engine.updateMatrix();
                     break;
