@@ -283,8 +283,14 @@ class Engine {
             for (var n=context.modelList2.head; n!=null; n=n.next()) n.value.draw(self);
             for (var n=context.modelList1.head; n!=null; n=n.next()) n.value.draw(self);
 
+            Timer.setTimeout(():void -> {
+                dom.window.scrollTo(0, 1);
+            }, 500);
+
             Timer.setTimeout(update, 0);
         };
+
+
 
         Timer.setTimeout(update, 0);
     }

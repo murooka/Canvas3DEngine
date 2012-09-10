@@ -177,8 +177,6 @@ final class _Main {
                     player.z + z*50
                 );
             })();
-            
-            log view.toString();
 
             engine.camera.target = target;
             engine.camera.view = view;
