@@ -98,6 +98,7 @@ class FpsManager {
 
     var stopwatch : Stopwatch;
     var recentlyMsecLog : number[];
+    var lastMsec : number;
     var fpsElement : Nullable.<HTMLElement>;
     var enabledHtmlLog : boolean;
     var enabledConsoleLog : boolean;
@@ -106,6 +107,7 @@ class FpsManager {
         this.fpsElement = null;
         this.stopwatch = new Stopwatch;
         this.recentlyMsecLog = [] : number[];
+        this.lastMsec = 0;
 
         this.enabledHtmlLog = false;
         this.enabledConsoleLog = true;
@@ -115,6 +117,7 @@ class FpsManager {
         this.fpsElement = dom.id(spanId);
         this.stopwatch = new Stopwatch;
         this.recentlyMsecLog = [] : number[];
+        this.lastMsec = 0;
 
         this.enabledHtmlLog = true;
         this.enabledConsoleLog = false;
@@ -124,16 +127,22 @@ class FpsManager {
         this.stopwatch.start();
     }
 
+    function lastLap() : number {
+        return this.lastMsec;
+    }
+
     /**
      * フレームを更新したタイミングで呼ぶことで、fpsを計算しdom要素またはconsoleに表示する
      */
     function update() : void {
         assert !this.stopwatch.isStopped();
 
+        var lap = this.stopwatch.lap();
+        this.lastMsec = lap;
         if (this.recentlyMsecLog.length < 1) {
-            this.recentlyMsecLog.push(this.stopwatch.lap());
+            this.recentlyMsecLog.push(lap);
         } else {
-            this.recentlyMsecLog.push(this.stopwatch.lap());
+            this.recentlyMsecLog.push(lap);
             this.recentlyMsecLog.shift();
         }
 
@@ -181,6 +190,7 @@ class Engine {
 
     var objects : AbstractModel[];
 
+    var onUpdate : function(:number):void;
     var onRender : function(:Context3D):void;
 
     /**
@@ -258,6 +268,8 @@ class Engine {
         var self = this;
         var update = ():void -> {
             fpsManager.update();
+
+            self.onUpdate(fpsManager.lastLap());
 
             this.ctx.fillStyle = 'rgb(255, 255, 255)';
             this.ctx.fillRect(0, 0, this.width, this.height);

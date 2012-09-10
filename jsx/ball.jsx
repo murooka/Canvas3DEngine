@@ -55,6 +55,67 @@ class Util3D {
 
 }
 
+
+
+class Player {
+
+    var r : number;
+    var x : number;
+    var y : number;
+    var z : number;
+    var vx : number;
+    var vy : number;
+    var vz : number;
+    var ax : number;
+    var ay : number;
+    var az : number;
+    var rot : Quaternion;
+
+    function constructor() {
+        this.r = 12;
+        this.x = 0;
+        this.y = 0;
+        this.z = 0;
+        this.vx = 0;
+        this.vy = 0;
+        this.vz = 0;
+        this.ax = 0;
+        this.ay = 0;
+        this.az = 0;
+        this.rot = Quaternion.rotating(0, 1, 0, 0);
+    }
+
+    function update(elapsedMsec:number) : void {
+        var sec = elapsedMsec / 1000;
+
+        this.vx += this.ax * sec;
+        this.vy += this.ay * sec;
+        this.vz += this.az * sec;
+
+        this.vx = Math.min(100, Math.max(-100, this.vx));
+        this.vy = Math.min(100, Math.max(-100, this.vy));
+        this.vz = Math.min(100, Math.max(-100, this.vz));
+
+        var dx = this.vx * sec;
+        var dy = this.vy * sec;
+        var dz = this.vz * sec;
+
+        this.x += dx;
+        this.y += dy;
+        this.z += dz;
+
+        var v = new Vector(dx, 0, dz);
+        var c = v.cross(new Vector(0, 1, 0)).unitSelf();
+        var q = Quaternion.rotating(v.abs()/this.r, c);
+
+        this.rot.mulSelf(q);
+    }
+
+
+}
+
+
+
 final class _Main {
     static function main(args:string[]) : void {
 
@@ -69,15 +130,24 @@ final class _Main {
             trees.push(new Vector(x, -3, z));
         }
 
+        var player = new Player;
 
-        var q = Quaternion.rotating(Math.PI/2, 1, 0, 0);
+        engine.onUpdate = (elapsedMsec:number):void -> {
+
+            player.update(elapsedMsec);
+
+        };
+
+        log Quaternion.rotating(0.1, 1, 0, 0).mul(Quaternion.rotating(0.1, 1, 0, 0)).toString();
+
+        var q = Quaternion.rotating(0, 0, 0, 0);
 
         engine.onRender = (context:Context3D):void -> {
+            log player.rot.toMatrix().toString();
 
-            context.translate(0, -12, 0);
-            q.mulSelf(Quaternion.rotating(0.01, 1, 0, 0));
-            context.rotate(q);
-            Util3D.sphere(context, 8, 12);
+            context.translate(player.x, player.y, player.z);
+            context.rotate(player.rot);
+            Util3D.sphere(context, 8, 8);
             context.resetMatrix();
 
             // context.renderTexture([
@@ -110,20 +180,24 @@ final class _Main {
             // console.log(e.keyCode);
             switch (ke.keyCode) {
                 case 119: // 'w'
-                    engine.camera.move(new Vector(0, 0, 10));
-                    engine.updateMatrix();
+                    player.az = 50;
+                    // engine.camera.move(new Vector(0, 0, 10));
+                    // engine.updateMatrix();
                     break;
                 case 115: // 's'
-                    engine.camera.move(new Vector(0, 0,-10));
-                    engine.updateMatrix();
+                    player.az = -50;
+                    // engine.camera.move(new Vector(0, 0,-10));
+                    // engine.updateMatrix();
                     break;
                 case 97:  // 'a'
-                    engine.camera.rotateY(-Math.PI/32);
-                    engine.updateMatrix();
+                    player.ax = -50;
+                    // engine.camera.rotateY(-Math.PI/32);
+                    // engine.updateMatrix();
                     break;
                 case 100: // 'd'
-                    engine.camera.rotateY(Math.PI/32);
-                    engine.updateMatrix();
+                    player.ax = 50;
+                    // engine.camera.rotateY(Math.PI/32);
+                    // engine.updateMatrix();
                     break;
                 case 106: // 'j'
                     break;

@@ -76,11 +76,23 @@ class Quaternion {
         ]);
     }
 
+    override function toString() : string {
+        var x = this.x.toFixed(3)  as string;
+        var y = this.y.toFixed(3)  as string;
+        var z = this.z.toFixed(3)  as string;
+        var t = this.t.toFixed(3)  as string;
+        return t + ' : (' + x + ', ' + y + ', ' + z + ', ' + ')';
+    }
+
     static function rotating(rad:number, x:number, y:number, z:number) : Quaternion {
         var cos = Math.cos(rad/2);
         var sin = Math.sin(rad/2);
 
         return new Quaternion(cos, x*sin, y*sin, z*sin);
+    }
+
+    static function rotating(rad:number, v:Vector) : Quaternion {
+        return Quaternion.rotating(rad, v.x, v.y, v.z);
     }
 
     static function rotate(src:Vector, axis:Vector, rad:number) : Vector {
