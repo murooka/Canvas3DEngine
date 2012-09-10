@@ -159,24 +159,23 @@ final class _Main {
             player.update(elapsedMsec);
 
             var target = new Vector(player.x, player.y, player.z);
-            var view = (():Vector -> {
-                var z = - player.vz;
-                var x = - player.vx;
-                var len = Math.sqrt(z*z + x*x);
-                if (len<1e-9) {
-                    z = 1;
-                    x = 0;
-                } else {
-                    z /= len;
-                    x /= len;
-                }
 
-                return new Vector(
-                    player.x + x*50,
-                    player.y + 20,
-                    player.z + z*50
-                );
-            })();
+            var z = - player.vz;
+            var x = - player.vx;
+            var len = Math.sqrt(z*z + x*x);
+            if (len<1e-9) {
+                z = 1;
+                x = 0;
+            } else {
+                z /= len;
+                x /= len;
+            }
+
+            var view =  new Vector(
+                player.x + x*50,
+                player.y + 20,
+                player.z + z*50
+            );
 
             engine.camera.target = target;
             engine.camera.view = view;
