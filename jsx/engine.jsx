@@ -179,6 +179,8 @@ class FpsManager {
  */
 class Engine {
 
+    var isMobile : boolean;
+
     var canvas : HTMLCanvasElement;
     var ctx : CanvasRenderingContext2D;
     var width : number;
@@ -198,6 +200,8 @@ class Engine {
      * @param {String} canvas_id 利用するcanvas(DOM)のid
      */
     function constructor(canvasId:string) {
+        this.isMobile = /iPhone/.test(dom.window.navigator.userAgent);
+
         this.canvas = dom.id(canvasId) as HTMLCanvasElement;
         this.ctx = this.canvas.getContext('2d') as CanvasRenderingContext2D;
 

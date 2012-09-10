@@ -216,40 +216,57 @@ final class _Main {
 
         };
 
-        dom.window.document.onkeypress = (e:Event):void -> {
-            var ke = e as KeyboardEvent;
-            // console.log(e.keyCode);
-            switch (ke.keyCode) {
-                case 119: // 'w'
-                    // player.az = 50;
-                    player.move(50, 0);
-                    // engine.camera.move(new Vector(0, 0, 10));
-                    // engine.updateMatrix();
-                    break;
-                case 115: // 's'
-                    // player.az = -50;
-                    player.move(-50, 0);
-                    // engine.camera.move(new Vector(0, 0,-10));
-                    // engine.updateMatrix();
-                    break;
-                case 97:  // 'a'
-                    // player.ax = -50;
-                    player.move(0,-50);
-                    // engine.camera.rotateY(-Math.PI/32);
-                    // engine.updateMatrix();
-                    break;
-                case 100: // 'd'
-                    // player.ax = 50;
-                    player.move(0, 50);
-                    // engine.camera.rotateY(Math.PI/32);
-                    // engine.updateMatrix();
-                    break;
-                case 106: // 'j'
-                    break;
-                case 107: // 'k'
-                    break;
-            }
-        };
+        if (engine.isMobile) {
+
+            dom.window.addEventListener('devicemotion', (e:Event):void -> {
+                var de = e as DeviceOrientationEvent;
+
+                var az = (de.accelerationIncludingGravity['y'] as number) * 30;
+                var ax = (de.accelerationIncludingGravity['x'] as number) * 30;
+                // player.move(az, ax);
+                player.move(50, 0);
+            });
+
+        } else {
+
+            dom.window.alert('PC');
+            
+            dom.window.document.onkeypress = (e:Event):void -> {
+                var ke = e as KeyboardEvent;
+                // console.log(e.keyCode);
+                switch (ke.keyCode) {
+                    case 119: // 'w'
+                        // player.az = 50;
+                        player.move(50, 0);
+                        // engine.camera.move(new Vector(0, 0, 10));
+                        // engine.updateMatrix();
+                        break;
+                    case 115: // 's'
+                        // player.az = -50;
+                        player.move(-50, 0);
+                        // engine.camera.move(new Vector(0, 0,-10));
+                        // engine.updateMatrix();
+                        break;
+                    case 97:  // 'a'
+                        // player.ax = -50;
+                        player.move(0,-50);
+                        // engine.camera.rotateY(-Math.PI/32);
+                        // engine.updateMatrix();
+                        break;
+                    case 100: // 'd'
+                        // player.ax = 50;
+                        player.move(0, 50);
+                        // engine.camera.rotateY(Math.PI/32);
+                        // engine.updateMatrix();
+                        break;
+                    case 106: // 'j'
+                        break;
+                    case 107: // 'k'
+                        break;
+                }
+            };
+
+        }
 
         engine.start();
 
