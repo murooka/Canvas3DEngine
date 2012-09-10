@@ -94,7 +94,7 @@ class List.<T> {
     override function toString() : string {
         var str = 'list : [';
         for (var n=this.head; n!=null; n=n.next()) {
-            str += ' ' + (n.value as string) + ',';
+            str += ' ' + n.value.toString() + ',';
         }
         str += ']';
         return str;
