@@ -91,14 +91,14 @@ class List.<T> {
         return this;
     }
 
-    // override function toString() : string {
-    //     var str = 'list : [';
-    //     for (var n=this.head; n!=null; n=n.next()) {
-    //         str += ' ' + (n.value as string) + ',';
-    //     }
-    //     str += ']';
-    //     return str;
-    // }
+    override function toString() : string {
+        var str = 'list : [';
+        for (var n=this.head; n!=null; n=n.next()) {
+            str += ' ' + (n.value as string) + ',';
+        }
+        str += ']';
+        return str;
+    }
 
 }
 

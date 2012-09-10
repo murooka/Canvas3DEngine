@@ -16,7 +16,7 @@ class List.<T> {
     override function toString() : string {
         var str = '';
         for (var n=this.head; n!=null; n=n.next()) {
-            str += (n.value as string) + ',';
+            str += n.value.toString() + ',';
         }
         return str;
     }
@@ -46,7 +46,8 @@ class Node.<T> {
 class _Main {
 
     final static function main(args:string[]) : void {
-        var list = new List.<int>();
+        var list = new List.<int>;
+        log list.toString();
     }
 
 }
