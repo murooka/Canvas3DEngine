@@ -193,7 +193,7 @@ class Engine {
     var objects : AbstractModel[];
 
     var onUpdate : function(:number):void;
-    var onRender : function(:Context3D):void;
+    var onRender : function(:Context3D, :number):void;
 
     /**
      * @constructor
@@ -273,13 +273,14 @@ class Engine {
         var update = ():void -> {
             fpsManager.update();
 
-            self.onUpdate(fpsManager.lastLap());
+            var lap = fpsManager.lastLap();
+            self.onUpdate(lap);
 
             this.ctx.fillStyle = 'rgb(255, 255, 255)';
             this.ctx.fillRect(0, 0, this.width, this.height);
 
             var context = new Context3D(self.camera);
-            self.onRender(context);
+            self.onRender(context, lap);
 
             for (var n=context.modelList5.head; n!=null; n=n.next()) n.value.draw(self);
             for (var n=context.modelList4.head; n!=null; n=n.next()) n.value.draw(self);
