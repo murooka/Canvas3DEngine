@@ -80,7 +80,7 @@ class Player {
         this.vy = 0;
         this.vz = 0;
         this.ax = 0;
-        this.ay = 0;
+        this.ay = -120;
         this.az = 0;
         this.rot = Quaternion.rotating(0, 1, 0, 0);
     }
@@ -114,9 +114,9 @@ class Player {
         this.vy += this.ay * sec;
         this.vz += this.az * sec;
 
-        this.vx = Math.min(100, Math.max(-100, this.vx));
-        this.vy = Math.min(100, Math.max(-100, this.vy));
-        this.vz = Math.min(100, Math.max(-100, this.vz));
+        this.vx = Math.min( 100, Math.max( -100, this.vx));
+        this.vy = Math.min(3000, Math.max(-3000, this.vy));
+        this.vz = Math.min( 100, Math.max( -100, this.vz));
 
         var dx = this.vx * sec;
         var dy = this.vy * sec;
@@ -125,6 +125,9 @@ class Player {
         this.x += dx;
         this.y += dy;
         this.z += dz;
+
+        this.vx -= Math.abs(dx) * this.vx * 0.01;
+        this.vz -= Math.abs(dz) * this.vz * 0.01;
 
         var v = new Vector(dx, 0, dz);
         var c = v.cross(new Vector(0, 1, 0)).unitSelf();
@@ -157,6 +160,12 @@ final class _Main {
         engine.onUpdate = (elapsedMsec:number):void -> {
 
             player.update(elapsedMsec);
+
+            // 床との当たり判定
+            if (player.y < 0) {
+                player.vy = - player.vy * 0.5;
+                player.y = 0;
+            }
 
             var target = new Vector(player.x, player.y, player.z);
 
@@ -234,34 +243,38 @@ final class _Main {
             dom.window.document.onkeypress = (e:Event):void -> {
                 var ke = e as KeyboardEvent;
                 // console.log(e.keyCode);
+                var accel = 80;
                 switch (ke.keyCode) {
                     case 119: // 'w'
                         // player.az = 50;
-                        player.move(50, 0);
+                        player.move(accel, 0);
                         // engine.camera.move(new Vector(0, 0, 10));
                         // engine.updateMatrix();
                         break;
                     case 115: // 's'
                         // player.az = -50;
-                        player.move(-50, 0);
+                        player.move(0, 0);
                         // engine.camera.move(new Vector(0, 0,-10));
                         // engine.updateMatrix();
                         break;
                     case 97:  // 'a'
                         // player.ax = -50;
-                        player.move(0,-50);
+                        player.move(0,-accel);
                         // engine.camera.rotateY(-Math.PI/32);
                         // engine.updateMatrix();
                         break;
                     case 100: // 'd'
                         // player.ax = 50;
-                        player.move(0, 50);
+                        player.move(0, accel);
                         // engine.camera.rotateY(Math.PI/32);
                         // engine.updateMatrix();
                         break;
                     case 106: // 'j'
                         break;
                     case 107: // 'k'
+                        break;
+                    case 32:  // ' '
+                        player.vy = 80;
                         break;
                 }
             };

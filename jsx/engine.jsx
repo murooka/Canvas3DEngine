@@ -545,14 +545,18 @@ class Color {
         this.b = b;
     }
 
-    function toHexString() : string {
-        var to2digitHex = (value:int) : string -> {
-            var str = Math.floor(value).toString(16);
-            if (str.length==1) str = '0' + str;
-            return str;
-        };
+    function _to2DigitHex(value:int) : string {
+        var str = Math.floor(value).toString(16);
+        if (str.length==1) str = '0' + str;
+        return str;
+    }
 
-        return to2digitHex(this.r) + to2digitHex(this.g) + to2digitHex(this.b);
+    function toHexString() : string {
+        return this._to2DigitHex(this.r) + this._to2DigitHex(this.g) + this._to2DigitHex(this.b);
+    }
+
+    override function toString() : string {
+        return '#' + this._to2DigitHex(this.r) + this._to2DigitHex(this.g) + this._to2DigitHex(this.b);
     }
 
     /**
