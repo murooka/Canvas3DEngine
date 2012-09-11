@@ -97,7 +97,7 @@ class Player {
         var z = this.vz;
         var len = Math.sqrt(x*x+z*z);
 
-        // z, x $B<+BN$,(Bsin, cos ?
+        // z, x 自体がsin, cos ?
         if (Math.abs(z)>1e-9) z /= len;
         if (Math.abs(x)>1e-9) x /= len;
 
@@ -173,7 +173,7 @@ final class _Main {
 
             player.update(elapsedMsec);
 
-            // $B>2$H$NEv$?$jH=Dj(B
+            // 床との当たり判定
             if (player.y < 0) {
                 player.vy = - player.vy * 0.5;
                 player.y = 0;
