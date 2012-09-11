@@ -1007,18 +1007,10 @@ class SmoothTexture extends Polygon {
                 divideAndDrawImage(image, wlc, wlb, wrb, wrc, slc, slb, srb, src, depth+1, sx, sy+sh/2, sw, sh/2); // 下側部分
             } else {
 
-                var maxX = Math.max(slt.x, slb.x, srb.x, srt.x);
-                var minX = Math.min(slt.x, slb.x, srb.x, srt.x);
-                var maxY = Math.max(slt.y, slb.y, srb.y, srt.y);
-                var minY = Math.min(slt.y, slb.y, srb.y, srt.y);
-
-                var scaleX   = (maxX-minX) / sw;
-                var scaleY   = (maxY-minY) / sh;
-                if (slt.x > srt.x) scaleX = -scaleX;
-                if (slt.y > slb.y) scaleY = -scaleY;
+                var scaleX   = (srt.x - slt.x) / sw;
+                var scaleY   = (slb.y - slt.y) / sh;
                 var skewingX = (srt.y-slt.y) / (srt.x-slt.x);
                 var skewingY = (slb.x-slt.x) / (slb.y-slt.y);
-
 
                 ctx.transform(1, 0, 0, 1, slt.x, slt.y);
                 ctx.transform(1, skewingX, skewingY, 1, 0, 0);
