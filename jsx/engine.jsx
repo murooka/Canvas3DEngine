@@ -373,6 +373,10 @@ class Context3D {
         this.renderModel(new Billboard(center, width, height, src));
     }
 
+    function renderTexture(vertices:Vector[], src:string, maxHorDiv:int, maxVerDiv:int, maxDiv:int, minDiv:int) : void {
+        this.renderModel(new SmoothTexture(vertices, src, maxHorDiv, maxVerDiv, maxDiv, minDiv));
+    }
+
     function renderTexture(vertices:Vector[], src:string) : void {
         this.renderModel(new SmoothTexture(vertices, src));
     }
@@ -861,13 +865,27 @@ class SmoothTexture extends Polygon {
     var width : number;
     var height : number;
 
+    var maxHorizontalDiv : int;
+    var maxVerticalDiv : int;
+    var maxDiv : int;
+    var minDiv : int;
+
+
+    function constructor(vertices:Vector[], src:string) {
+        this(vertices, src, 6, 6, 4, 2);
+    }
+
     /**
      * @constructor
      * @description verticesは画像の左下に対応する点から、反時計回りで指定する
-     * @param {Vector[]}  vertices ポリゴンの頂点座標の配列
-     * @param {String}    src      テクスチャに使う画像ファイル名
+     * @param {Vector[]}  vertices  ポリゴンの頂点座標の配列
+     * @param {String}    src       テクスチャに使う画像ファイル名
+     * @param {int}       maxHorDiv 描画時に水平分割を行う最大数
+     * @param {int}       maxVerDiv 描画時に垂直分割を行う最大数
+     * @param {int}       maxDiv    描画時に4分割を行う最大数
+     * @param {int}       minDiv    描画時に必ず4分割を行う回数
      */
-    function constructor(vertices:Vector[], src:string) {
+    function constructor(vertices:Vector[], src:string, maxHorDiv:int, maxVerDiv:int, maxDiv:int, minDiv:int) {
         super(vertices, new Color(0, 0, 0));
 
         this.src = src;
@@ -876,6 +894,10 @@ class SmoothTexture extends Polygon {
 
         this.width  = Math.abs(vertices[1].sub(vertices[0]).abs());
         this.height = Math.abs(vertices[2].sub(vertices[1]).abs());
+
+        this.maxHorizontalDiv = maxHorDiv;
+        this.maxVerticalDiv   = maxVerDiv;
+        this.minDiv           = minDiv;
 
         this.updateCenter();
     }
@@ -980,7 +1002,7 @@ class SmoothTexture extends Polygon {
             var splittingHorizontal = widthRatio > 1.01;
             var splittingVertical   = heightRatio > 1.01;
 
-            if (depth <= 2 || (depth <=4 && splittingHorizontal && splittingVertical)) {
+            if (depth <= this.minDiv || (depth <= this.maxDiv && splittingHorizontal && splittingVertical)) {
                 var wct = wlt.add(wrt).divSelf(2);
                 var wcb = wlb.add(wrb).divSelf(2);
                 var wlc = wlt.add(wlb).divSelf(2);
@@ -997,7 +1019,7 @@ class SmoothTexture extends Polygon {
                 divideAndDrawImage(image, wlc, wlb, wcb, wcc, slc, slb, scb, scc, depth+1,      sx, sy+sh/2, sw/2, sh/2); // 左下部分
                 divideAndDrawImage(image, wct, wcc, wrc, wrt, sct, scc, src, srt, depth+1, sx+sw/2, sy     , sw/2, sh/2); // 右上部分
                 divideAndDrawImage(image, wcc, wcb, wrb, wrc, scc, scb, srb, src, depth+1, sx+sw/2, sy+sh/2, sw/2, sh/2); // 右下部分
-            } else if (depth <= 6 && splittingVertical) {
+            } else if (depth <= this.maxVerticalDiv && splittingVertical) {
                 var wct = wlt.add(wrt).divSelf(2);
                 var wcb = wlb.add(wrb).divSelf(2);
 
@@ -1006,7 +1028,7 @@ class SmoothTexture extends Polygon {
 
                 divideAndDrawImage(image, wlt, wlb, wcb, wct, slt, slb, scb, sct, depth+1,      sx, sy, sw/2, sh); // 左側部分
                 divideAndDrawImage(image, wct, wcb, wrb, wrt, sct, scb, srb, srt, depth+1, sx+sw/2, sy, sw/2, sh); // 右側部分
-            } else if (depth <= 6 && splittingHorizontal) {
+            } else if (depth <= this.maxHorizontalDiv && splittingHorizontal) {
                 var wlc = wlt.add(wlb).divSelf(2);
                 var wrc = wrt.add(wrb).divSelf(2);
 

@@ -210,7 +210,7 @@ final class _Main {
             Util3D.sphere(context, 8, 8);
             context.resetMatrix();
 
-            var axis = Quaternion.rotating(totalElapsedMsec/1000, 0, 1, 0);
+            var axis = Quaternion.rotating(Math.PI*totalElapsedMsec/200, 0, 1, 0);
 
             for (var i=0; i<items.length; i++) {
                 var x = items[i].x;
@@ -224,7 +224,7 @@ final class _Main {
                     new Vector( 15,-10, 0),
                     new Vector( 15, 10, 0),
                     new Vector(-15, 10, 0)
-                ], './image/redbull_free.png');
+                ], './image/redbull_free.png', 2, 2, 1, 1);
                 context.popMatrix();
             }
 
@@ -266,6 +266,10 @@ final class _Main {
                 var ax = (de.accelerationIncludingGravity['x'] as number) * 30;
                 az = Math.max(ax, 0);
                 player.move(az, ax);
+            });
+
+            dom.window.addEventListener('touchstart', (e:Event):void -> {
+                player.vy = 80;
             });
 
         } else {
