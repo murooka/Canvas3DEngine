@@ -73,6 +73,7 @@ class Player {
     var ay : number;
     var az : number;
     var rot : Quaternion;
+    var radius : int;
 
     function constructor() {
         this.r = 12;
@@ -86,6 +87,7 @@ class Player {
         this.ay = -120;
         this.az = 0;
         this.rot = Quaternion.rotating(0, 1, 0, 0);
+        this.radius = 8;
     }
 
     function moveForward() : void {
@@ -151,20 +153,22 @@ final class _Main {
 
         var engine = new Engine('canvas');
 
-        // engine.setSkyImage('./image/sky1.jpg');
+        engine.setSkyImage('./image/sky1.jpg');
 
-        var trees = [] : Vector[];
-        for (var i=0; i<100; i++) {
+        var trees = new List.<Vector>;
+        var treeRadius = 30;
+        for (var i=0; i<10; i++) {
             var x = Math.floor((Math.random()-0.5)*20)*25;
             var z = Math.floor((Math.random()-0.5)*20)*25;
-            trees.push(new Vector(x, -3, z));
+            trees.append(new Vector(x, -3, z));
         }
 
-        var items = [] : Vector[];
+        var items = new List.<Vector>;
+        var itemRadius = 8;
         for (var i=0; i<10; i++) {
             var x = Math.floor((Math.random()-0.5)*500);
             var z = Math.floor((Math.random()-0.5)*500);
-            items.push(new Vector(x, -10, z));
+            items.append(new Vector(x, -10, z));
         }
 
         var player = new Player;
@@ -178,6 +182,40 @@ final class _Main {
                 player.vy = - player.vy * 0.5;
                 player.y = 0;
             }
+
+            // 木との当たり判定
+            for (var n=trees.head; n; n=n.next()) {
+                var tree = n.value;
+                var dx = player.x - tree.x;
+                var dy = player.y - tree.y;
+                var dz = player.z - tree.z;
+
+                var dr = treeRadius + player.radius;
+
+                if (dx*dx+dy*dy+dz*dz < dr*dr) {
+                    var normalVec = new Vector(dx, dy, dz).unitSelf();
+                    var a = Math.sqrt(player.vx*player.vx+player.vy*player.vy+player.vz*player.vz);
+                    player.vx += 2 * a * normalVec.x;
+                    player.vy += 2 * a * normalVec.y;
+                    player.vz += 2 * a * normalVec.z;
+                }
+            }
+
+            // アイテムとの当たり判定
+            for (var n=items.head; n; n=n.next()) {
+                var item = n.value;
+                var dx = item.x - player.x;
+                var dy = item.y - player.y;
+                var dz = item.z - player.z;
+
+                var dr = itemRadius + player.radius;
+
+                if (dx*dx+dy*dy+dz*dz < dr*dr) {
+                    items.remove(n);
+                }
+            }
+
+
 
             var target = new Vector(player.x, player.y, player.z);
 
@@ -216,26 +254,38 @@ final class _Main {
 
             context.translate(player.x, player.y-12, player.z);
             context.rotate(player.rot);
-            Util3D.sphere(context, 8, 6);
+            Util3D.sphere(context, player.radius, 6);
             context.resetMatrix();
 
-            // var axis = Quaternion.rotating(Math.PI*totalElapsedMsec/200, 0, 1, 0);
+            var axis = Quaternion.rotating(Math.PI*totalElapsedMsec/1000, 0, 1, 0);
 
-            // for (var i=0; i<items.length; i++) {
-            //     var x = items[i].x;
-            //     var y = items[i].y;
-            //     var z = items[i].z;
-            //     context.pushMatrix();
-            //     context.translate(x, y, z);
-            //     context.rotate(axis);
-            //     context.renderTexture([
-            //         new Vector(-15,-10, 0),
-            //         new Vector( 15,-10, 0),
-            //         new Vector( 15, 10, 0),
-            //         new Vector(-15, 10, 0)
-            //     ], './image/redbull_free.png', 2, 2, 1, 1);
-            //     context.popMatrix();
-            // }
+            for (var n=items.head; n; n=n.next()) {
+                var item = n.value;
+                var x = item.x;
+                var y = item.y;
+                var z = item.z;
+                context.pushMatrix();
+                context.translate(x, y, z);
+                context.rotate(axis);
+                context.renderTexture([
+                    new Vector(-15,-10, 0),
+                    new Vector( 15,-10, 0),
+                    new Vector( 15, 10, 0),
+                    new Vector(-15, 10, 0)
+                ], './image/redbull_free.png', 2, 2, 1, 1);
+                context.popMatrix();
+            }
+
+            for (var n=trees.head; n; n=n.next()) {
+                var tree = n.value;
+                var x = tree.x;
+                var y = tree.y;
+                var z = tree.z;
+                context.pushMatrix();
+                context.translate(x, y, z);
+                context.renderBillboard(new Vector(0, 0, 0), 50, 34, './image/tree.png');
+                context.popMatrix();
+            }
 
             // context.translate(0, 0, 100);
             // context.rotate(axis);
@@ -303,6 +353,7 @@ final class _Main {
                         player.move(0, accel);
                         break;
                     case 106: // 'j'
+                        log items;
                         break;
                     case 107: // 'k'
                         break;

@@ -55,6 +55,16 @@ class List.<T> {
         return this;
     }
 
+    function remove(node:Node.<T>) : T {
+        if (node._prev) node._prev._next = node._next;
+        else            this.head = node._next;
+
+        if (node._next) node._next._prev = node._prev;
+        else            this.tail = node._prev;
+
+        return node.value;
+    }
+
     function removeFirst() : T {
         var node = this.head;
 
