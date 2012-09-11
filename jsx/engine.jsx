@@ -195,6 +195,9 @@ class Engine {
 
     var onUpdate : function(:number):void;
     var onRender : function(:Context3D, :number):void;
+    
+    var skyImageSrc : Nullable.<string>;
+    var skyImage : Nullable.<HTMLImageElement>;
 
     /**
      * @constructor
@@ -211,6 +214,9 @@ class Engine {
         this.setScreenMatrix(this.width, this.height);
 
         this.objects = [] : AbstractModel[];
+
+        this.skyImageSrc = null;
+        this.skyImage = null;
 
 
         var viewPosition   = new Vector(0,  0,-90);
@@ -262,6 +268,11 @@ class Engine {
         }
     }
 
+    function setSkyImage(src:string) : void {
+        this.skyImageSrc = src;
+        this.skyImage = Engine.images[src];
+    }
+
     function addModel(o : AbstractModel) : void {
         this.objects.push(o);
     }
@@ -277,8 +288,14 @@ class Engine {
             var lap = fpsManager.lastLap();
             self.onUpdate(lap);
 
-            this.ctx.fillStyle = 'rgb(255, 255, 255)';
-            this.ctx.fillRect(0, 0, this.width, this.height);
+            if (self.skyImage && Engine.isLoadedImage[self.skyImageSrc]) {
+                self.ctx.fillStyle = 'rgb(255, 255, 255)';
+                self.ctx.fillRect(0, 0, this.width, this.height);
+                self.renderSkyImage();
+            } else {
+                self.ctx.fillStyle = 'rgb(255, 255, 255)';
+                self.ctx.fillRect(0, 0, this.width, this.height);
+            }
 
             var context = new Context3D(self.camera);
             self.onRender(context, lap);
@@ -298,6 +315,46 @@ class Engine {
 
         Timer.setTimeout(update, 0);
     }
+
+    // upperVectorが(0, 1, 0)の場合にしか対応できないかもしれない
+    function renderSkyImage() : void {
+        // image上の座標系の値はiを、screen上の座標系の値はsを、prefixとしてつける
+        // TODO: 計算式を綺麗にする 一度割合を求めると楽になる
+
+        var lookingVec = this.camera.target.sub(this.camera.view);
+        var x = lookingVec.x;
+        var y = - lookingVec.y;
+        var z = lookingVec.z;
+
+        var horRad = Math.atan2(x, z);
+        var verRad = Math.atan2(y, Math.sqrt(x*x+z*z));
+
+        var imgWidth  = this.skyImage.width;
+        var imgHeight = this.skyImage.height;
+
+        var iCenterX = ((horRad / Math.PI / 2) + 0.5) * imgWidth;
+        var iCenterY = ((verRad / Math.PI) + 0.5) * imgHeight;
+
+        var iWidth  = this.camera.fovyX / Math.PI / 2 * imgWidth;
+        var iHeight = iWidth * this.camera.aspectRatio;
+
+        var sx = iCenterX - iWidth/2;
+        var sy = iCenterY - iHeight/2;
+        if (sx < 0) sx += imgWidth;
+        if (sy < 0) sy += imgHeight;
+        var sw = iWidth;
+        var sh = iHeight;
+
+        var overflowingRight = (sx + sw > imgWidth);  // 画像の右側がはみ出る
+        if (overflowingRight) {
+            this.ctx.drawImage(this.skyImage, sx, sy,    imgWidth-sx, sh,                           0, 0,    this.width*(imgWidth-sx)/sw, this.height);
+            this.ctx.drawImage(this.skyImage,  0, sy, sx+sw-imgWidth, sh, this.width*(imgWidth-sx)/sw, 0, this.width*(sx+sw-imgWidth)/sw, this.height);
+        } else {
+            this.ctx.drawImage(this.skyImage, sx, sy, sw, sh, 0, 0, this.width, this.height);
+        }
+
+    }
+    
 
     function setScreenMatrix(width:number, height:number) : void {
         this.screenMatrix =
@@ -329,7 +386,7 @@ class Context3D {
     var modelList4 = List.<AbstractModel>;
     var modelList5 = List.<AbstractModel>;
 
-    var polygonGroup : Polygon[];
+    var polygonList : List.<Polygon>;
     var groupCenter : Vector;
     var ignoringZHidden : boolean;
 
@@ -344,7 +401,6 @@ class Context3D {
         this.modelList4 = new List.<AbstractModel>;
         this.modelList5 = new List.<AbstractModel>;
 
-        this.polygonGroup = [] : Polygon[];
     }
 
 
@@ -394,7 +450,7 @@ class Context3D {
     }
 
     function beginGroup(center:Vector, ignoringZHidden:boolean) : void {
-        this.polygonGroup = [] : Polygon[];
+        this.polygonList = new List.<Polygon>;
         this.groupCenter = center;
         this.ignoringZHidden = ignoringZHidden;
     }
@@ -405,12 +461,13 @@ class Context3D {
         polygon.applyViewMatrix(this.camera.viewMatrix);
         if (polygon.isHidden(this.camera)) return;
 
-        this.polygonGroup.push(polygon);
+        this.polygonList.prepend(polygon);
     }
 
     function endGroup() : void {
-        assert this.polygonGroup.length != 0;
-        this.renderModel(new Model(this.polygonGroup, this.groupCenter, this.ignoringZHidden));
+        if (this.polygonList.length != 0) {
+            this.renderModel(new Model(this.polygonList, this.groupCenter, this.ignoringZHidden));
+        }
     }
 
 
@@ -854,18 +911,18 @@ class Polygon extends AbstractModel {
  */
 class Model extends AbstractModel {
 
-    var polygons : Polygon[];
+    var polygons : List.<Polygon>;
     var ignoringZHidden : boolean;
 
     /*
      * @param {Polygon[]}  polygons Polygonの配列
      * @param {Vector}     center   world座標系での原点からの相対ベクトル
      */
-    function constructor(polygons:Polygon[], center:Vector) {
+    function constructor(polygons:List.<Polygon>, center:Vector) {
         this(polygons, center, false);
     }
 
-    function constructor(polygons:Polygon[], center:Vector, ignoringZHidden:boolean) {
+    function constructor(polygons:List.<Polygon>, center:Vector, ignoringZHidden:boolean) {
         this.polygons = polygons;
         this.center = center;
         this.ignoringZHidden = ignoringZHidden;
@@ -894,11 +951,17 @@ class Model extends AbstractModel {
     override function draw(engine:Engine) : boolean {
         var polygons = this.polygons;
 
-        for (var i=0; i<this.polygons.length; i++) {
-            var polygon = this.polygons[i];
+        for (var n=polygons.head; n!=null; n=n.next()) {
+            var polygon = n.value;
             if (polygon.isHidden(engine.camera)) continue;
             polygon.draw(engine);
         }
+
+        // for (var i=0; i<polygons.length; i++) {
+        //     var polygon = polygons[i];
+        //     if (polygon.isHidden(engine.camera)) continue;
+        //     polygon.draw(engine);
+        // }
 
         return true;
     }

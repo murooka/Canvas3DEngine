@@ -147,9 +147,11 @@ class Player {
 final class _Main {
     static function main(args:string[]) : void {
 
-        Engine.loadImages(['./image/tree.png', './image/so-nya.png', './image/redbull_free.png']);
+        Engine.loadImages(['./image/tree.png', './image/so-nya.png', './image/redbull_free.png', './image/sky1.jpg']);
 
         var engine = new Engine('canvas');
+
+        // engine.setSkyImage('./image/sky1.jpg');
 
         var trees = [] : Vector[];
         for (var i=0; i<100; i++) {
@@ -190,9 +192,15 @@ final class _Main {
                 x /= len;
             }
 
+
+            var yOffset = 10;
+            var xzVelocity = Math.sqrt(player.vx*player.vx+player.vz*player.vz);
+            if (xzVelocity < 50) {
+                yOffset -= (50 - xzVelocity) * 0.6;
+            }
             var view =  new Vector(
                 player.x + x*50,
-                player.y + 20,
+                player.y*1.2 + yOffset,
                 player.z + z*50
             );
 
@@ -202,34 +210,32 @@ final class _Main {
 
         };
 
-        var q = Quaternion.rotating(0, 0, 0, 0);
-
         var totalElapsedMsec = 0;
         engine.onRender = (context:Context3D, elapsedMsec:number):void -> {
             totalElapsedMsec += elapsedMsec;
 
             context.translate(player.x, player.y-12, player.z);
             context.rotate(player.rot);
-            Util3D.sphere(context, 8, 8);
+            Util3D.sphere(context, 8, 6);
             context.resetMatrix();
 
-            var axis = Quaternion.rotating(Math.PI*totalElapsedMsec/200, 0, 1, 0);
+            // var axis = Quaternion.rotating(Math.PI*totalElapsedMsec/200, 0, 1, 0);
 
-            for (var i=0; i<items.length; i++) {
-                var x = items[i].x;
-                var y = items[i].y;
-                var z = items[i].z;
-                context.pushMatrix();
-                context.translate(x, y, z);
-                context.rotate(axis);
-                context.renderTexture([
-                    new Vector(-15,-10, 0),
-                    new Vector( 15,-10, 0),
-                    new Vector( 15, 10, 0),
-                    new Vector(-15, 10, 0)
-                ], './image/redbull_free.png', 2, 2, 1, 1);
-                context.popMatrix();
-            }
+            // for (var i=0; i<items.length; i++) {
+            //     var x = items[i].x;
+            //     var y = items[i].y;
+            //     var z = items[i].z;
+            //     context.pushMatrix();
+            //     context.translate(x, y, z);
+            //     context.rotate(axis);
+            //     context.renderTexture([
+            //         new Vector(-15,-10, 0),
+            //         new Vector( 15,-10, 0),
+            //         new Vector( 15, 10, 0),
+            //         new Vector(-15, 10, 0)
+            //     ], './image/redbull_free.png', 2, 2, 1, 1);
+            //     context.popMatrix();
+            // }
 
             // context.translate(0, 0, 100);
             // context.rotate(axis);
@@ -265,7 +271,7 @@ final class _Main {
         if (engine.isMobile) {
 
             dom.window.addEventListener('devicemotion', (e:Event):void -> {
-                var de = e as DeviceOrientationEvent;
+                var de = e as DeviceMotionEvent;
 
                 var az = (de.accelerationIncludingGravity['y'] as number) * 30;
                 var ax = (de.accelerationIncludingGravity['x'] as number) * 30;
