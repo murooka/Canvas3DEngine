@@ -144,7 +144,7 @@ class Player {
 final class _Main {
     static function main(args:string[]) : void {
 
-        Engine.loadImages(['./image/tree.png', './image/so-nya.png']);
+        Engine.loadImages(['./image/tree.png', './image/so-nya.png', './image/redbull_free.png']);
 
         var engine = new Engine('canvas');
 
@@ -153,6 +153,13 @@ final class _Main {
             var x = Math.floor((Math.random()-0.5)*20)*25;
             var z = Math.floor((Math.random()-0.5)*20)*25;
             trees.push(new Vector(x, -3, z));
+        }
+
+        var items = [] : Vector[];
+        for (var i=0; i<10; i++) {
+            var x = Math.floor((Math.random()-0.5)*500);
+            var z = Math.floor((Math.random()-0.5)*500);
+            items.push(new Vector(x, -10, z));
         }
 
         var player = new Player;
@@ -194,11 +201,30 @@ final class _Main {
 
         var q = Quaternion.rotating(0, 0, 0, 0);
 
+        var totalElapsedMsec = 0;
         engine.onRender = (context:Context3D, elapsedMsec:number):void -> {
+            totalElapsedMsec += elapsedMsec;
+
             context.translate(player.x, player.y-12, player.z);
             context.rotate(player.rot);
             Util3D.sphere(context, 8, 8);
             context.resetMatrix();
+
+            var axis = Quaternion.rotating(totalElapsedMsec/1000, 0, 1, 0);
+            for (var i=0; i<items.length; i++) {
+                var x = items[i].x;
+                var y = items[i].y;
+                var z = items[i].z;
+                context.translate(x, y, z);
+                context.rotate(axis);
+                context.renderTexture([
+                    new Vector(-15,-10, 0),
+                    new Vector( 15,-10, 0),
+                    new Vector( 15, 10, 0),
+                    new Vector(-15, 10, 0)
+                ], './image/redbull_free.png');
+                context.resetMatrix();
+            }
 
             // context.renderTexture([
             //     new Vector(-30, -20, 0),
@@ -207,9 +233,10 @@ final class _Main {
             //     new Vector(-30,  20, 0)
             // ], './image/so-nya.png');
 
-            /* for (var i=0; i<trees.length; i++) { */
-                /* context.renderBillboard(trees[i], 50, 30, './image/tree.png'); */
-            /* } */
+            // for (var i=0; i<trees.length; i++) {
+            //     context.renderBillboard(trees[i], 50, 30, './image/redbull_free.png');
+            // }
+
 
             context.depth = 5;
             for (var i=-10; i<10; i++) {

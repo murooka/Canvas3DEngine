@@ -908,8 +908,8 @@ class SmoothTexture extends Polygon {
         // ビュー・透視・スクリーン変換行列
         var matrix =
             engine.screenMatrix.compose(
-                    engine.camera.projectionMatrix.compose(
-                        engine.camera.viewMatrix));
+                engine.camera.projectionMatrix.compose(
+                    engine.camera.viewMatrix));
 
         // screen + left or right + top or bottom
         var sltImage = matrix.mul(wltImage);
@@ -925,10 +925,10 @@ class SmoothTexture extends Polygon {
          * @param {Vector} wlt wlb wrb wrt ワールド座標系上の、画像の左上、左下、右下、右上の座標
          * @param {Vector} slt slb srb srt 変換後のスクリーン座標系上の、画像の左上、左下、右下、右上の座標
          * @param {number} depth           この関数の再帰呼び出しの回数、最初の呼び出しでは1を指定
-         * @param {number} dx              画像を描画する部分のx軸方向のオフセット
-         * @param {number} dy              画像を描画する部分のy軸方向のオフセット
-         * @param {number} dw              画像を描画する部分の横幅
-         * @param {number} dh              画像を描画する部分の縦幅
+         * @param {number} sx              画像を描画する部分のx軸方向のオフセット
+         * @param {number} sy              画像を描画する部分のy軸方向のオフセット
+         * @param {number} sw              画像を描画する部分の横幅
+         * @param {number} sh              画像を描画する部分の縦幅
          */
         var divideAndDrawImage = (
             image:HTMLImageElement,
@@ -1014,6 +1014,8 @@ class SmoothTexture extends Polygon {
 
                 var scaleX   = (maxX-minX) / sw;
                 var scaleY   = (maxY-minY) / sh;
+                if (slt.x > srt.x) scaleX = -scaleX;
+                if (slt.y > slb.y) scaleY = -scaleY;
                 var skewingX = (srt.y-slt.y) / (srt.x-slt.x);
                 var skewingY = (slb.x-slt.x) / (slb.y-slt.y);
 
