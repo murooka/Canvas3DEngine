@@ -194,7 +194,7 @@ final class _Main {
 
         var q = Quaternion.rotating(0, 0, 0, 0);
 
-        engine.onRender = (context:Context3D):void -> {
+        engine.onRender = (context:Context3D, elapsedMsec:number):void -> {
             context.translate(player.x, player.y-12, player.z);
             context.rotate(player.rot);
             Util3D.sphere(context, 8, 8);

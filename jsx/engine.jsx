@@ -684,27 +684,6 @@ class Polygon extends AbstractModel {
         this.updateCenter();
     }
 
-    function rotateX(center:Vector, rad:number) : void {
-        for (var i=0; i<this.vertices.length; i++) {
-            this.vertices[i].subSelf(center).rotateXSelf(rad).addSelf(center);
-        }
-        this.updateCenter();
-    }
-
-    function rotateY(center:Vector, rad:number) : void {
-        for (var i=0; i<this.vertices.length; i++) {
-            this.vertices[i].subSelf(center).rotateYSelf(rad).addSelf(center);
-        }
-        this.updateCenter();
-    }
-
-    function rotateZ(center:Vector, rad:number) : void {
-        for (var i=0; i<this.vertices.length; i++) {
-            this.vertices[i].subSelf(center).rotateZSelf(rad).addSelf(center);
-        }
-        this.updateCenter();
-    }
-
     function updateCenter() : void {
         var sumVector = new Vector(0,0,0);
         for (var i=0; i<this.vertices.length; i++) {
@@ -848,31 +827,6 @@ class Model extends AbstractModel {
         return true;
     }
 
-    function move(v:Vector) : void {
-        for (var i=0; i<this.polygons.length; i++) {
-            this.polygons[i].move(v);
-        }
-        this.center = this.center.add(v);
-    }
-
-    function rotateX(rad:number) : void {
-        for (var i=0; i<this.polygons.length; i++) {
-            this.polygons[i].rotateX(this.center, rad);
-        }
-    }
-
-    function rotateY(rad:number) : void {
-        for (var i=0; i<this.polygons.length; i++) {
-            this.polygons[i].rotateY(this.center, rad);
-        }
-    }
-
-    function rotateZ(rad:number) : void {
-        for (var i=0; i<this.polygons.length; i++) {
-            this.polygons[i].rotateZ(this.center, rad);
-        }
-    }
-
     override function draw(engine:Engine) : boolean {
         var polygons = this.polygons;
 
@@ -938,27 +892,6 @@ class SmoothTexture extends Polygon {
     override function isHidden(camera:Camera) : boolean {
         if (camera.nearZ < this.vCenter.z && this.vCenter.z < camera.farZ) return false;
         return true;
-    }
-
-    function rotateX(rad:number, center:Vector) : void {
-        for (var i=0; i<this.vertices.length; i++) {
-            this.vertices[i].subSelf(center).rotateXSelf(rad).addSelf(center);
-        }
-        this.updateCenter();
-    }
-
-    function rotateY(rad:number, center:Vector) : void {
-        for (var i=0; i<this.vertices.length; i++) {
-            this.vertices[i].subSelf(center).rotateYSelf(rad).addSelf(center);
-        }
-        this.updateCenter();
-    }
-
-    function rotateZ(rad:number, center:Vector) : void {
-        for (var i=0; i<this.vertices.length; i++) {
-            this.vertices[i].subSelf(center).rotateZSelf(rad).addSelf(center);
-        }
-        this.updateCenter();
     }
 
     override function draw(engine:Engine) : boolean {
