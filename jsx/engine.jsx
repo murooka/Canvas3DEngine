@@ -9,6 +9,7 @@ import "timer.jsx";
 
 /**
  * 座標系は左手座標系
+ * ポリゴンの座標は、視点から見て反時計回りに指定する
  */
 
 
@@ -614,6 +615,7 @@ abstract class AbstractModel {
     /**
      * @description スクリーン座標系の頂点がcanvas内に描画する必要があるかどうかを確認する
      *              描画する必要がないならばtrueを返す
+     * TODO: 下側の判定を緩くする or 全体的に少し緩くする
      */
     static function isHiddenXY(vertices:Vector[], engine:Engine) : boolean {
         for (var i=0; i<vertices.length; i++) {
@@ -789,6 +791,7 @@ class Polygon extends AbstractModel {
 /**
  * @class 複数のPolygonを内包するオブジェクトモデルクラス
  * @description 各Polygonの移動・回転を一括して行う
+ * TODO: クラス名を変更する
  */
 class Model extends AbstractModel {
 
@@ -850,6 +853,7 @@ class Model extends AbstractModel {
 
 /**
  * @class アフィン変換を用いて高速にテクスチャを描画するクラス
+ * @description 裏柄からみた場合は、反転して表示する
  * TODO: 継承関係を直す
  */
 class SmoothTexture extends Polygon {
@@ -886,6 +890,11 @@ class SmoothTexture extends Polygon {
     }
 
     override function applyViewMatrix(viewMatrix:Matrix) : void {
+        var vVertices = [] : Vector[];
+        for (var i=0; i<this.vertices.length; i++) {
+            vVertices.push(viewMatrix.mul(this.vertices[i]));
+        }
+        this.vVertices = vVertices;
         this.vCenter = viewMatrix.mul(this.center);
     }
 
@@ -916,6 +925,9 @@ class SmoothTexture extends Polygon {
         var slbImage = matrix.mul(wlbImage);
         var srbImage = matrix.mul(wrbImage);
         var srtImage = matrix.mul(wrtImage);
+
+        var isHiddenXY = AbstractModel.isHiddenXY([sltImage, slbImage, srbImage, srtImage], engine);
+        if (isHiddenXY) return false;
 
         /**
          * @function

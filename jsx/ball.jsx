@@ -180,7 +180,7 @@ final class _Main {
             var x = - player.vx;
             var len = Math.sqrt(z*z + x*x);
             if (len<1e-9) {
-                z = 1;
+                z = -1;
                 x = 0;
             } else {
                 z /= len;
@@ -210,31 +210,31 @@ final class _Main {
             Util3D.sphere(context, 8, 8);
             context.resetMatrix();
 
-            var axis = Quaternion.rotating(totalElapsedMsec/1000, 0, 0, 1);
-            // for (var i=0; i<items.length; i++) {
-            //     var x = items[i].x;
-            //     var y = items[i].y;
-            //     var z = items[i].z;
-            //     context.translate(x, y, z);
-            //     context.rotate(axis);
-            //     context.renderTexture([
-            //         new Vector(-15,-10, 0),
-            //         new Vector( 15,-10, 0),
-            //         new Vector( 15, 10, 0),
-            //         new Vector(-15, 10, 0)
-            //     ], './image/redbull_free.png');
-            //     context.resetMatrix();
-            // }
+            var axis = Quaternion.rotating(totalElapsedMsec/1000, 0, 1, 0);
+            for (var i=0; i<items.length; i++) {
+                var x = items[i].x;
+                var y = items[i].y;
+                var z = items[i].z;
+                context.translate(x, y, z);
+                context.rotate(axis);
+                context.renderTexture([
+                    new Vector(-15,-10, 0),
+                    new Vector( 15,-10, 0),
+                    new Vector( 15, 10, 0),
+                    new Vector(-15, 10, 0)
+                ], './image/redbull_free.png');
+                context.resetMatrix();
+            }
 
-            context.translate(0, 0, 100);
-            context.rotate(axis);
-            context.renderTexture([
-                new Vector(-30, -20, 0),
-                new Vector( 30, -20, 0),
-                new Vector( 30,  20, 0),
-                new Vector(-30,  20, 0)
-            ], './image/so-nya.png');
-            context.resetMatrix();
+            // context.translate(0, 0, 100);
+            // context.rotate(axis);
+            // context.renderTexture([
+            //     new Vector(-30, -20, 0),
+            //     new Vector( 30, -20, 0),
+            //     new Vector( 30,  20, 0),
+            //     new Vector(-30,  20, 0)
+            // ], './image/so-nya.png');
+            // context.resetMatrix();
 
             // for (var i=0; i<trees.length; i++) {
             //     context.renderBillboard(trees[i], 50, 30, './image/redbull_free.png');
@@ -262,42 +262,28 @@ final class _Main {
 
                 var az = (de.accelerationIncludingGravity['y'] as number) * 30;
                 var ax = (de.accelerationIncludingGravity['x'] as number) * 30;
-                // player.move(az, ax);
-                player.move(50, 0);
+                az = Math.max(ax, 0);
+                player.move(az, ax);
             });
 
         } else {
 
-            dom.window.alert('PC');
-            
             dom.window.document.onkeypress = (e:Event):void -> {
                 var ke = e as KeyboardEvent;
-                // console.log(e.keyCode);
                 var accel = 80;
                 switch (ke.keyCode) {
                     case 119: // 'w'
-                        // player.az = 50;
                         player.move(accel, 0);
-                        // engine.camera.move(new Vector(0, 0, 10));
-                        // engine.updateMatrix();
                         break;
                     case 115: // 's'
-                        // player.az = -50;
                         player.move(0, 0);
-                        // engine.camera.move(new Vector(0, 0,-10));
-                        // engine.updateMatrix();
                         break;
                     case 97:  // 'a'
-                        // player.ax = -50;
                         player.move(0,-accel);
-                        // engine.camera.rotateY(-Math.PI/32);
-                        // engine.updateMatrix();
                         break;
                     case 100: // 'd'
                         // player.ax = 50;
                         player.move(0, accel);
-                        // engine.camera.rotateY(Math.PI/32);
-                        // engine.updateMatrix();
                         break;
                     case 106: // 'j'
                         break;
