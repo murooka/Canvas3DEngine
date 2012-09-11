@@ -14,12 +14,14 @@ class Util3D {
         var sin = Math.sin;
         var cos = Math.cos;
         var pi = Math.PI;
+
+        context.beginGroup(new Vector(0, 0, 0));
         for (var i=0; i<hor; i++) {
             var i1 = 0;
             var i2 = 1;
             var j1 = i+1;
             var j2 = i;
-            context.renderPolygon([
+            context.renderPolygonGroup([
                 new Vector(cos(2*pi*j1/hor)*sin(pi*i1/ver)*size, cos(pi*i1/ver)*size, sin(2*pi*j1/hor)*sin(pi*i1/ver)*size),
                 new Vector(cos(2*pi*j1/hor)*sin(pi*i2/ver)*size, cos(pi*i2/ver)*size, sin(2*pi*j1/hor)*sin(pi*i2/ver)*size),
                 new Vector(cos(2*pi*j2/hor)*sin(pi*i2/ver)*size, cos(pi*i2/ver)*size, sin(2*pi*j2/hor)*sin(pi*i2/ver)*size)
@@ -31,7 +33,7 @@ class Util3D {
                 var i2 = i+1;
                 var j1 = j+1;
                 var j2 = j;
-                context.renderPolygon([
+                context.renderPolygonGroup([
                     new Vector(cos(2*pi*j1/hor)*sin(pi*i1/ver)*size, cos(pi*i1/ver)*size, sin(2*pi*j1/hor)*sin(pi*i1/ver)*size),
                     new Vector(cos(2*pi*j1/hor)*sin(pi*i2/ver)*size, cos(pi*i2/ver)*size, sin(2*pi*j1/hor)*sin(pi*i2/ver)*size),
                     new Vector(cos(2*pi*j2/hor)*sin(pi*i2/ver)*size, cos(pi*i2/ver)*size, sin(2*pi*j2/hor)*sin(pi*i2/ver)*size),
@@ -44,12 +46,13 @@ class Util3D {
             var i2 = ver;
             var j1 = i+1;
             var j2 = i;
-            context.renderPolygon([
+            context.renderPolygonGroup([
                 new Vector(cos(2*pi*j1/hor)*sin(pi*i2/ver)*size, cos(pi*i2/ver)*size, sin(2*pi*j1/hor)*sin(pi*i2/ver)*size),
                 new Vector(cos(2*pi*j2/hor)*sin(pi*i2/ver)*size, cos(pi*i2/ver)*size, sin(2*pi*j2/hor)*sin(pi*i2/ver)*size),
                 new Vector(cos(2*pi*j2/hor)*sin(pi*i1/ver)*size, cos(pi*i1/ver)*size, sin(2*pi*j2/hor)*sin(pi*i1/ver)*size)
             ], new Color(128, 128, 255));
         }
+        context.endGroup();
 
     }
 
@@ -243,10 +246,11 @@ final class _Main {
             // }
 
 
-            context.depth = 5;
+            context.setDepth(5);
+            context.beginGroup(new Vector(0, 0, 0), true);
             for (var i=-10; i<10; i++) {
                 for (var j=-10; j<10; j++) {
-                    context.renderPolygon([
+                    context.renderPolygonGroup([
                         new Vector(    i*50, -20,     j*50),
                         new Vector(    i*50, -20, (j+1)*50),
                         new Vector((i+1)*50, -20, (j+1)*50),
@@ -254,6 +258,7 @@ final class _Main {
                     ], new Color(128, 255, 128));
                 }
             }
+            context.endGroup();
 
         };
 

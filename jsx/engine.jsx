@@ -329,6 +329,10 @@ class Context3D {
     var modelList4 = List.<AbstractModel>;
     var modelList5 = List.<AbstractModel>;
 
+    var polygonGroup : Polygon[];
+    var groupCenter : Vector;
+    var ignoringZHidden : boolean;
+
     function constructor(camera:Camera) {
         this.worldMatrix = new Matrix;
         this.matrixStack = new List.<Matrix>;
@@ -339,8 +343,24 @@ class Context3D {
         this.modelList3 = new List.<AbstractModel>;
         this.modelList4 = new List.<AbstractModel>;
         this.modelList5 = new List.<AbstractModel>;
+
+        this.polygonGroup = [] : Polygon[];
     }
 
+
+    function setDepth(depth:int) : void {
+        assert 1 <= depth && depth <= 5;
+        this.depth = depth;
+    }
+
+    function getDepth() : int {
+        return this.depth;
+    }
+
+
+    /**
+     * ワールド変換行列を操作するための関数群
+     */
     function pushMatrix() : void {
         this.matrixStack.prepend(this.worldMatrix.copy());
     }
@@ -365,6 +385,39 @@ class Context3D {
         this.worldMatrix.composeSelf(q.toMatrix());
     }
 
+
+    /**
+     * 複数のPolygonをグルーピングするための関数群
+     */
+    function beginGroup(center:Vector) : void {
+        this.beginGroup(center, false);
+    }
+
+    function beginGroup(center:Vector, ignoringZHidden:boolean) : void {
+        this.polygonGroup = [] : Polygon[];
+        this.groupCenter = center;
+        this.ignoringZHidden = ignoringZHidden;
+    }
+
+    function renderPolygonGroup(vertices:Vector[], color:Color) : void {
+        var polygon = new Polygon(vertices, color);
+        polygon.applyWorldMatrix(this.worldMatrix);
+        polygon.applyViewMatrix(this.camera.viewMatrix);
+        if (polygon.isHidden(this.camera)) return;
+
+        this.polygonGroup.push(polygon);
+    }
+
+    function endGroup() : void {
+        assert this.polygonGroup.length != 0;
+        this.renderModel(new Model(this.polygonGroup, this.groupCenter, this.ignoringZHidden));
+    }
+
+
+    /**
+     * 描画モデルを生成するための関数群
+     * この関数を呼ぶことで描画されるわけではないが、ライブラリの利用者がそのことを意識せず使えるようにするため、renderXxxという関数名にしている
+     */
     function renderPolygon(vertices:Vector[], color:Color) : void {
         this.renderModel(new Polygon(vertices, color));
     }
@@ -382,7 +435,7 @@ class Context3D {
     }
 
     function renderModel(model:AbstractModel) : void {
-        if (this.worldMatrix != null) model.applyWorldMatrix(this.worldMatrix);
+        model.applyWorldMatrix(this.worldMatrix);
         model.applyViewMatrix(this.camera.viewMatrix);
         if (model.isHidden(this.camera)) return;
 
@@ -792,54 +845,54 @@ class Polygon extends AbstractModel {
 
 /**
  * @class 複数のPolygonを内包するオブジェクトモデルクラス
- * @description 各Polygonの移動・回転を一括して行う
+ * @description このクラスは、Z-sortを行う必要の無い、1つのまとまりとして扱うことのできるPolygonの集合のクラスである
+ *              例えば立方体や球などでは、裏側のPolygonは隠面消去するため、Z-sortを行わなくても自然に描画できる
+ *              そのような3Dオブジェクトの場合、このクラスを利用することにより高速化ができる
+ * @description 大きな3Dオブジェクトの場合、適切なcenter座標を指定できず、一部のPolygonを表示したい場合でもisHidden関数により描画されない場合がある
+ *              その場合は、ignoringZHiddenをtrueにすることで全てのPolygonの描画を試みるが、前後関係が正しく表示されない可能性がある
  * TODO: クラス名を変更する
  */
 class Model extends AbstractModel {
 
     var polygons : Polygon[];
-    var enabledZSort : boolean;
+    var ignoringZHidden : boolean;
 
     /*
      * @param {Polygon[]}  polygons Polygonの配列
      * @param {Vector}     center   world座標系での原点からの相対ベクトル
      */
     function constructor(polygons:Polygon[], center:Vector) {
+        this(polygons, center, false);
+    }
+
+    function constructor(polygons:Polygon[], center:Vector, ignoringZHidden:boolean) {
         this.polygons = polygons;
         this.center = center;
-        this.enabledZSort = false;
+        this.ignoringZHidden = ignoringZHidden;
     }
 
     override function applyWorldMatrix(worldMatrix:Matrix) : void {
-        for (var i=0; i<this.polygons.length; i++) {
-            this.polygons[i].applyWorldMatrix(worldMatrix);
-        }
+        // for (var i=0; i<this.polygons.length; i++) {
+        //     this.polygons[i].applyWorldMatrix(worldMatrix);
+        // }
         this.center = worldMatrix.mul(this.center);
     }
 
     override function applyViewMatrix(viewMatrix:Matrix) : void {
+        // for (var i=0; i<this.polygons.length; i++) {
+        //     this.polygons[i].applyViewMatrix(viewMatrix);
+        // }
         this.vCenter = viewMatrix.mul(this.center);
-        for (var i=0; i<this.polygons.length; i++) {
-            this.polygons[i].applyViewMatrix(viewMatrix);
-        }
     }
 
     override function isHidden(camera:Camera) : boolean {
-        for (var i=0; i<this.polygons.length; i++) {
-            var polygon = this.polygons[i];
-            if (camera.nearZ < -polygon.vCenter.z && -polygon.vCenter.z < camera.farZ) return false;
-        }
+        if (this.ignoringZHidden) return false;
+        if (camera.nearZ < this.vCenter.z && this.vCenter.z < camera.farZ) return false;
         return true;
     }
 
     override function draw(engine:Engine) : boolean {
         var polygons = this.polygons;
-
-        if (this.enabledZSort) {
-            polygons = polygons.sort((a,b) -> {
-                return a.vCenter.z - b.vCenter.z;
-            });
-        }
 
         for (var i=0; i<this.polygons.length; i++) {
             var polygon = this.polygons[i];
