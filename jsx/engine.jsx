@@ -319,7 +319,8 @@ class Engine {
  */
 class Context3D {
 
-    var worldMatrix : Nullable.<Matrix>;
+    var worldMatrix : Matrix;
+    var matrixStack : List.<Matrix>;
     var camera : Camera;
     var depth : int;
     var modelList1 = List.<AbstractModel>;
@@ -329,42 +330,39 @@ class Context3D {
     var modelList5 = List.<AbstractModel>;
 
     function constructor(camera:Camera) {
-        this.worldMatrix = null;
+        this.worldMatrix = new Matrix;
+        this.matrixStack = new List.<Matrix>;
         this.camera = camera;
         this.depth = 3;
-        this.modelList1 = new List.<AbstractModel>();
-        this.modelList2 = new List.<AbstractModel>();
-        this.modelList3 = new List.<AbstractModel>();
-        this.modelList4 = new List.<AbstractModel>();
-        this.modelList5 = new List.<AbstractModel>();
+        this.modelList1 = new List.<AbstractModel>;
+        this.modelList2 = new List.<AbstractModel>;
+        this.modelList3 = new List.<AbstractModel>;
+        this.modelList4 = new List.<AbstractModel>;
+        this.modelList5 = new List.<AbstractModel>;
+    }
+
+    function pushMatrix() : void {
+        this.matrixStack.prepend(this.worldMatrix.copy());
+    }
+
+    function popMatrix() : void {
+        this.worldMatrix = this.matrixStack.removeFirst();
     }
 
     function resetMatrix() : void {
-        this.worldMatrix = null;
+        this.worldMatrix = new Matrix;
     }
 
     function translate(x:number, y:number, z:number) : void {
-        if (this.worldMatrix == null) {
-            this.worldMatrix = Matrix.translating(x, y, z);
-        } else {
-            this.worldMatrix.composeSelf(Matrix.translating(x, y, z));
-        }
+        this.worldMatrix.composeSelf(Matrix.translating(x, y, z));
     }
 
     function scale(x:number, y:number, z:number) : void {
-        if (this.worldMatrix == null) {
-            this.worldMatrix = Matrix.scaling(x, y, z);
-        } else {
-            this.worldMatrix.composeSelf(Matrix.scaling(x, y, z));
-        }
+        this.worldMatrix.composeSelf(Matrix.scaling(x, y, z));
     }
 
     function rotate(q:Quaternion) : void {
-        if (this.worldMatrix == null) {
-            this.worldMatrix = q.toMatrix();
-        } else {
-            this.worldMatrix.composeSelf(q.toMatrix());
-        }
+        this.worldMatrix.composeSelf(q.toMatrix());
     }
 
     function renderPolygon(vertices:Vector[], color:Color) : void {

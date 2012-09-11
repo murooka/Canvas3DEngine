@@ -55,6 +55,26 @@ class List.<T> {
         return this;
     }
 
+    function removeFirst() : T {
+        var node = this.head;
+
+        this.head = node._next;
+        if (node._next != null) node._next._prev = null;
+
+        this.length--;
+        return node.value;
+    }
+
+    function removeLast() : T {
+        var node = this.tail;
+
+        this.tail = node._prev;
+        if (node._prev != null) node._prev._next = null;
+
+        this.length--;
+        return node.value;
+    }
+
     function insertAfter(node:Node.<T>, value:T) : List.<T> {
         var newNode = new Node.<T>(value);
 

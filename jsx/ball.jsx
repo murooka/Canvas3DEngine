@@ -211,10 +211,12 @@ final class _Main {
             context.resetMatrix();
 
             var axis = Quaternion.rotating(totalElapsedMsec/1000, 0, 1, 0);
+
             for (var i=0; i<items.length; i++) {
                 var x = items[i].x;
                 var y = items[i].y;
                 var z = items[i].z;
+                context.pushMatrix();
                 context.translate(x, y, z);
                 context.rotate(axis);
                 context.renderTexture([
@@ -223,7 +225,7 @@ final class _Main {
                     new Vector( 15, 10, 0),
                     new Vector(-15, 10, 0)
                 ], './image/redbull_free.png');
-                context.resetMatrix();
+                context.popMatrix();
             }
 
             // context.translate(0, 0, 100);
