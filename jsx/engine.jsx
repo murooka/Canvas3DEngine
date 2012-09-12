@@ -730,10 +730,11 @@ abstract class AbstractModel {
      * TODO: 下側の判定を緩くする or 全体的に少し緩くする
      */
     static function isHiddenXY(vertices:Vector[], engine:Engine) : boolean {
+        var margin = 50;
         for (var i=0; i<vertices.length; i++) {
             var v = vertices[i];
-            if (0 < v.x && v.x < engine.width &&
-                0 < v.y && v.y < engine.height  ) return false;
+            if (-margin < v.x && v.x < engine.width  + margin &&
+                -margin < v.y && v.y < engine.height + margin   ) return false;
         }
         return true;
     }
