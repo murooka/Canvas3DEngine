@@ -345,9 +345,9 @@ class Engine {
         var sw = iWidth;
         var sh = iHeight;
 
-        var overflowingRight = (sx + sw > imgWidth);  // 画像の右側がはみ出る
-        var overflowingBelow = (sy + sh > imgHeight); // 画像の下側がはみ出る
-        if (overflowingBelow && overflowingBelow) {
+        var overflowingRight = (sx + sw >= imgWidth);  // 画像の右側がはみ出る
+        var overflowingBelow = (sy + sh >= imgHeight); // 画像の下側がはみ出る
+        if (overflowingRight && overflowingBelow) {
             var perHor = (imgWidth-sx)  / sw; // 描画する横幅のうち、はみ出ずに描画できる幅の割当費
             var perVer = (imgHeight-sy) / sh; // 描画する縦幅のうち、はみ出ずに描画できる幅の割当費
             this.ctx.drawImage(this.skyImage, sx, sy,    imgWidth-sx, imgHeight-sy,                 0, 0,     this.width*perHor, this.height*perVer);
@@ -1228,6 +1228,9 @@ class Billboard extends AbstractModel {
 
     override function draw(engine:Engine) : boolean {
         if (!Engine.isLoadedImage[this.src]) return false;
+
+        var isHiddenXY = AbstractModel.isHiddenXY([this.vCenter], engine);
+        if (isHiddenXY) return false;
 
         var ctx = engine.ctx;
 
