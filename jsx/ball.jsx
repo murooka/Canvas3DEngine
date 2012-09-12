@@ -8,6 +8,9 @@ import "timer.jsx";
 
 class Util3D {
 
+    /**
+     * render sphere
+     */
     static function sphere(context:Context3D, size:number, div:int) : void {
         var ver = div;
         var hor = div*2;
@@ -54,6 +57,18 @@ class Util3D {
         }
         context.endGroup();
 
+    }
+
+    /**
+     * render XZ floor tile
+     */
+    static function tileOnGroup(context:Context3D, x:int, y:int, z:int, size:int, color:Color) : void {
+        context.renderPolygonGroup([
+            new Vector(x-size/2, y, z-size/2),
+            new Vector(x-size/2, y, z+size/2),
+            new Vector(x+size/2, y, z+size/2),
+            new Vector(x+size/2, y, z-size/2)
+        ], color);
     }
 
 }
@@ -173,19 +188,19 @@ final class _Main {
 
         var trees = new List.<Vector>;
         var treeRadius = 30;
-        for (var i=0; i<10; i++) {
-            var x = Math.floor((Math.random()-0.5)*20)*25;
-            var z = Math.floor((Math.random()-0.5)*20)*25;
-            trees.append(new Vector(x, -3, z));
-        }
+        // for (var i=0; i<10; i++) {
+        //     var x = Math.floor((Math.random()-0.5)*20)*25;
+        //     var z = Math.floor((Math.random()-0.5)*20)*25;
+        //     trees.append(new Vector(x, -3, z));
+        // }
 
         var items = new List.<Vector>;
         var itemRadius = 8;
-        for (var i=0; i<10; i++) {
-            var x = Math.floor((Math.random()-0.5)*500);
-            var z = Math.floor((Math.random()-0.5)*500);
-            items.append(new Vector(x, -10, z));
-        }
+        // for (var i=0; i<10; i++) {
+        //     var x = Math.floor((Math.random()-0.5)*500);
+        //     var z = Math.floor((Math.random()-0.5)*500);
+        //     items.append(new Vector(x, -10, z));
+        // }
 
         var player = new Player;
 
@@ -193,10 +208,17 @@ final class _Main {
 
             player.update(elapsedMsec);
 
+            var x = player.x;
+            var z = player.z;
             // 床との当たり判定
-            if (player.y < 0) {
-                player.vy = - player.vy * 0.5;
-                player.y = 0;
+            if (
+                ( -30 <= x && x <=  30 && -30 <= z && z <= 150) || // starting floor
+                (-300 <= x && x <= 300 && 150 <= z && z <= 750)
+            ) {
+                if (player.y < 0) {
+                    player.vy = - player.vy * 0.5;
+                    player.y = 0;
+                }
             }
 
             // 木との当たり判定
@@ -250,6 +272,8 @@ final class _Main {
             }
 
 
+            var y = player.y;
+            if (y < 0) y = -y / 2;
             var yOffset = 10;
             var xzVelocity = Math.sqrt(player.vx*player.vx+player.vz*player.vz);
             if (xzVelocity < 50) {
@@ -257,7 +281,7 @@ final class _Main {
             }
             var view =  new Vector(
                 player.x + x*50,
-                player.y*1.2 + yOffset,
+                y*1.2 + yOffset,
                 player.z + z*50
             );
 
@@ -323,16 +347,32 @@ final class _Main {
 
             context.setDepth(5);
             context.beginGroup(new Vector(0, 0, 0), true);
-            for (var i=-10; i<10; i++) {
-                for (var j=-10; j<10; j++) {
-                    context.renderPolygonGroup([
-                        new Vector(    i*50, -20,     j*50),
-                        new Vector(    i*50, -20, (j+1)*50),
-                        new Vector((i+1)*50, -20, (j+1)*50),
-                        new Vector((i+1)*50, -20,     j*50)
-                    ], new Color(128, 255, 128));
+            var grayColor = new Color(192, 192, 192);
+            var size = 30;
+            for (var i=0; i<6; i++) {
+                Util3D.tileOnGroup(context, -15, -20, -15+i*size, size, grayColor);
+                Util3D.tileOnGroup(context, +15, -20, -15+i*size, size, grayColor);
+            }
+            var lightGreen = new Color(160, 255, 160);
+            var green = new Color(96, 255, 96);
+            context.pushMatrix();
+            context.translate(0, 0, 450);
+            for (var i=0; i<20; i++) {
+                for (var j=0; j<20; j++) {
+                    var color = (i+j)%2==0 ? lightGreen : green;
+                    Util3D.tileOnGroup(context, i*30-285, -20, j*30-285, 30, color);
                 }
             }
+            // for (var i=-10; i<10; i++) {
+            //     for (var j=-10; j<10; j++) {
+            //         context.renderPolygonGroup([
+            //             new Vector(    i*50, -20,     j*50),
+            //             new Vector(    i*50, -20, (j+1)*50),
+            //             new Vector((i+1)*50, -20, (j+1)*50),
+            //             new Vector((i+1)*50, -20,     j*50)
+            //         ], new Color(128, 255, 128));
+            //     }
+            // }
             context.endGroup();
 
         };
