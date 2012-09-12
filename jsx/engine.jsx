@@ -346,9 +346,19 @@ class Engine {
         var sh = iHeight;
 
         var overflowingRight = (sx + sw > imgWidth);  // 画像の右側がはみ出る
-        if (overflowingRight) {
-            this.ctx.drawImage(this.skyImage, sx, sy,    imgWidth-sx, sh,                           0, 0,    this.width*(imgWidth-sx)/sw, this.height);
-            this.ctx.drawImage(this.skyImage,  0, sy, sx+sw-imgWidth, sh, this.width*(imgWidth-sx)/sw, 0, this.width*(sx+sw-imgWidth)/sw, this.height);
+        var overflowingBelow = (sy + sh > imgHeight); // 画像の下側がはみ出る
+        if (overflowingBelow && overflowingBelow) {
+            var perHor = (imgWidth-sx)  / sw; // 描画する横幅のうち、はみ出ずに描画できる幅の割当費
+            var perVer = (imgHeight-sy) / sh; // 描画する縦幅のうち、はみ出ずに描画できる幅の割当費
+            this.ctx.drawImage(this.skyImage, sx, sy,    imgWidth-sx, imgHeight-sy,                 0, 0,     this.width*perHor, this.height*perVer);
+            this.ctx.drawImage(this.skyImage,  0, sy, sx+sw-imgWidth, imgHeight-sy, this.width*perHor, 0, this.width*(1-perHor), this.height*perVer);
+        } else if (overflowingRight) {
+            var per = (imgWidth-sx) / sw; // 描画する幅のうち、はみ出ずに描画できる幅の割当費
+            this.ctx.drawImage(this.skyImage, sx, sy,    imgWidth-sx, sh,              0, 0,     this.width*per, this.height);
+            this.ctx.drawImage(this.skyImage,  0, sy, sx+sw-imgWidth, sh, this.width*per, 0, this.width*(1-per), this.height);
+        } else if (overflowingBelow) {
+            var per = (imgHeight-sy) / sh; // 描画する幅のうち、はみ出ずに描画できる幅の割当費
+            this.ctx.drawImage(this.skyImage, sx, sy, sw,    imgHeight-sy, 0,               0, this.width, this.height*per);
         } else {
             this.ctx.drawImage(this.skyImage, sx, sy, sw, sh, 0, 0, this.width, this.height);
         }
