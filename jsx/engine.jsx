@@ -36,39 +36,39 @@ class Math2D {
  */
 class Stopwatch {
 
-    var elapsedMsec : number;
-    var startedMsec : Nullable.<number>;
-    var lastLapMsec : Nullable.<number>;
+    var _elapsedMsec : number;
+    var _startedMsec : Nullable.<number>;
+    var _lastLapMsec : Nullable.<number>;
 
     function constructor() {
-        this.elapsedMsec = 0;
-        this.startedMsec = null;
+        this._elapsedMsec = 0;
+        this._startedMsec = null;
     }
 
-    function currentMsec() : number {
+    function _currentMsec() : number {
         return Date.now();
     }
 
     function start() : void {
-        assert this.startedMsec == null;
+        assert this._startedMsec == null;
 
-        this.startedMsec = this.lastLapMsec = this.currentMsec();
+        this._startedMsec = this._lastLapMsec = this._currentMsec();
     }
 
     function stop() : void {
-        assert this.startedMsec != null;
+        assert this._startedMsec != null;
 
-        this.elapsedMsec += this.currentMsec() - this.startedMsec;
-        this.startedMsec = null;
-        this.lastLapMsec = null;
+        this._elapsedMsec += this._currentMsec() - this._startedMsec;
+        this._startedMsec = null;
+        this._lastLapMsec = null;
     }
 
     function isStarted() : boolean {
-        return this.startedMsec != null;
+        return this._startedMsec != null;
     }
 
     function isStopped() : boolean {
-        return this.startedMsec == null;
+        return this._startedMsec == null;
     }
 
     /**
@@ -76,17 +76,17 @@ class Stopwatch {
      * @returns {number} 経過時間
      */
     function lap() : number {
-        assert this.lastLapMsec != null;
+        assert this._lastLapMsec != null;
 
-        var currentMsec = this.currentMsec();
-        var lapMsec = currentMsec - this.lastLapMsec;
-        this.lastLapMsec = currentMsec;
+        var currentMsec = this._currentMsec();
+        var lapMsec = currentMsec - this._lastLapMsec;
+        this._lastLapMsec = currentMsec;
 
         return lapMsec;
     }
 
     function getElapsedMsec() : number {
-        return this.elapsedMsec;
+        return this._elapsedMsec;
     }
 
 }
@@ -97,67 +97,67 @@ class Stopwatch {
  */
 class FpsManager {
 
-    var stopwatch : Stopwatch;
-    var recentlyMsecLog : number[];
-    var lastMsec : number;
-    var fpsElement : Nullable.<HTMLElement>;
-    var enabledHtmlLog : boolean;
-    var enabledConsoleLog : boolean;
+    var _stopwatch : Stopwatch;
+    var _recentlyMsecLog : number[];
+    var _lastMsec : number;
+    var _fpsElement : Nullable.<HTMLElement>;
+    var _enabledHtmlLog : boolean;
+    var _enabledConsoleLog : boolean;
 
     function constructor() {
-        this.fpsElement = null;
-        this.stopwatch = new Stopwatch;
-        this.recentlyMsecLog = [] : number[];
-        this.lastMsec = 0;
+        this._fpsElement = null;
+        this._stopwatch = new Stopwatch;
+        this._recentlyMsecLog = [] : number[];
+        this._lastMsec = 0;
 
-        this.enabledHtmlLog = false;
-        this.enabledConsoleLog = true;
+        this._enabledHtmlLog = false;
+        this._enabledConsoleLog = true;
     }
 
     function constructor(spanId:string) {
-        this.fpsElement = dom.id(spanId);
-        this.stopwatch = new Stopwatch;
-        this.recentlyMsecLog = [] : number[];
-        this.lastMsec = 0;
+        this._fpsElement = dom.id(spanId);
+        this._stopwatch = new Stopwatch;
+        this._recentlyMsecLog = [] : number[];
+        this._lastMsec = 0;
 
-        this.enabledHtmlLog = true;
-        this.enabledConsoleLog = false;
+        this._enabledHtmlLog = true;
+        this._enabledConsoleLog = false;
     }
 
     function start() : void {
-        this.stopwatch.start();
+        this._stopwatch.start();
     }
 
     function lastLap() : number {
-        return this.lastMsec;
+        return this._lastMsec;
     }
 
     /**
      * フレームを更新したタイミングで呼ぶことで、fpsを計算しdom要素またはconsoleに表示する
      */
     function update() : void {
-        assert !this.stopwatch.isStopped();
+        assert !this._stopwatch.isStopped();
 
-        var lap = this.stopwatch.lap();
-        this.lastMsec = lap;
-        if (this.recentlyMsecLog.length < 1) {
-            this.recentlyMsecLog.push(lap);
+        var lap = this._stopwatch.lap();
+        this._lastMsec = lap;
+        if (this._recentlyMsecLog.length < 1) {
+            this._recentlyMsecLog.push(lap);
         } else {
-            this.recentlyMsecLog.push(lap);
-            this.recentlyMsecLog.shift();
+            this._recentlyMsecLog.push(lap);
+            this._recentlyMsecLog.shift();
         }
 
-        var length = this.recentlyMsecLog.length;
+        var length = this._recentlyMsecLog.length;
 
         var totalMsec = 0;
         for (var i=0; i<length; i++) {
-            totalMsec += this.recentlyMsecLog[i];
+            totalMsec += this._recentlyMsecLog[i];
         }
         var fps = length / (totalMsec / 1000);
 
-        if (this.fpsElement!=null && this.enabledHtmlLog) {
-            this.fpsElement.innerHTML = fps.toFixed(1) + "fps";
-        } else if (this.enabledConsoleLog) {
+        if (this._fpsElement!=null && this._enabledHtmlLog) {
+            this._fpsElement.innerHTML = fps.toFixed(1) + "fps";
+        } else if (this._enabledConsoleLog) {
             log fps.toFixed(1) + "fps";
         }
     }
@@ -350,17 +350,21 @@ class Engine {
         if (overflowingRight && overflowingBelow) {
             var perHor = (imgWidth-sx)  / sw; // 描画する横幅のうち、はみ出ずに描画できる幅の割当費
             var perVer = (imgHeight-sy) / sh; // 描画する縦幅のうち、はみ出ずに描画できる幅の割当費
-            this.ctx.drawImage(this.skyImage, sx, sy,    imgWidth-sx, imgHeight-sy,                 0, 0,     this.width*perHor, this.height*perVer);
-            this.ctx.drawImage(this.skyImage,  0, sy, sx+sw-imgWidth, imgHeight-sy, this.width*perHor, 0, this.width*(1-perHor), this.height*perVer);
+            this.ctx.drawImage(this.skyImage, ~~sx, ~~sy,    ~~(imgWidth-sx), ~~(imgHeight-sy),                     0, 0,     ~~(this.width*perHor), ~~(this.height*perVer));
+            if (~~(sx+sw-imgWidth) != 0) this.ctx.drawImage(this.skyImage,    0, ~~sy, ~~(sx+sw-imgWidth), ~~(imgHeight-sy), ~~(this.width*perHor), 0, ~~(this.width*(1-perHor)), ~~(this.height*perVer));
         } else if (overflowingRight) {
             var per = (imgWidth-sx) / sw; // 描画する幅のうち、はみ出ずに描画できる幅の割当費
-            this.ctx.drawImage(this.skyImage, sx, sy,    imgWidth-sx, sh,              0, 0,     this.width*per, this.height);
-            this.ctx.drawImage(this.skyImage,  0, sy, sx+sw-imgWidth, sh, this.width*per, 0, this.width*(1-per), this.height);
+            if (~~(imgWidth-sx) != 0 && ~~(this.width*per) != 0) {
+                this.ctx.drawImage(this.skyImage, ~~sx, ~~sy,    ~~(imgWidth-sx), ~~sh,                  0, 0,     ~~(this.width*per), this.height);
+            }
+            if (~~(sx+sw-imgWidth) != 0 && ~~(this.width*(1-per)) != 0) {
+                this.ctx.drawImage(this.skyImage,    0, ~~sy, ~~(sx+sw-imgWidth), ~~sh, ~~(this.width*per), 0, ~~(this.width*(1-per)), this.height);
+            }
         } else if (overflowingBelow) {
             var per = (imgHeight-sy) / sh; // 描画する幅のうち、はみ出ずに描画できる幅の割当費
-            this.ctx.drawImage(this.skyImage, sx, sy, sw,    imgHeight-sy, 0,               0, this.width, this.height*per);
+            this.ctx.drawImage(this.skyImage, ~~sx, ~~sy, ~~sw,    ~~(imgHeight-sy), 0, 0, this.width, ~~(this.height*per));
         } else {
-            this.ctx.drawImage(this.skyImage, sx, sy, sw, sh, 0, 0, this.width, this.height);
+            this.ctx.drawImage(this.skyImage, ~~sx, ~~sy, ~~sw, ~~sh, 0, 0, this.width, this.height);
         }
 
     }
@@ -1174,7 +1178,7 @@ class SmoothTexture extends Polygon {
                 ctx.transform(1, 0, 0, 1, slt.x, slt.y);
                 ctx.transform(1, skewingX, skewingY, 1, 0, 0);
                 ctx.transform(scaleX, 0, 0, scaleY, 0, 0);
-                ctx.drawImage(image, Math.floor(sx), Math.floor(sy), Math.ceil(sw), Math.ceil(sh), 0, 0, Math.ceil(sw), Math.ceil(sh));
+                ctx.drawImage(image, ~~(sx), ~~(sy), ~~(sw), ~~(sh), 0, 0, ~~(sw), ~~(sh));
 
                 ctx.setTransform(1, 0, 0, 1, 0, 0);
             }
@@ -1250,7 +1254,7 @@ class Billboard extends AbstractModel {
         ctx.setTransform(scaleX, 0, 0, scaleY, 0, 0);
 
         // TODO: 描画位置を決めなくても、アフィン変換でなんとかなるかも
-        ctx.drawImage(this.image, (vpCenter.x-vpHalfWidth)/scaleX, (vpCenter.y-vpHalfHeight)/scaleY);
+        ctx.drawImage(this.image, ~~((vpCenter.x-vpHalfWidth)/scaleX), ~~((vpCenter.y-vpHalfHeight)/scaleY));
 
         ctx.setTransform(1, 0, 0, 1, 0, 0);
 

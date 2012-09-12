@@ -194,6 +194,11 @@ final class _Main {
 
         engine.setSkyImage('./image/sky1.jpg');
 
+        if (engine.isMobile) {
+            engine.camera.farZ = 200;
+            engine.camera.updateMatrix();
+        }
+
         var trees = new List.<Vector>([
             new Vector(-271, -3, 450),
             new Vector(-200, -3, 720),
@@ -442,8 +447,8 @@ final class _Main {
             dom.window.addEventListener('devicemotion', (e:Event):void -> {
                 var de = e as DeviceMotionEvent;
 
-                var az = (de.accelerationIncludingGravity['y'] as number) * 30;
-                var ax = (de.accelerationIncludingGravity['x'] as number) * 30 / 2;
+                var az = de.accelerationIncludingGravity.y * 30;
+                var ax = de.accelerationIncludingGravity.x * 30 / 2;
                 if (az < 0) {
                     player.brake();
                     az = 0;
