@@ -74,6 +74,7 @@ class Player {
     var az : number;
     var rot : Quaternion;
     var radius : int;
+    var isBraking : boolean;
 
     function constructor() {
         this.r = 12;
@@ -88,6 +89,7 @@ class Player {
         this.az = 0;
         this.rot = Quaternion.rotating(0, 1, 0, 0);
         this.radius = 8;
+        this.isBraking = true;
     }
 
     function moveForward() : void {
@@ -95,6 +97,8 @@ class Player {
     }
 
     function move(dz:number, dx:number) : void {
+        this.isBraking = false;
+
         var x = this.vx;
         var z = this.vz;
         var len = Math.sqrt(x*x+z*z);
@@ -110,6 +114,10 @@ class Player {
 
         this.az = cos*dz - sin*dx;
         this.ax = sin*dz + cos*dx;
+    }
+
+    function brake() : void {
+        this.isBraking = true;
     }
 
     function update(elapsedMsec:number) : void {
@@ -131,8 +139,16 @@ class Player {
         this.y += dy;
         this.z += dz;
 
-        this.vx -= Math.abs(dx) * this.vx * 0.01;
-        this.vz -= Math.abs(dz) * this.vz * 0.01;
+        var velocityDecl = (this.isBraking) ? 0.1 : 0.01;
+
+        this.vx -= Math.abs(dx) * this.vx * velocityDecl;
+        this.vz -= Math.abs(dz) * this.vz * velocityDecl;
+
+        if (this.isBraking) {
+            var decl = Math.pow(Math.E, -sec);
+            this.az *= decl;
+            this.ax *= decl;
+        }
 
         var v = new Vector(dx, 0, dz);
         var c = v.cross(new Vector(0, 1, 0)).unitSelf();
@@ -195,9 +211,12 @@ final class _Main {
                 if (dx*dx+dy*dy+dz*dz < dr*dr) {
                     var normalVec = new Vector(dx, dy, dz).unitSelf();
                     var a = Math.sqrt(player.vx*player.vx+player.vy*player.vy+player.vz*player.vz);
-                    player.vx += 2 * a * normalVec.x;
+                    player.ax += 2 * a * normalVec.x;
                     player.vy += 2 * a * normalVec.y;
-                    player.vz += 2 * a * normalVec.z;
+                    player.az += 2 * a * normalVec.z;
+
+                    player.x += normalVec.x * treeRadius / 4;
+                    player.z += normalVec.z * treeRadius / 4;
                 }
             }
 
@@ -335,22 +354,23 @@ final class _Main {
 
         } else {
 
-            dom.window.document.onkeypress = (e:Event):void -> {
+            dom.window.document.addEventListener('keypress', (e:Event):void -> {
                 var ke = e as KeyboardEvent;
-                var accel = 80;
+                var accel = 100;
                 switch (ke.keyCode) {
                     case 119: // 'w'
                         player.move(accel, 0);
                         break;
                     case 115: // 's'
-                        player.move(0, 0);
+                        // player.move(0, 0);
+                        player.brake();
                         break;
                     case 97:  // 'a'
-                        player.move(0,-accel);
+                        player.move(0,-accel/2);
                         break;
                     case 100: // 'd'
                         // player.ax = 50;
-                        player.move(0, accel);
+                        player.move(0, accel/2);
                         break;
                     case 106: // 'j'
                         log items;
@@ -361,7 +381,7 @@ final class _Main {
                         player.vy = 80;
                         break;
                 }
-            };
+            }, false);
 
         }
 
