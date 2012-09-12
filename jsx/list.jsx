@@ -19,6 +19,9 @@ class List.<T> {
         this.head = null;
         this.tail = null;
         this.length = 0;
+
+        var len = array.length;
+        for (var i=0; i<len; i++) this.prepend(array.pop());
     }
 
     function prepend(value:T) : List.<T> {
