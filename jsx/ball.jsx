@@ -230,11 +230,6 @@ final class _Main {
             new Vector( 271, -10, 401)
         ]);
         var itemRadius = 8;
-        // for (var i=0; i<10; i++) {
-        //     var x = Math.floor((Math.random()-0.5)*500);
-        //     var z = Math.floor((Math.random()-0.5)*500);
-        //     items.append(new Vector(x, -10, z));
-        // }
 
         var player = new Player;
 
@@ -384,21 +379,6 @@ final class _Main {
                 context.popMatrix();
             }
 
-            // context.translate(0, 0, 100);
-            // context.rotate(axis);
-            // context.renderTexture([
-            //     new Vector(-30, -20, 0),
-            //     new Vector( 30, -20, 0),
-            //     new Vector( 30,  20, 0),
-            //     new Vector(-30,  20, 0)
-            // ], './image/so-nya.png');
-            // context.resetMatrix();
-
-            // for (var i=0; i<trees.length; i++) {
-            //     context.renderBillboard(trees[i], 50, 30, './image/redbull_free.png');
-            // }
-
-
             context.setDepth(5);
             context.beginGroup(new Vector(0, 0, 0), true);
             var grayColor = new Color(192, 192, 192);
@@ -521,14 +501,4 @@ final class _Main {
         }
 
         engine.start();
-
-        // var move = ():void -> {
-        //     engine.camera.move(new Vector(0, 0, 5));
-        //     engine.camera.rotateY(Math.PI / 64);
-        //     engine.updateMatrix();
-        //     Timer.setTimeout(move, 10);
-        // };
-        // Timer.setTimeout(move, 10);
-    }
-
 }
