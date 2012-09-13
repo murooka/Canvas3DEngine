@@ -50,9 +50,9 @@ class Util3D {
             var j1 = i+1;
             var j2 = i;
             context.renderPolygonGroup([
-                new Vector(cos(2*pi*j1/hor)*sin(pi*i2/ver)*size, cos(pi*i2/ver)*size, sin(2*pi*j1/hor)*sin(pi*i2/ver)*size),
-                new Vector(cos(2*pi*j2/hor)*sin(pi*i2/ver)*size, cos(pi*i2/ver)*size, sin(2*pi*j2/hor)*sin(pi*i2/ver)*size),
-                new Vector(cos(2*pi*j2/hor)*sin(pi*i1/ver)*size, cos(pi*i1/ver)*size, sin(2*pi*j2/hor)*sin(pi*i1/ver)*size)
+                new Vector(cos(2*pi*j2/hor)*sin(pi*i1/ver)*size, cos(pi*i1/ver)*size, sin(2*pi*j2/hor)*sin(pi*i1/ver)*size),
+                new Vector(cos(2*pi*j1/hor)*sin(pi*i1/ver)*size, cos(pi*i1/ver)*size, sin(2*pi*j1/hor)*sin(pi*i1/ver)*size),
+                new Vector(cos(2*pi*j2/hor)*sin(pi*i2/ver)*size, cos(pi*i2/ver)*size, sin(2*pi*j2/hor)*sin(pi*i2/ver)*size)
             ], new Color(128, 128, 255));
         }
         context.endGroup();
@@ -102,7 +102,7 @@ class Player {
     function constructor() {
         this.r = 12;
         this.x = 0;
-        this.y = 0;
+        this.y = 10;
         this.z = 0;
         this.vx = 0;
         this.vy = 0;
@@ -145,6 +145,7 @@ class Player {
 
     function update(elapsedMsec:number) : void {
         var sec = elapsedMsec / 1000;
+        if (sec > 0.1) sec = 0.1;
 
         this.vx += this.ax * sec;
         this.vy += this.ay * sec;
@@ -342,8 +343,11 @@ final class _Main {
         };
 
         var totalElapsedMsec = 0;
+        var backgroundColor = new Color( 90, 135, 150);
         engine.onRender = (context:Context3D, elapsedMsec:number):void -> {
             totalElapsedMsec += elapsedMsec;
+
+            context.setBackgroundColor(backgroundColor);
 
             context.translate(player.x, player.y-12, player.z);
             context.rotate(player.rot);
@@ -461,14 +465,20 @@ final class _Main {
             });
 
             dom.window.addEventListener('touchstart', (e:Event):void -> {
-                if (!isStarted) isStarted = true;
-                player.vy = 80;
+                if (!isStarted) {
+                    isStarted = true;
+                } else {
+                    player.vy = 80;
+                }
             });
 
         } else {
 
             dom.window.document.addEventListener('keypress', (e:Event):void -> {
-                if (!isStarted) isStarted = true;
+                if (!isStarted) {
+                    isStarted = true;
+                    return;
+                }
 
                 var ke = e as KeyboardEvent;
                 var accel = 100;

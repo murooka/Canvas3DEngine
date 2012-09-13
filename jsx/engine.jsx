@@ -125,16 +125,17 @@ class Engine {
             var lap = fpsManager.lastLap();
             this.onUpdate(lap);
 
+            var context = new Context3D(this.camera);
+
             if (this._skyImage && Engine.isLoadedImage[this._skyImageSrc]) {
-                this.context.fillStyle = 'rgb(255, 255, 255)';
+                this.context.fillStyle = '#' + context.backgroundColor.toHexString();;
                 this.context.fillRect(0, 0, this._width, this._height);
                 this.renderSkyImage();
             } else {
-                this.context.fillStyle = 'rgb(255, 255, 255)';
+                this.context.fillStyle = '#' + context.backgroundColor.toHexString();;
                 this.context.fillRect(0, 0, this._width, this._height);
             }
 
-            var context = new Context3D(this.camera);
             this.onRender(context, lap);
 
             context.modelList5.forEach((model) -> { model.draw(this); });
@@ -241,6 +242,8 @@ class Context3D {
     var _groupCenter : Vector;
     var _ignoringZHidden : boolean;
 
+    var backgroundColor : Color;
+
     function constructor(camera:Camera) {
         this._worldMatrix = new Matrix;
         this._matrixStack = new List.<Matrix>;
@@ -252,6 +255,7 @@ class Context3D {
         this.modelList4 = new List.<AbstractModel>;
         this.modelList5 = new List.<AbstractModel>;
 
+        this.backgroundColor = new Color(90, 135, 158);
     }
 
 
@@ -262,6 +266,10 @@ class Context3D {
 
     function getDepth() : int {
         return this._depth;
+    }
+
+    function setBackgroundColor(color:Color) : void {
+        this.backgroundColor = color;
     }
 
 
