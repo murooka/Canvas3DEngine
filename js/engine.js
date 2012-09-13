@@ -657,11 +657,10 @@ var Texture = extend(Polygon, function (vertices, src) {
     var canvas = document.getElementById('tmp_canvas');
     var ctx = canvas.getContext('2d');
 
-    var self = this;
     image.onload = function () {
         ctx.drawImage(image, 0, 0);
-        self.imageData = ctx.getImageData(0, 0, image.width, image.height);
-        self.loaded = true;
+        this.imageData = ctx.getImageData(0, 0, image.width, image.height);
+        this.loaded = true;
     };
 
     this.updateCenter();

@@ -1,7 +1,7 @@
 
 
 /**
- * @class $BAPJ}8~%j%9%H9=B$$rI=$9%/%i%9(B
+ * 双方向リスト構造を表すクラス
  */
 class List.<T> {
 
@@ -124,6 +124,10 @@ class List.<T> {
         return this;
     }
 
+    function forEach(f:function(:T):void) : void {
+        for (var n=this.head; n; n=n.next()) f(n.value);
+    }
+
     override function toString() : string {
         var str = 'list : [';
         for (var n=this.head; n!=null; n=n.next()) {
@@ -137,7 +141,7 @@ class List.<T> {
 
 
 /**
- * @class List$B$N#1MWAG$rI=$9%/%i%9(B
+ * @class Listの１要素を表すクラス
  */
 class Node.<T> {
 

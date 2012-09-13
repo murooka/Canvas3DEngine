@@ -2,7 +2,7 @@ import "./vector.jsx";
 import "./matrix.jsx";
 
 /**
- * @class 回転のための四元数を扱うクラス
+ * 回転のための四元数を扱うクラス
  */
 class Quaternion {
 

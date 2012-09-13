@@ -188,13 +188,15 @@ class Player {
 final class _Main {
     static function main(args:string[]) : void {
 
+        var isStarted = false;
+
         Engine.loadImages(['./image/tree.png', './image/so-nya.png', './image/redbull_free.png', './image/sky1.jpg']);
 
         var engine = new Engine('canvas');
 
         engine.setSkyImage('./image/sky1.jpg');
 
-        if (engine.isMobile) {
+        if (engine.isMobile()) {
             engine.camera.farZ = 200;
             engine.camera.updateMatrix();
         }
@@ -236,6 +238,8 @@ final class _Main {
         var player = new Player;
 
         engine.onUpdate = (elapsedMsec:number):void -> {
+
+            if (!isStarted) return;
 
             player.update(elapsedMsec);
 
@@ -442,7 +446,7 @@ final class _Main {
             context.popMatrix();
         };
 
-        if (engine.isMobile) {
+        if (engine.isMobile()) {
 
             dom.window.addEventListener('devicemotion', (e:Event):void -> {
                 var de = e as DeviceMotionEvent;
@@ -457,12 +461,15 @@ final class _Main {
             });
 
             dom.window.addEventListener('touchstart', (e:Event):void -> {
+                if (!isStarted) isStarted = true;
                 player.vy = 80;
             });
 
         } else {
 
             dom.window.document.addEventListener('keypress', (e:Event):void -> {
+                if (!isStarted) isStarted = true;
+
                 var ke = e as KeyboardEvent;
                 var accel = 100;
                 switch (ke.keyCode) {

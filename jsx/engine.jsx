@@ -2,12 +2,13 @@ import "./vector.jsx";
 import "./matrix.jsx";
 import "./quaternion.jsx";
 import "./list.jsx";
+import "./util.jsx";
 import "js/web.jsx";
 import "timer.jsx";
 
 
 
-/**
+/***
  * 座標系は左手座標系
  * ポリゴンの座標は、視点から見て反時計回りに指定する
  */
@@ -15,208 +16,47 @@ import "timer.jsx";
 
 
 /**
- * @class 二次元平面での汎用関数をまとめたクラス
- */
-class Math2D {
-
-    /**
-     * ベクトルの外積
-     */
-    static function cross(x1:number, y1:number, x2:number, y2:number) : number {
-        return x1*y2 - x2*y1;
-    }
-
-}
-
-
-
-// クラス名をTimerにしたかった・・・
-/**
- * @class 時間計測を行うタイマークラス
- */
-class Stopwatch {
-
-    var _elapsedMsec : number;
-    var _startedMsec : Nullable.<number>;
-    var _lastLapMsec : Nullable.<number>;
-
-    function constructor() {
-        this._elapsedMsec = 0;
-        this._startedMsec = null;
-    }
-
-    function _currentMsec() : number {
-        return Date.now();
-    }
-
-    function start() : void {
-        assert this._startedMsec == null;
-
-        this._startedMsec = this._lastLapMsec = this._currentMsec();
-    }
-
-    function stop() : void {
-        assert this._startedMsec != null;
-
-        this._elapsedMsec += this._currentMsec() - this._startedMsec;
-        this._startedMsec = null;
-        this._lastLapMsec = null;
-    }
-
-    function isStarted() : boolean {
-        return this._startedMsec != null;
-    }
-
-    function isStopped() : boolean {
-        return this._startedMsec == null;
-    }
-
-    /**
-     * 前回lap関数を呼んだ時間(またはスタートさせた時間)からの経過時間をミリ秒で返す
-     * @returns {number} 経過時間
-     */
-    function lap() : number {
-        assert this._lastLapMsec != null;
-
-        var currentMsec = this._currentMsec();
-        var lapMsec = currentMsec - this._lastLapMsec;
-        this._lastLapMsec = currentMsec;
-
-        return lapMsec;
-    }
-
-    function getElapsedMsec() : number {
-        return this._elapsedMsec;
-    }
-
-}
-
-
-/**
- * @class ゲームでの１秒辺りのフレームの更新回数を計測するクラス
- */
-class FpsManager {
-
-    var _stopwatch : Stopwatch;
-    var _recentlyMsecLog : number[];
-    var _lastMsec : number;
-    var _fpsElement : Nullable.<HTMLElement>;
-    var _enabledHtmlLog : boolean;
-    var _enabledConsoleLog : boolean;
-
-    function constructor() {
-        this._fpsElement = null;
-        this._stopwatch = new Stopwatch;
-        this._recentlyMsecLog = [] : number[];
-        this._lastMsec = 0;
-
-        this._enabledHtmlLog = false;
-        this._enabledConsoleLog = true;
-    }
-
-    function constructor(spanId:string) {
-        this._fpsElement = dom.id(spanId);
-        this._stopwatch = new Stopwatch;
-        this._recentlyMsecLog = [] : number[];
-        this._lastMsec = 0;
-
-        this._enabledHtmlLog = true;
-        this._enabledConsoleLog = false;
-    }
-
-    function start() : void {
-        this._stopwatch.start();
-    }
-
-    function lastLap() : number {
-        return this._lastMsec;
-    }
-
-    /**
-     * フレームを更新したタイミングで呼ぶことで、fpsを計算しdom要素またはconsoleに表示する
-     */
-    function update() : void {
-        assert !this._stopwatch.isStopped();
-
-        var lap = this._stopwatch.lap();
-        this._lastMsec = lap;
-        if (this._recentlyMsecLog.length < 1) {
-            this._recentlyMsecLog.push(lap);
-        } else {
-            this._recentlyMsecLog.push(lap);
-            this._recentlyMsecLog.shift();
-        }
-
-        var length = this._recentlyMsecLog.length;
-
-        var totalMsec = 0;
-        for (var i=0; i<length; i++) {
-            totalMsec += this._recentlyMsecLog[i];
-        }
-        var fps = length / (totalMsec / 1000);
-
-        if (this._fpsElement!=null && this._enabledHtmlLog) {
-            this._fpsElement.innerHTML = fps.toFixed(1) + "fps";
-        } else if (this._enabledConsoleLog) {
-            log fps.toFixed(1) + "fps";
-        }
-    }
-
-}
-
-
-
-/**
- * @class 擬似3Dを実現するためのゲームエンジンクラス
+ * 擬似3Dを実現するためのゲームエンジンクラス
  *
  * @property {HTMLCanvasElement} canvas 描画するキャンバスへの参照
- * @property {CanvasRenderingContext2D} ctx キャンバスのコンテキストへの参照
+ * @property {CanvasRenderingContext2D} context キャンバスのコンテキストへの参照
  * @property {number}  width   キャンバスの横幅
  * @property {number}  height  キャンバスの縦幅
- * @property {Model[]} objects 描画する3Dオブジェクトモデルの配列
  * @property {Camera}  camera  視点管理用のカメラ
  * @property {Matrix}  screenMatrix スクリーン変換行列
- * @property {Matrix}  transformationMatrix ワールド変換、透視変換、スクリーン変換行列を合成した変換行列
  */
 class Engine {
 
-    var isMobile : boolean;
+    var _isMobile : boolean;
 
-    var canvas : HTMLCanvasElement;
-    var ctx : CanvasRenderingContext2D;
-    var width : number;
-    var height : number;
+    var context : CanvasRenderingContext2D;
+    var _width : number;
+    var _height : number;
 
     var camera : Camera;
     var screenMatrix : Matrix;
-    var transformationMatrix : Matrix;
-
-    var objects : AbstractModel[];
 
     var onUpdate : function(:number):void;
     var onRender : function(:Context3D, :number):void;
     
-    var skyImageSrc : Nullable.<string>;
-    var skyImage : Nullable.<HTMLImageElement>;
+    var _skyImageSrc : Nullable.<string>;
+    var _skyImage : Nullable.<HTMLImageElement>;
 
     /**
-     * @constructor
-     * @param {String} canvas_id 利用するcanvas(DOM)のid
+     * @param canvas_id 利用するcanvas(DOM)のid
      */
     function constructor(canvasId:string) {
-        this.isMobile = /iPhone/.test(dom.window.navigator.userAgent);
+        this._isMobile = /iPhone/.test(dom.window.navigator.userAgent);
 
-        this.canvas = dom.id(canvasId) as HTMLCanvasElement;
-        this.ctx = this.canvas.getContext('2d') as CanvasRenderingContext2D;
+        var canvas = dom.id(canvasId) as HTMLCanvasElement;
+        this.context = canvas.getContext('2d') as CanvasRenderingContext2D;
 
-        this.width = this.canvas.width;
-        this.height = this.canvas.height;
-        this.setScreenMatrix(this.width, this.height);
+        this._width  = canvas.width;
+        this._height = canvas.height;
+        this.setScreenMatrix(this._width, this._height);
 
-        this.objects = [] : AbstractModel[];
-
-        this.skyImageSrc = null;
-        this.skyImage = null;
+        this._skyImageSrc = null;
+        this._skyImage = null;
 
 
         var viewPosition   = new Vector(0,  0,-90);
@@ -225,7 +65,7 @@ class Engine {
         var fovyX          = Math.PI / 3;
         var nearZ          = 0;
         var farZ           = 500;
-        var aspectRatio    = 1.0 * this.height / this.width;
+        var aspectRatio    = 1.0 * this._height / this._width;
 
         this.camera = new Camera(
             viewPosition,
@@ -240,20 +80,22 @@ class Engine {
         this.updateMatrix();
     }
 
+    function isMobile() : boolean { return this._isMobile; }
+
     static var images = {} : Map.<HTMLImageElement>;
     static var imageDatas = {} : Map.<ImageData>;
     static var isLoadedImage = {} : Map.<boolean>;
 
     static function loadImages(srcs:string[]) : void {
         var canvas = dom.id('tmp_canvas') as HTMLCanvasElement;
-        var ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
+        var context = canvas.getContext('2d') as CanvasRenderingContext2D;
 
         var setOnload = (src:string):void -> {
             Engine.images[src].onload = (e:Event):void -> {
                 var image = Engine.images[src];
                 Engine.isLoadedImage[src] = true;
-                ctx.drawImage(image, 0, 0);
-                Engine.imageDatas[src] = ctx.getImageData(0, 0, image.width, image.height);
+                context.drawImage(image, 0, 0);
+                Engine.imageDatas[src] = context.getImageData(0, 0, image.width, image.height);
             };
         };
 
@@ -269,42 +111,37 @@ class Engine {
     }
 
     function setSkyImage(src:string) : void {
-        this.skyImageSrc = src;
-        this.skyImage = Engine.images[src];
-    }
-
-    function addModel(o : AbstractModel) : void {
-        this.objects.push(o);
+        this._skyImageSrc = src;
+        this._skyImage = Engine.images[src];
     }
 
     function start() : void {
         var fpsManager = new FpsManager('fps');
         fpsManager.start();
 
-        var self = this;
         var update = ():void -> {
             fpsManager.update();
 
             var lap = fpsManager.lastLap();
-            self.onUpdate(lap);
+            this.onUpdate(lap);
 
-            if (self.skyImage && Engine.isLoadedImage[self.skyImageSrc]) {
-                self.ctx.fillStyle = 'rgb(255, 255, 255)';
-                self.ctx.fillRect(0, 0, this.width, this.height);
-                self.renderSkyImage();
+            if (this._skyImage && Engine.isLoadedImage[this._skyImageSrc]) {
+                this.context.fillStyle = 'rgb(255, 255, 255)';
+                this.context.fillRect(0, 0, this._width, this._height);
+                this.renderSkyImage();
             } else {
-                self.ctx.fillStyle = 'rgb(255, 255, 255)';
-                self.ctx.fillRect(0, 0, this.width, this.height);
+                this.context.fillStyle = 'rgb(255, 255, 255)';
+                this.context.fillRect(0, 0, this._width, this._height);
             }
 
-            var context = new Context3D(self.camera);
-            self.onRender(context, lap);
+            var context = new Context3D(this.camera);
+            this.onRender(context, lap);
 
-            for (var n=context.modelList5.head; n!=null; n=n.next()) n.value.draw(self);
-            for (var n=context.modelList4.head; n!=null; n=n.next()) n.value.draw(self);
-            for (var n=context.modelList3.head; n!=null; n=n.next()) n.value.draw(self);
-            for (var n=context.modelList2.head; n!=null; n=n.next()) n.value.draw(self);
-            for (var n=context.modelList1.head; n!=null; n=n.next()) n.value.draw(self);
+            context.modelList5.forEach((model) -> { model.draw(this); });
+            context.modelList4.forEach((model) -> { model.draw(this); });
+            context.modelList3.forEach((model) -> { model.draw(this); });
+            context.modelList2.forEach((model) -> { model.draw(this); });
+            context.modelList1.forEach((model) -> { model.draw(this); });
 
             Timer.setTimeout(update, 0);
         };
@@ -329,8 +166,8 @@ class Engine {
         var horRad = Math.atan2(x, z);
         var verRad = Math.atan2(y, Math.sqrt(x*x+z*z));
 
-        var imgWidth  = this.skyImage.width;
-        var imgHeight = this.skyImage.height;
+        var imgWidth  = this._skyImage.width;
+        var imgHeight = this._skyImage.height;
 
         var iCenterX = ((horRad / Math.PI / 2) + 0.5) * imgWidth;
         var iCenterY = ((verRad / Math.PI) + 0.5) * imgHeight;
@@ -350,21 +187,21 @@ class Engine {
         if (overflowingRight && overflowingBelow) {
             var perHor = (imgWidth-sx)  / sw; // 描画する横幅のうち、はみ出ずに描画できる幅の割当費
             var perVer = (imgHeight-sy) / sh; // 描画する縦幅のうち、はみ出ずに描画できる幅の割当費
-            this.ctx.drawImage(this.skyImage, ~~sx, ~~sy,    ~~(imgWidth-sx), ~~(imgHeight-sy),                     0, 0,     ~~(this.width*perHor), ~~(this.height*perVer));
-            if (~~(sx+sw-imgWidth) != 0) this.ctx.drawImage(this.skyImage,    0, ~~sy, ~~(sx+sw-imgWidth), ~~(imgHeight-sy), ~~(this.width*perHor), 0, ~~(this.width*(1-perHor)), ~~(this.height*perVer));
+            this.context.drawImage(this._skyImage, ~~sx, ~~sy,    ~~(imgWidth-sx), ~~(imgHeight-sy),                     0, 0,     ~~(this._width*perHor), ~~(this._height*perVer));
+            if (~~(sx+sw-imgWidth) != 0) this.context.drawImage(this._skyImage,    0, ~~sy, ~~(sx+sw-imgWidth), ~~(imgHeight-sy), ~~(this._width*perHor), 0, ~~(this._width*(1-perHor)), ~~(this._height*perVer));
         } else if (overflowingRight) {
             var per = (imgWidth-sx) / sw; // 描画する幅のうち、はみ出ずに描画できる幅の割当費
-            if (~~(imgWidth-sx) != 0 && ~~(this.width*per) != 0) {
-                this.ctx.drawImage(this.skyImage, ~~sx, ~~sy,    ~~(imgWidth-sx), ~~sh,                  0, 0,     ~~(this.width*per), this.height);
+            if (~~(imgWidth-sx) != 0 && ~~(this._width*per) != 0) {
+                this.context.drawImage(this._skyImage, ~~sx, ~~sy,    ~~(imgWidth-sx), ~~sh,                  0, 0,     ~~(this._width*per), this._height);
             }
-            if (~~(sx+sw-imgWidth) != 0 && ~~(this.width*(1-per)) != 0) {
-                this.ctx.drawImage(this.skyImage,    0, ~~sy, ~~(sx+sw-imgWidth), ~~sh, ~~(this.width*per), 0, ~~(this.width*(1-per)), this.height);
+            if (~~(sx+sw-imgWidth) != 0 && ~~(this._width*(1-per)) != 0) {
+                this.context.drawImage(this._skyImage,    0, ~~sy, ~~(sx+sw-imgWidth), ~~sh, ~~(this._width*per), 0, ~~(this._width*(1-per)), this._height);
             }
         } else if (overflowingBelow) {
             var per = (imgHeight-sy) / sh; // 描画する幅のうち、はみ出ずに描画できる幅の割当費
-            this.ctx.drawImage(this.skyImage, ~~sx, ~~sy, ~~sw,    ~~(imgHeight-sy), 0, 0, this.width, ~~(this.height*per));
+            this.context.drawImage(this._skyImage, ~~sx, ~~sy, ~~sw,    ~~(imgHeight-sy), 0, 0, this._width, ~~(this._height*per));
         } else {
-            this.ctx.drawImage(this.skyImage, ~~sx, ~~sy, ~~sw, ~~sh, 0, 0, this.width, this.height);
+            this.context.drawImage(this._skyImage, ~~sx, ~~sy, ~~sw, ~~sh, 0, 0, this._width, this._height);
         }
 
     }
@@ -378,7 +215,6 @@ class Engine {
 
     function updateMatrix() : void {
         this.camera.updateMatrix();
-        this.transformationMatrix = this.screenMatrix.compose(this.camera.matrix);
     }
 
 }
@@ -386,29 +222,30 @@ class Engine {
 
 
 /**
- * @class 3DのRenderingContextクラス
+ * 3DのRenderingContextクラス
  */
 class Context3D {
 
-    var worldMatrix : Matrix;
-    var matrixStack : List.<Matrix>;
+    var _worldMatrix : Matrix;
+    var _matrixStack : List.<Matrix>;
+
     var camera : Camera;
-    var depth : int;
+    var _depth : int;
     var modelList1 = List.<AbstractModel>;
     var modelList2 = List.<AbstractModel>;
     var modelList3 = List.<AbstractModel>;
     var modelList4 = List.<AbstractModel>;
     var modelList5 = List.<AbstractModel>;
 
-    var polygonList : List.<Polygon>;
-    var groupCenter : Vector;
-    var ignoringZHidden : boolean;
+    var _polygonList : List.<Polygon>;
+    var _groupCenter : Vector;
+    var _ignoringZHidden : boolean;
 
     function constructor(camera:Camera) {
-        this.worldMatrix = new Matrix;
-        this.matrixStack = new List.<Matrix>;
+        this._worldMatrix = new Matrix;
+        this._matrixStack = new List.<Matrix>;
         this.camera = camera;
-        this.depth = 3;
+        this._depth = 3;
         this.modelList1 = new List.<AbstractModel>;
         this.modelList2 = new List.<AbstractModel>;
         this.modelList3 = new List.<AbstractModel>;
@@ -420,11 +257,11 @@ class Context3D {
 
     function setDepth(depth:int) : void {
         assert 1 <= depth && depth <= 5;
-        this.depth = depth;
+        this._depth = depth;
     }
 
     function getDepth() : int {
-        return this.depth;
+        return this._depth;
     }
 
 
@@ -432,27 +269,27 @@ class Context3D {
      * ワールド変換行列を操作するための関数群
      */
     function pushMatrix() : void {
-        this.matrixStack.prepend(this.worldMatrix.copy());
+        this._matrixStack.prepend(this._worldMatrix.copy());
     }
 
     function popMatrix() : void {
-        this.worldMatrix = this.matrixStack.removeFirst();
+        this._worldMatrix = this._matrixStack.removeFirst();
     }
 
     function resetMatrix() : void {
-        this.worldMatrix = new Matrix;
+        this._worldMatrix = new Matrix;
     }
 
     function translate(x:number, y:number, z:number) : void {
-        this.worldMatrix.composeSelf(Matrix.translating(x, y, z));
+        this._worldMatrix.composeSelf(Matrix.translating(x, y, z));
     }
 
     function scale(x:number, y:number, z:number) : void {
-        this.worldMatrix.composeSelf(Matrix.scaling(x, y, z));
+        this._worldMatrix.composeSelf(Matrix.scaling(x, y, z));
     }
 
     function rotate(q:Quaternion) : void {
-        this.worldMatrix.composeSelf(q.toMatrix());
+        this._worldMatrix.composeSelf(q.toMatrix());
     }
 
 
@@ -464,23 +301,23 @@ class Context3D {
     }
 
     function beginGroup(center:Vector, ignoringZHidden:boolean) : void {
-        this.polygonList = new List.<Polygon>;
-        this.groupCenter = center;
-        this.ignoringZHidden = ignoringZHidden;
+        this._polygonList = new List.<Polygon>;
+        this._groupCenter = center;
+        this._ignoringZHidden = ignoringZHidden;
     }
 
     function renderPolygonGroup(vertices:Vector[], color:Color) : void {
         var polygon = new Polygon(vertices, color);
-        polygon.applyWorldMatrix(this.worldMatrix);
+        polygon.applyWorldMatrix(this._worldMatrix);
         polygon.applyViewMatrix(this.camera.viewMatrix);
         if (polygon.isHidden(this.camera)) return;
 
-        this.polygonList.prepend(polygon);
+        this._polygonList.prepend(polygon);
     }
 
     function endGroup() : void {
-        if (this.polygonList.length != 0) {
-            this.renderModel(new Model(this.polygonList, this.groupCenter, this.ignoringZHidden));
+        if (this._polygonList.length != 0) {
+            this.renderModel(new Model(this._polygonList, this._groupCenter, this._ignoringZHidden));
         }
     }
 
@@ -506,11 +343,11 @@ class Context3D {
     }
 
     function renderModel(model:AbstractModel) : void {
-        model.applyWorldMatrix(this.worldMatrix);
+        model.applyWorldMatrix(this._worldMatrix);
         model.applyViewMatrix(this.camera.viewMatrix);
         if (model.isHidden(this.camera)) return;
 
-        switch (this.depth) {
+        switch (this._depth) {
             case 1: this.insertModelByZValue(this.modelList1, model); break;
             case 2: this.insertModelByZValue(this.modelList2, model); break;
             case 3: this.insertModelByZValue(this.modelList3, model); break;
@@ -536,11 +373,11 @@ class Context3D {
 
 
 /**
- * @class ワールド座標系上での物の見方を表すカメラクラス
+ * ワールド座標系上での物の見方を表すカメラクラス
  *
- * @property {Matrix} viewMatrix       ビュー変換行列
- * @property {Matrix} projectionMatrix 透視変換行列
- * @property {Matrix} matrix           ビュー変換と透視変換行列を合成した変換行列
+ * @property viewMatrix       ビュー変換行列
+ * @property projectionMatrix 透視変換行列
+ * @property matrix           ビュー変換と透視変換行列を合成した変換行列
  */
 class Camera {
 
@@ -558,14 +395,13 @@ class Camera {
     var aspectRatio : number;
 
     /**
-     * @constructor
-     * @param {Vector} view   視点座標
-     * @param {Vector} target 注視点座標
-     * @param {Vecotr} upper  上方向ベクトル
-     * @param {number} fovyX  横方向の視野角
-     * @param {number} nearZ  物が見える範囲のうち、最も近い距離
-     * @param {number} farZ   物が見える範囲のうち、最も遠い距離
-     * @param {number} apect_ratio カメラ画面のheight/widthの値
+     * @param view   視点座標
+     * @param target 注視点座標
+     * @param upper  上方向ベクトル
+     * @param fovyX  横方向の視野角
+     * @param nearZ  物が見える範囲のうち、最も近い距離
+     * @param farZ   物が見える範囲のうち、最も遠い距離
+     * @param apect_ratio カメラ画面のheight/widthの値
      */
     function constructor(view:Vector, target:Vector, upper:Vector, fovyX:number, nearZ:number, farZ:number, aspectRatio:number) {
         this.view   = view;
@@ -583,7 +419,7 @@ class Camera {
 
     /**
      * カメラの位置を移動させる
-     * @param {Vector} v 移動させる方向ベクトル
+     * @param v 移動させる方向ベクトル
      */
     function move(v:Vector) : void {
         var vector = this.rotatingMatrix.mul(v);
@@ -593,7 +429,7 @@ class Camera {
 
     /**
      * Y軸を中心にカメラの向きを反時計回りに回転させる
-     * @param {number} rad 回転量
+     * @param rad 回転量
      */
     function rotateY(rad:number) : void {
         var lookingVec =  this.target.sub(this.view);
@@ -663,9 +499,9 @@ class Color {
     
     /**
      * @constructor
-     * @param {number} r rgbのr要素
-     * @param {number} g rgbのg要素
-     * @param {number} b rgbのb要素
+     * @param r rgbのr要素
+     * @param g rgbのg要素
+     * @param b rgbのb要素
      */
     function constructor(r:int, g:int, b:int) {
         this.r = r;
@@ -687,23 +523,16 @@ class Color {
         return '#' + this._to2DigitHex(this.r) + this._to2DigitHex(this.g) + this._to2DigitHex(this.b);
     }
 
-    /**
-     * r, g, bをg, b, rにする
-     * ポリゴンの裏面の色を得るためのテスト的な関数
-     */
-    function negative() : Color {
-        return new Color(this.g, this.b, this.r);
-    }
 }
 
 
 
 /**
- * @class Engine上で表示するモデルの抽象クラス
- * @description このクラスを継承するクラスは、draw関数、applyViewMatrix関数、isHidden関数、centerプロパティ、vCenterプロパティ、depthプロパティを実装する必要がある
- * @property {Vector} center  Zソートを行うためのモデルの中心座標
- * @property {Vector} vCenter view変換を行ったあとのcenter
- * @property {number} depth   centerとは無関係に描画順序を決定するための値
+ * Engine上で表示するモデルの抽象クラス
+ * このクラスを継承するクラスは、draw関数、applyViewMatrix関数、isHidden関数、centerプロパティ、vCenterプロパティ、depthプロパティを実装する必要がある
+ * @property center  Zソートを行うためのモデルの中心座標
+ * @property vCenter view変換を行ったあとのcenter
+ * @property depth   centerとは無関係に描画順序を決定するための値
  *                            小さいほど手前に表示され、大きいほど奥に表示される
  *                            デフォルトで値は3とする
  */
@@ -711,44 +540,43 @@ abstract class AbstractModel {
 
     var center : Vector;
     var vCenter : Vector;
-    var depth : int = 3;
 
     /**
-     * @description 引数に渡されたworldMatrixを用いて、モデリングオブジェクトをワールド座標系に移動させる
-     *              この関数を実装する場合は、verticesやcenterの値を直接書き換える
-     * @param {Matrix} worldMatrix ワールド変換行列
+     * 引数に渡されたworldMatrixを用いて、モデリングオブジェクトをワールド座標系に移動させる
+     * この関数を実装する場合は、verticesやcenterの値を直接書き換える
+     * @param worldMatrix ワールド変換行列
      */
     abstract function applyWorldMatrix(worldMatrix:Matrix) : void;
 
     /**
-     * @description 引数に渡されたviewMatrixを用いて、ビュー座標系でのcenter(vCenter)を更新する
-     * @param {Matrix} viewMatrix ビュー変換行列
+     * 引数に渡されたviewMatrixを用いて、ビュー座標系でのcenter(vCenter)を更新する
+     * @param viewMatrix ビュー変換行列
      */
     abstract function applyViewMatrix(viewMatrix:Matrix) : void;
 
     /**
-     * @description 透視変換後の座標を用いて、Zvalueが見える範囲にあるか(nearZ以上farZ以下か)を確認する
-     * @param {Camera} camera Zvalueの範囲情報を持つCamera
+     * 透視変換後の座標を用いて、Zvalueが見える範囲にあるか(nearZ以上farZ以下か)を確認する
+     * @param camera Zvalueの範囲情報を持つCamera
      */
     abstract function isHidden(camera:Camera) : boolean;
 
     /**
-     * @description 渡されたcanvasにモデルを描画する
-     *              描画を行った場合はtrueを、行う必要がなかった場合はfalseを返す
+     * 渡されたcanvasにモデルを描画する
+     * 描画を行った場合はtrueを、行う必要がなかった場合はfalseを返す
      */
     abstract function draw(engine:Engine) : boolean;
 
     /**
-     * @description スクリーン座標系の頂点がcanvas内に描画する必要があるかどうかを確認する
-     *              描画する必要がないならばtrueを返す
+     * スクリーン座標系の頂点がcanvas内に描画する必要があるかどうかを確認する
+     * 描画する必要がないならばtrueを返す
      * TODO: 下側の判定を緩くする or 全体的に少し緩くする
      */
     static function isHiddenXY(vertices:Vector[], engine:Engine) : boolean {
-        var margin = 50;
+        var margin = 100;
         for (var i=0; i<vertices.length; i++) {
             var v = vertices[i];
-            if (-margin < v.x && v.x < engine.width  + margin &&
-                -margin < v.y && v.y < engine.height + margin   ) return false;
+            if (-margin < v.x && v.x < engine._width  + margin &&
+                      0 < v.y && v.y < engine._height + margin   ) return false;
         }
         return true;
     }
@@ -758,27 +586,27 @@ abstract class AbstractModel {
 
 
 /**
- * @class Engineで利用する多角形クラス
- * @property {boolean} enabledLighting 環境光、拡散光の有効無効を切り替えるフラグ
+ * Engineで利用する多角形クラス
+ * @property enabledLighting 環境光、拡散光の有効無効を切り替えるフラグ
  */
 class Polygon extends AbstractModel {
 
     var vertices : Vector[];
     var vVertices : Vector[];
-    var color : Color;
-    var enabledLighting : boolean;
+    var _color : Color;
+    var _enabledLighting : boolean;
 
     /**
      * 1つの面に対して1つの色情報を持つ
      * NOTICE: 引数のverticesは同一平面上に無いと歪む可能性がある
      * NOTICE: verticesは反時計回りに指定する
-     * @param {Vector[]} vertices 多角形の頂点座標の配列
-     * @param {Color}    color    多角形の色
+     * @param vertices 多角形の頂点座標の配列
+     * @param color    多角形の色
      */
     function constructor(vertices:Vector[], color:Color) {
         this.vertices = vertices;
-        this.color = color;
-        this.enabledLighting = true;
+        this._color = color;
+        this._enabledLighting = true;
         this.updateCenter();
     }
 
@@ -829,14 +657,14 @@ class Polygon extends AbstractModel {
     }
 
     override function draw(engine:Engine) : boolean {
-        var ctx = engine.ctx;
+        var context = engine.context;
         var len = this.vertices.length;
         var verts = this.vVertices;
 
 
         // 透視変換の前に光の計算をしておく
-        var color = this.color;
-        if (this.enabledLighting) {
+        var color = this._color;
+        if (this._enabledLighting) {
             color = (():Color -> {
                 var center = this.vCenter;
 
@@ -850,9 +678,9 @@ class Polygon extends AbstractModel {
                 var diffuseCoefficient = 0.8;
                 var ambientPower = 0.5;
 
-                var r = Math.min(255, (diffusePower * diffuseCoefficient * lightPower + ambientPower) * this.color.r);
-                var g = Math.min(255, (diffusePower * diffuseCoefficient * lightPower + ambientPower) * this.color.g);
-                var b = Math.min(255, (diffusePower * diffuseCoefficient * lightPower + ambientPower) * this.color.b);
+                var r = Math.min(255, (diffusePower * diffuseCoefficient * lightPower + ambientPower) * color.r);
+                var g = Math.min(255, (diffusePower * diffuseCoefficient * lightPower + ambientPower) * color.g);
+                var b = Math.min(255, (diffusePower * diffuseCoefficient * lightPower + ambientPower) * color.b);
 
                 return new Color(r, g, b);
             })();
@@ -890,23 +718,23 @@ class Polygon extends AbstractModel {
 
         var colorStr = '#' + color.toHexString();
 
-        ctx.strokeStyle = colorStr;
+        context.strokeStyle = colorStr;
         for (var i=0; i<len; i++) {
-            ctx.beginPath();
-            ctx.moveTo(verts[i].x, verts[i].y);
-            ctx.lineTo(verts[(i+1)%len].x, verts[(i+1)%len].y);
-            ctx.stroke();
+            context.beginPath();
+            context.moveTo(verts[i].x, verts[i].y);
+            context.lineTo(verts[(i+1)%len].x, verts[(i+1)%len].y);
+            context.stroke();
         }
 
-        ctx.fillStyle = colorStr;
-        ctx.beginPath();
+        context.fillStyle = colorStr;
+        context.beginPath();
         for (var i=0; i<len; i++) {
             var x = verts[i].x;
             var y = verts[i].y;
-            ctx.lineTo(x, y);
+            context.lineTo(x, y);
         }
-        ctx.closePath();
-        ctx.fill();
+        context.closePath();
+        context.fill();
 
         return true;
     }
@@ -916,22 +744,22 @@ class Polygon extends AbstractModel {
 
 
 /**
- * @class 複数のPolygonを内包するオブジェクトモデルクラス
- * @description このクラスは、Z-sortを行う必要の無い、1つのまとまりとして扱うことのできるPolygonの集合のクラスである
- *              例えば立方体や球などでは、裏側のPolygonは隠面消去するため、Z-sortを行わなくても自然に描画できる
- *              そのような3Dオブジェクトの場合、このクラスを利用することにより高速化ができる
- * @description 大きな3Dオブジェクトの場合、適切なcenter座標を指定できず、一部のPolygonを表示したい場合でもisHidden関数により描画されない場合がある
- *              その場合は、ignoringZHiddenをtrueにすることで全てのPolygonの描画を試みるが、前後関係が正しく表示されない可能性がある
+ * 複数のPolygonを内包するオブジェクトモデルクラス
+ * このクラスは、Z-sortを行う必要の無い、1つのまとまりとして扱うことのできるPolygonの集合のクラスである
+ * 例えば立方体や球などでは、裏側のPolygonは隠面消去するため、Z-sortを行わなくても自然に描画できる
+ * そのような3Dオブジェクトの場合、このクラスを利用することにより高速化ができる
+ * 大きな3Dオブジェクトの場合、適切なcenter座標を指定できず、一部のPolygonを表示したい場合でもisHidden関数により描画されない場合がある
+ * その場合は、ignoringZHiddenをtrueにすることで全てのPolygonの描画を試みるが、前後関係が正しく表示されない可能性がある
  * TODO: クラス名を変更する
  */
 class Model extends AbstractModel {
 
     var polygons : List.<Polygon>;
-    var ignoringZHidden : boolean;
+    var _ignoringZHidden : boolean;
 
     /*
-     * @param {Polygon[]}  polygons Polygonの配列
-     * @param {Vector}     center   world座標系での原点からの相対ベクトル
+     * @param  polygons Polygonの配列
+     * @param  center   world座標系での原点からの相対ベクトル
      */
     function constructor(polygons:List.<Polygon>, center:Vector) {
         this(polygons, center, false);
@@ -940,25 +768,19 @@ class Model extends AbstractModel {
     function constructor(polygons:List.<Polygon>, center:Vector, ignoringZHidden:boolean) {
         this.polygons = polygons;
         this.center = center;
-        this.ignoringZHidden = ignoringZHidden;
+        this._ignoringZHidden = ignoringZHidden;
     }
 
     override function applyWorldMatrix(worldMatrix:Matrix) : void {
-        // for (var i=0; i<this.polygons.length; i++) {
-        //     this.polygons[i].applyWorldMatrix(worldMatrix);
-        // }
         this.center = worldMatrix.mul(this.center);
     }
 
     override function applyViewMatrix(viewMatrix:Matrix) : void {
-        // for (var i=0; i<this.polygons.length; i++) {
-        //     this.polygons[i].applyViewMatrix(viewMatrix);
-        // }
         this.vCenter = viewMatrix.mul(this.center);
     }
 
     override function isHidden(camera:Camera) : boolean {
-        if (this.ignoringZHidden) return false;
+        if (this._ignoringZHidden) return false;
         if (camera.nearZ < this.vCenter.z && this.vCenter.z < camera.farZ) return false;
         return true;
     }
@@ -966,17 +788,10 @@ class Model extends AbstractModel {
     override function draw(engine:Engine) : boolean {
         var polygons = this.polygons;
 
-        for (var n=polygons.head; n!=null; n=n.next()) {
-            var polygon = n.value;
-            if (polygon.isHidden(engine.camera)) continue;
+        polygons.forEach((polygon) -> {
+            if (polygon.isHidden(engine.camera)) return;
             polygon.draw(engine);
-        }
-
-        // for (var i=0; i<polygons.length; i++) {
-        //     var polygon = polygons[i];
-        //     if (polygon.isHidden(engine.camera)) continue;
-        //     polygon.draw(engine);
-        // }
+        });
 
         return true;
     }
@@ -985,21 +800,21 @@ class Model extends AbstractModel {
 
 
 /**
- * @class アフィン変換を用いて高速にテクスチャを描画するクラス
- * @description 裏柄からみた場合は、反転して表示する
+ * アフィン変換を用いて高速にテクスチャを描画するクラス
+ * 裏柄からみた場合は、反転して表示する
  * TODO: 継承関係を直す
  */
 class SmoothTexture extends Polygon {
 
-    var src : string;
-    var image : HTMLImageElement;
-    var width : number;
-    var height : number;
+    var _src : string;
+    var _image : HTMLImageElement;
+    var _width : number;
+    var _height : number;
 
-    var maxHorizontalDiv : int;
-    var maxVerticalDiv : int;
-    var maxDiv : int;
-    var minDiv : int;
+    var _maxHorizontalDiv : int;
+    var _maxVerticalDiv : int;
+    var _maxDiv : int;
+    var _minDiv : int;
 
 
     function constructor(vertices:Vector[], src:string) {
@@ -1007,28 +822,28 @@ class SmoothTexture extends Polygon {
     }
 
     /**
-     * @constructor
-     * @description verticesは画像の左下に対応する点から、反時計回りで指定する
-     * @param {Vector[]}  vertices  ポリゴンの頂点座標の配列
-     * @param {String}    src       テクスチャに使う画像ファイル名
-     * @param {int}       maxHorDiv 描画時に水平分割を行う最大数
-     * @param {int}       maxVerDiv 描画時に垂直分割を行う最大数
-     * @param {int}       maxDiv    描画時に4分割を行う最大数
-     * @param {int}       minDiv    描画時に必ず4分割を行う回数
+     * verticesは画像の左下に対応する点から、反時計回りで指定する
+     * @param vertices  ポリゴンの頂点座標の配列
+     * @param src       テクスチャに使う画像ファイル名
+     * @param maxHorDiv 描画時に水平分割を行う最大数
+     * @param maxVerDiv 描画時に垂直分割を行う最大数
+     * @param maxDiv    描画時に4分割を行う最大数
+     * @param minDiv    描画時に必ず4分割を行う回数
      */
     function constructor(vertices:Vector[], src:string, maxHorDiv:int, maxVerDiv:int, maxDiv:int, minDiv:int) {
         super(vertices, new Color(0, 0, 0));
 
-        this.src = src;
-        this.image = Engine.images[src];
+        this._src = src;
+        this._image = Engine.images[src];
         this.vertices = vertices;
 
-        this.width  = Math.abs(vertices[1].sub(vertices[0]).abs());
-        this.height = Math.abs(vertices[2].sub(vertices[1]).abs());
+        this._width  = Math.abs(vertices[1].sub(vertices[0]).abs());
+        this._height = Math.abs(vertices[2].sub(vertices[1]).abs());
 
-        this.maxHorizontalDiv = maxHorDiv;
-        this.maxVerticalDiv   = maxVerDiv;
-        this.minDiv           = minDiv;
+        this._maxHorizontalDiv = maxHorDiv;
+        this._maxVerticalDiv   = maxVerDiv;
+        this._maxDiv           = maxDiv;
+        this._minDiv           = minDiv;
 
         this.updateCenter();
     }
@@ -1055,9 +870,9 @@ class SmoothTexture extends Polygon {
     }
 
     override function draw(engine:Engine) : boolean {
-        if (!Engine.isLoadedImage[this.src]) return false;
+        if (!Engine.isLoadedImage[this._src]) return false;
 
-        var ctx = engine.ctx;
+        var context = engine.context;
 
         // world + left or right + top or bottom
         var wltImage = this.vertices[3];
@@ -1081,17 +896,16 @@ class SmoothTexture extends Polygon {
         if (isHiddenXY) return false;
 
         /**
-         * @function
-         * @description 画像をアフィン変換のみを用いて台形へ変換し描画する
-         * @description 変換後の台形が極端に歪んでいる場合は分割を行い、この関数を再帰的に読んで描画する
-         * @param {Image}  image           描画する画像
-         * @param {Vector} wlt wlb wrb wrt ワールド座標系上の、画像の左上、左下、右下、右上の座標
-         * @param {Vector} slt slb srb srt 変換後のスクリーン座標系上の、画像の左上、左下、右下、右上の座標
-         * @param {number} depth           この関数の再帰呼び出しの回数、最初の呼び出しでは1を指定
-         * @param {number} sx              画像を描画する部分のx軸方向のオフセット
-         * @param {number} sy              画像を描画する部分のy軸方向のオフセット
-         * @param {number} sw              画像を描画する部分の横幅
-         * @param {number} sh              画像を描画する部分の縦幅
+         * 画像をアフィン変換のみを用いて台形へ変換し描画する
+         * 変換後の台形が極端に歪んでいる場合は分割を行い、この関数を再帰的に読んで描画する
+         * @param image           描画する画像
+         * @param wlt wlb wrb wrt ワールド座標系上の、画像の左上、左下、右下、右上の座標
+         * @param slt slb srb srt 変換後のスクリーン座標系上の、画像の左上、左下、右下、右上の座標
+         * @param depth           この関数の再帰呼び出しの回数、最初の呼び出しでは1を指定
+         * @param sx              画像を描画する部分のx軸方向のオフセット
+         * @param sy              画像を描画する部分のy軸方向のオフセット
+         * @param sw              画像を描画する部分の横幅
+         * @param sh              画像を描画する部分の縦幅
          */
         var divideAndDrawImage = (
             image:HTMLImageElement,
@@ -1113,8 +927,6 @@ class SmoothTexture extends Polygon {
             // 座標の位置は、(world or screen) + (left or right or center) + (top or bottom or center)を組み合わせて表現する
             // 例: world-left-top -> wlp
 
-            // if (AbstractModel.isHiddenXY([slt,slb,srb,srt], engine)) return;
-
             var hypotenuse = (a:number, b:number):number -> {
                 return Math.sqrt(a*a+b*b);
             };
@@ -1133,7 +945,7 @@ class SmoothTexture extends Polygon {
             var splittingHorizontal = widthRatio > 1.01;
             var splittingVertical   = heightRatio > 1.01;
 
-            if (depth <= this.minDiv || (depth <= this.maxDiv && splittingHorizontal && splittingVertical)) {
+            if (depth <= this._minDiv || (depth <= this._maxDiv && splittingHorizontal && splittingVertical)) {
                 var wct = wlt.add(wrt).divSelf(2);
                 var wcb = wlb.add(wrb).divSelf(2);
                 var wlc = wlt.add(wlb).divSelf(2);
@@ -1150,7 +962,7 @@ class SmoothTexture extends Polygon {
                 divideAndDrawImage(image, wlc, wlb, wcb, wcc, slc, slb, scb, scc, depth+1,      sx, sy+sh/2, sw/2, sh/2); // 左下部分
                 divideAndDrawImage(image, wct, wcc, wrc, wrt, sct, scc, src, srt, depth+1, sx+sw/2, sy     , sw/2, sh/2); // 右上部分
                 divideAndDrawImage(image, wcc, wcb, wrb, wrc, scc, scb, srb, src, depth+1, sx+sw/2, sy+sh/2, sw/2, sh/2); // 右下部分
-            } else if (depth <= this.maxVerticalDiv && splittingVertical) {
+            } else if (depth <= this._maxVerticalDiv && splittingVertical) {
                 var wct = wlt.add(wrt).divSelf(2);
                 var wcb = wlb.add(wrb).divSelf(2);
 
@@ -1159,7 +971,7 @@ class SmoothTexture extends Polygon {
 
                 divideAndDrawImage(image, wlt, wlb, wcb, wct, slt, slb, scb, sct, depth+1,      sx, sy, sw/2, sh); // 左側部分
                 divideAndDrawImage(image, wct, wcb, wrb, wrt, sct, scb, srb, srt, depth+1, sx+sw/2, sy, sw/2, sh); // 右側部分
-            } else if (depth <= this.maxHorizontalDiv && splittingHorizontal) {
+            } else if (depth <= this._maxHorizontalDiv && splittingHorizontal) {
                 var wlc = wlt.add(wlb).divSelf(2);
                 var wrc = wrt.add(wrb).divSelf(2);
 
@@ -1175,16 +987,16 @@ class SmoothTexture extends Polygon {
                 var skewingX = (srt.y-slt.y) / (srt.x-slt.x);
                 var skewingY = (slb.x-slt.x) / (slb.y-slt.y);
 
-                ctx.transform(1, 0, 0, 1, slt.x, slt.y);
-                ctx.transform(1, skewingX, skewingY, 1, 0, 0);
-                ctx.transform(scaleX, 0, 0, scaleY, 0, 0);
-                ctx.drawImage(image, ~~(sx), ~~(sy), ~~(sw), ~~(sh), 0, 0, ~~(sw), ~~(sh));
+                context.transform(1, 0, 0, 1, slt.x, slt.y);
+                context.transform(1, skewingX, skewingY, 1, 0, 0);
+                context.transform(scaleX, 0, 0, scaleY, 0, 0);
+                context.drawImage(image, ~~(sx), ~~(sy), ~~(sw), ~~(sh), 0, 0, ~~(sw), ~~(sh));
 
-                ctx.setTransform(1, 0, 0, 1, 0, 0);
+                context.setTransform(1, 0, 0, 1, 0, 0);
             }
         };
 
-        divideAndDrawImage(this.image, wltImage, wlbImage, wrbImage, wrtImage, sltImage, slbImage, srbImage, srtImage, 1, 0, 0, this.image.width, this.image.height);
+        divideAndDrawImage(this._image, wltImage, wlbImage, wrbImage, wrtImage, sltImage, slbImage, srbImage, srtImage, 1, 0, 0, this._image.width, this._image.height);
 
         return true;
     }
@@ -1194,26 +1006,26 @@ class SmoothTexture extends Polygon {
 
 
 /**
- * @class billboard(どの方向から見ても同じ画像を表示するオブジェクト)を表すクラス
+ * billboard(どの方向から見ても同じ画像を表示するオブジェクト)を表すクラス
  */
 class Billboard extends AbstractModel {
 
-    var width : number;
-    var height : number;
-    var src : string;
-    var image : HTMLImageElement;
+    var _width : number;
+    var _height : number;
+    var _src : string;
+    var _image : HTMLImageElement;
 
     /**
-     * @param {Vector} center world座標系でのBillboardの中心座標
-     * @param {number} width  world座標系でのBillboardの横幅
-     * @param {number} height world座標系でのBillboardの縦幅
-     * @param {String} src    Billboardで使う画像のファイル名
+     * @param center world座標系でのBillboardの中心座標
+     * @param width  world座標系でのBillboardの横幅
+     * @param height world座標系でのBillboardの縦幅
+     * @param src    Billboardで使う画像のファイル名
      */
     function constructor(center:Vector, width:number, height:number, src:string) {
-        this.width = width;
-        this.height = height;
-        this.src = src;
-        this.image = Engine.images[src];
+        this._width = width;
+        this._height = height;
+        this._src = src;
+        this._image = Engine.images[src];
 
         this.center = center;
     }
@@ -1231,32 +1043,33 @@ class Billboard extends AbstractModel {
     }
 
     override function draw(engine:Engine) : boolean {
-        if (!Engine.isLoadedImage[this.src]) return false;
+        if (!Engine.isLoadedImage[this._src]) return false;
 
-        var isHiddenXY = AbstractModel.isHiddenXY([this.vCenter], engine);
-        if (isHiddenXY) return false;
 
-        var ctx = engine.ctx;
+        var context = engine.context;
 
         var projectionAndScreenMatrix = engine.screenMatrix.compose(engine.camera.projectionMatrix);
 
         // TODO: 座標系のチェック
-        var vLeftBottom = this.vCenter.sub(new Vector(this.width/2, this.height/2, 0));
+        var vLeftBottom = this.vCenter.sub(new Vector(this._width/2, this._height/2, 0));
 
-        var vpCenter = projectionAndScreenMatrix.mul(this.vCenter);
-        var vpLeftBottom = projectionAndScreenMatrix.mul(vLeftBottom);
-        var vpHalfWidth = vpLeftBottom.x - vpCenter.x;
-        var vpHalfHeight = vpLeftBottom.y - vpCenter.y;
+        var sCenter = projectionAndScreenMatrix.mul(this.vCenter);
+        var sLeftBottom = projectionAndScreenMatrix.mul(vLeftBottom);
+        var sHalfWidth  = sLeftBottom.x - sCenter.x;
+        var sHalfHeight = sLeftBottom.y - sCenter.y;
 
-        var scaleX = vpHalfWidth  / this.image.width  * 2;
-        var scaleY = vpHalfHeight / this.image.height * 2;
+        var isHiddenXY = AbstractModel.isHiddenXY([sCenter], engine);
+        if (isHiddenXY) return false;
 
-        ctx.setTransform(scaleX, 0, 0, scaleY, 0, 0);
+        var scaleX = sHalfWidth  / this._image.width  * 2;
+        var scaleY = sHalfHeight / this._image.height * 2;
+
+        context.setTransform(scaleX, 0, 0, scaleY, 0, 0);
 
         // TODO: 描画位置を決めなくても、アフィン変換でなんとかなるかも
-        ctx.drawImage(this.image, ~~((vpCenter.x-vpHalfWidth)/scaleX), ~~((vpCenter.y-vpHalfHeight)/scaleY));
+        context.drawImage(this._image, ~~((sCenter.x-sHalfWidth)/scaleX), ~~((sCenter.y-sHalfHeight)/scaleY));
 
-        ctx.setTransform(1, 0, 0, 1, 0, 0);
+        context.setTransform(1, 0, 0, 1, 0, 0);
 
         return true;
     }
