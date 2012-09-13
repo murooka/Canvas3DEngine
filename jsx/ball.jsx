@@ -186,23 +186,84 @@ class Player {
 
 
 
-final class _Main {
-    static function main(args:string[]) : void {
+class BlueBall {
 
-        var isStarted = false;
+    var isStarted : boolean;
+    var engine : Engine;
+    
 
+    var player : Player;
+
+    var trees : List.<Vector>;
+    var treeRadius : int;
+    var items : List.<Vector>;
+    var itemRadius : int;
+
+    var totalElapsedMsec : number;
+    
+    function constructor() {
         Engine.loadImages(['./image/tree.png', './image/so-nya.png', './image/redbull_free.png', './image/sky1.jpg']);
 
-        var engine = new Engine('canvas');
+        this.isStarted = false;
 
-        engine.setSkyImage('./image/sky1.jpg');
 
-        if (engine.isMobile()) {
-            engine.camera.farZ = 200;
-            engine.camera.updateMatrix();
+        // engine setting
+        this.engine = new Engine('canvas');
+        this.engine.setSkyImage('./image/sky1.jpg');
+
+        if (this.engine.isMobile()) {
+            this.engine.camera.farZ = 200;
+            this.engine.camera.updateMatrix();
         }
 
-        var trees = new List.<Vector>([
+
+        // player and objects setting
+        this.player = new Player;
+        this._initTrees();
+        this._initItems();
+
+
+        // update
+        this.engine.onUpdate = (elapsedMsec:number):void -> {
+            if (!this.isStarted) return;
+            
+            this._checkCollisionWithFloor(elapsedMsec);
+
+            this._checkCollisionWithTrees();
+
+            this._checkCollisionWithItems();
+
+            this._updateViewpoint();
+        };
+
+
+        // render
+        var backgroundColor = new Color( 90, 135, 150);
+        this.engine.onRender = (context:Context3D, elapsedMsec:number):void -> {
+            this.totalElapsedMsec += elapsedMsec;
+
+            context.setBackgroundColor(backgroundColor);
+
+            this._renderPlayer(context);
+
+            this._renderTrees(context);
+
+            this._renderItems(context);
+
+            this._renderField(context);
+        };
+
+
+        // operation setting
+        if (this.engine.isMobile()) {
+            this._setMobileOperation();
+        } else {
+            this._setPCOperation();
+        }
+    }
+
+    function _initTrees() : void {
+        this.trees = new List.<Vector>([
             new Vector(-271, -3, 450),
             new Vector(-200, -3, 720),
             new Vector( 139, -3, 351),
@@ -214,10 +275,11 @@ final class _Main {
             new Vector(  96, -3, 678),
             new Vector( -49, -3, 222)
         ]);
-        var treeRadius = 20;
+        this.treeRadius = 24;
+    }
 
-
-        var items = new List.<Vector>([
+    function _initItems() : void {
+        this.items = new List.<Vector>([
             new Vector( 149, -10, 724),
             new Vector( 107, -10, 483),
             new Vector( 279, -10, 551),
@@ -229,276 +291,304 @@ final class _Main {
             new Vector(-169, -10, 254),
             new Vector( 271, -10, 401)
         ]);
-        var itemRadius = 8;
+        this.itemRadius = 8;
+    }
 
-        var player = new Player;
+    function _checkCollisionWithFloor(elapsedMsec:number) : void {
+        var player = this.player;
 
-        engine.onUpdate = (elapsedMsec:number):void -> {
+        player.update(elapsedMsec);
 
-            if (!isStarted) return;
-
-            player.update(elapsedMsec);
-
-            var x = player.x;
-            var y = player.y;
-            var z = player.z;
-            // 床との当たり判定
-            if (
+        var x = player.x;
+        var y = player.y;
+        var z = player.z;
+        // 床との当たり判定
+        if (
                 ( -30 <= x && x <=  30 && -30 <= z && z <= 150) || // starting floor
                 (-300 <= x && x <= 300 && 150 <= z && z <= 750) || // stage 1
                 ( -30 <= x && x <=  30 && 750 <= z && z <= 810) ||
                 ( -30 <= x && x <= 570 && 810 <= z && z <= 870)    // passage from stage 1 to stage 2
-            ) {
-                if (-player.radius*2 < y && y < 0) {
-                    player.vy = - player.vy * 0.5;
-                    player.y = 0;
-                }
+           ) {
+            if (-player.radius*2 < y && y < 0) {
+                player.vy = - player.vy * 0.5;
+                player.y = 0;
             }
-            if (510 <= x && x <= 570 && 210 <= z && z <= 810) {    // stage 2
-                var height = Math.floor((810 - z) / 30);
-                if (height > 9) height = 19 - height;
-                height *= 5;
+        }
+        if (510 <= x && x <= 570 && 210 <= z && z <= 810) {    // stage 2
+            var height = Math.floor((810 - z) / 30);
+            if (height > 9) height = 19 - height;
+            height *= 5;
 
-                if (height-player.radius*2 < y && y < height) {
-                    player.vy = - player.vy * 0.5;
-                    player.y = height;
-                }
+            if (height-player.radius*2 < y && y < height) {
+                player.vy = - player.vy * 0.5;
+                player.y = height;
             }
-            
+        }
+    }
 
+    function _checkCollisionWithTrees() : void {
+        var player = this.player;
 
-            // 木との当たり判定
-            for (var n=trees.head; n; n=n.next()) {
-                var tree = n.value;
-                var dx = player.x - tree.x;
-                var dy = player.y - tree.y;
-                var dz = player.z - tree.z;
+        this.trees.forEach((tree) -> {
+            var dx = player.x - tree.x;
+            var dy = player.y - tree.y;
+            var dz = player.z - tree.z;
 
-                var dr = treeRadius + player.radius;
+            var dr = this.treeRadius + player.radius;
 
-                if (dx*dx+dy*dy+dz*dz < dr*dr) {
-                    var normalVec = new Vector(dx, dy, dz).unitSelf();
-                    var a = Math.sqrt(player.vx*player.vx+player.vy*player.vy+player.vz*player.vz);
-                    player.ax += 2 * a * normalVec.x;
-                    player.vy += 2 * a * normalVec.y;
-                    player.az += 2 * a * normalVec.z;
+            if (dx*dx+dy*dy+dz*dz < dr*dr) {
+                var normalVec = new Vector(dx, dy, dz).unitSelf();
+                var a = Math.sqrt(player.vx*player.vx+player.vy*player.vy+player.vz*player.vz);
+                player.ax += 2 * a * normalVec.x;
+                player.vy += 2 * a * normalVec.y;
+                player.az += 2 * a * normalVec.z;
 
-                    player.x += normalVec.x * treeRadius / 4;
-                    player.z += normalVec.z * treeRadius / 4;
-                }
+                player.x += normalVec.x * this.treeRadius / 4;
+                player.z += normalVec.z * this.treeRadius / 4;
             }
+        });
 
-            // アイテムとの当たり判定
-            for (var n=items.head; n; n=n.next()) {
-                var item = n.value;
-                var dx = item.x - player.x;
-                var dy = item.y - player.y;
-                var dz = item.z - player.z;
+    }
 
-                var dr = itemRadius + player.radius;
+    function _checkCollisionWithItems() : void {
+        var player = this.player;
+        var items = this.items;
+        var radius = this.itemRadius;
 
-                if (dx*dx+dy*dy+dz*dz < dr*dr) {
-                    items.remove(n);
-                }
+        for (var n=items.head; n; n=n.next()) {
+            var item = n.value;
+            var dx = item.x - player.x;
+            var dy = item.y - player.y;
+            var dz = item.z - player.z;
+
+            var dr = radius + player.radius;
+
+            if (dx*dx+dy*dy+dz*dz < dr*dr) {
+                items.remove(n);
             }
+        }
+    }
 
+    function _updateViewpoint() : void {
+        var player = this.player;
 
-
-            var target = new Vector(player.x, player.y, player.z);
-
-            var z = - player.vz;
-            var x = - player.vx;
-            var len = Math.sqrt(z*z + x*x);
-            if (len<1e-9) {
-                z = -1;
-                x = 0;
-            } else {
-                z /= len;
-                x /= len;
-            }
-
-
-            var y = player.y;
-            if (y < 0) y = -y / 2;
-            var yOffset = 10;
-            var xzVelocity = Math.sqrt(player.vx*player.vx+player.vz*player.vz);
-            if (xzVelocity < 50) {
-                yOffset -= (50 - xzVelocity) * 0.6;
-            }
-            var view =  new Vector(
-                player.x + x*50,
-                y*1.2 + yOffset,
-                player.z + z*50
-            );
-
-            engine.camera.target = target;
-            engine.camera.view = view;
-            engine.camera.updateMatrix();
-
-        };
-
-        var totalElapsedMsec = 0;
-        var backgroundColor = new Color( 90, 135, 150);
-        engine.onRender = (context:Context3D, elapsedMsec:number):void -> {
-            totalElapsedMsec += elapsedMsec;
-
-            context.setBackgroundColor(backgroundColor);
-
-            context.translate(player.x, player.y-12, player.z);
-            context.rotate(player.rot);
-            Util3D.sphere(context, player.radius, 6);
-            context.resetMatrix();
-
-            var axis = Quaternion.rotating(Math.PI*totalElapsedMsec/1000, 0, 1, 0);
-
-            for (var n=items.head; n; n=n.next()) {
-                var item = n.value;
-                var x = item.x;
-                var y = item.y;
-                var z = item.z;
-                context.pushMatrix();
-                context.translate(x, y, z);
-                context.rotate(axis);
-                context.renderTexture([
-                    new Vector(-15,-10, 0),
-                    new Vector( 15,-10, 0),
-                    new Vector( 15, 10, 0),
-                    new Vector(-15, 10, 0)
-                ], './image/redbull_free.png', 2, 2, 1, 1);
-                context.popMatrix();
-            }
-
-            for (var n=trees.head; n; n=n.next()) {
-                var tree = n.value;
-                var x = tree.x;
-                var y = tree.y;
-                var z = tree.z;
-                context.pushMatrix();
-                context.translate(x, y, z);
-                context.renderBillboard(new Vector(0, 0, 0), 50, 34, './image/tree.png');
-                context.popMatrix();
-            }
-
-            context.setDepth(5);
-            context.beginGroup(new Vector(0, 0, 0), true);
-            var grayColor = new Color(192, 192, 192);
-            var size = 30;
-            for (var i=0; i<6; i++) {
-                Util3D.tileOnGroup(context, -15, -20, -15+i*size, size, grayColor);
-                Util3D.tileOnGroup(context, +15, -20, -15+i*size, size, grayColor);
-            }
-            var lightGreen = new Color(160, 255, 160);
-            var green = new Color(96, 255, 96);
-            context.pushMatrix();
-            context.translate(0, 0, 450);
-            for (var i=0; i<20; i++) {
-                for (var j=0; j<20; j++) {
-                    var color = (i+j)%2==0 ? lightGreen : green;
-                    Util3D.tileOnGroup(context, i*30-285, -20, j*30-285, 30, color);
-                }
-            }
-            context.popMatrix();
-            context.endGroup();
-
-            context.beginGroup(new Vector(0, 0, 0), true);
-            Util3D.tileOnGroup(context,-15, -20, 765, 30, green);
-            Util3D.tileOnGroup(context,-15, -20, 795, 30, lightGreen);
-            Util3D.tileOnGroup(context, 15, -20, 795, 30, green);
-            Util3D.tileOnGroup(context, 15, -20, 765, 30, lightGreen);
-            context.pushMatrix();
-            context.translate(0, 0, 840);
-            for (var i=0; i<2; i++) {
-                for (var j=0; j<20; j++) {
-                    var color = (i+j)%2==1 ? lightGreen : green;
-                    Util3D.tileOnGroup(context, j*30-15, -20, i*30-15, 30, color);
-                }
-            }
-            context.popMatrix();
-            context.endGroup();
-
-
-            context.pushMatrix();
-            context.translate(540, 0, 510);
-            for (var i=0; i<2; i++) {
-                for (var j=0; j<20; j++) {
-                    var y = j;
-                    if (y > 9) y = 19 - y;
-                    var color = (i+j)%2==0 ? lightGreen : green;
-                    Util3D.tile(context, i*30-15, -20+y*5, 285-j*30, 30, color);
-                }
-            }
-            context.popMatrix();
-        };
-
-        if (engine.isMobile()) {
-
-            dom.window.addEventListener('devicemotion', (e:Event):void -> {
-                var de = e as DeviceMotionEvent;
-
-                var az = de.accelerationIncludingGravity.y * 30;
-                var ax = de.accelerationIncludingGravity.x * 30 / 2;
-                if (az < 0) {
-                    player.brake();
-                    az = 0;
-                }
-                player.move(az, ax);
-            });
-
-            dom.window.addEventListener('touchstart', (e:Event):void -> {
-                if (!isStarted) {
-                    isStarted = true;
-                } else {
-                    player.vy = 80;
-                }
-            });
-
+        var dz = - player.vz;
+        var dx = - player.vx;
+        var len = Math.sqrt(dz*dz + dx*dx);
+        if (len<1e-9) {
+            dz = -1;
+            dx = 0;
         } else {
-
-            dom.window.document.addEventListener('keypress', (e:Event):void -> {
-                if (!isStarted) {
-                    isStarted = true;
-                    return;
-                }
-
-                var ke = e as KeyboardEvent;
-                var accel = 100;
-                switch (ke.keyCode) {
-                    case 119: // 'w'
-                        player.move(accel, 0);
-                        break;
-                    case 115: // 's'
-                        // player.move(0, 0);
-                        player.brake();
-                        break;
-                    case 97:  // 'a'
-                        player.move(0,-accel/2);
-                        break;
-                    case 100: // 'd'
-                        // player.ax = 50;
-                        player.move(0, accel/2);
-                        break;
-
-                    // vim like key mapping :-)
-                    case 104: // 'h'
-                        player.move(0,-accel/2);
-                        break;
-                    case 106: // 'j'
-                        player.brake();
-                        break;
-                    case 107: // 'k'
-                        player.move(accel, 0);
-                        break;
-                    case 108: // 'l'
-                        player.move(0, accel/2);
-                        break;
-
-                    case 32:  // ' '
-                        player.vy = 80;
-                        break;
-                }
-            }, false);
-
+            dz /= len;
+            dx /= len;
         }
 
-        engine.start();
+        var y = player.y;
+        if (y < 0) y = -y / 2;
+        var yOffset = 10;
+        var xzVelocity = Math.sqrt(player.vx*player.vx+player.vz*player.vz);
+        if (xzVelocity < 50) {
+            yOffset -= (50 - xzVelocity) * 0.6;
+        }
+
+        var view =  new Vector(
+            player.x + dx*50,
+            y*1.2 + yOffset,
+            player.z + dz*50
+        );
+        var target = new Vector(
+            player.x,
+            player.y,
+            player.z
+        );
+
+        this.engine.camera.target = target;
+        this.engine.camera.view = view;
+        this.engine.camera.updateMatrix();
+    }
+
+
+    function _renderPlayer(context:Context3D) : void {
+        context.translate(this.player.x, this.player.y-12, this.player.z);
+        context.rotate(this.player.rot);
+        Util3D.sphere(context, this.player.radius, 6);
+        context.resetMatrix();
+    }
+
+    function _renderTrees(context:Context3D) : void {
+        this.trees.forEach((tree) -> {
+            var x = tree.x;
+            var y = tree.y;
+            var z = tree.z;
+            context.pushMatrix();
+            context.translate(x, y, z);
+            context.renderBillboard(new Vector(0, 0, 0), 50, 34, './image/tree.png');
+            context.popMatrix();
+        });
+    }
+
+    function _renderItems(context:Context3D) : void {
+        var rad = Math.PI * this.totalElapsedMsec / 1000;
+        var axis = Quaternion.rotating(rad, 0, 1, 0);
+
+        this.items.forEach((item) -> {
+            var x = item.x;
+            var y = item.y;
+            var z = item.z;
+            context.pushMatrix();
+            context.translate(x, y, z);
+            context.rotate(axis);
+            context.renderTexture([
+                new Vector(-15,-10, 0),
+                new Vector( 15,-10, 0),
+                new Vector( 15, 10, 0),
+                new Vector(-15, 10, 0)
+            ], './image/redbull_free.png', 2, 2, 1, 1);
+            context.popMatrix();
+        });
+    }
+
+    function _renderField(context:Context3D) : void {
+        var gray= new Color(192, 192, 192);
+        var lightGreen = new Color(160, 255, 160);
+        var green = new Color(96, 255, 96);
+        var size = 30;
+
+        context.setDepth(5);
+
+        context.beginGroup(new Vector(0, 0, 0), true);
+        for (var i=0; i<6; i++) {
+            Util3D.tileOnGroup(context, -15, -20, -15+i*size, size, gray);
+            Util3D.tileOnGroup(context, +15, -20, -15+i*size, size, gray);
+        }
+        context.pushMatrix();
+        context.translate(0, 0, 450);
+        for (var i=0; i<20; i++) {
+            for (var j=0; j<20; j++) {
+                var color = (i+j)%2==0 ? lightGreen : green;
+                Util3D.tileOnGroup(context, i*30-285, -20, j*30-285, 30, color);
+            }
+        }
+        context.popMatrix();
+        context.endGroup();
+
+        context.beginGroup(new Vector(0, 0, 0), true);
+        Util3D.tileOnGroup(context,-15, -20, 765, 30, green);
+        Util3D.tileOnGroup(context,-15, -20, 795, 30, lightGreen);
+        Util3D.tileOnGroup(context, 15, -20, 795, 30, green);
+        Util3D.tileOnGroup(context, 15, -20, 765, 30, lightGreen);
+        context.pushMatrix();
+        context.translate(0, 0, 840);
+        for (var i=0; i<2; i++) {
+            for (var j=0; j<20; j++) {
+                var color = (i+j)%2==1 ? lightGreen : green;
+                Util3D.tileOnGroup(context, j*30-15, -20, i*30-15, 30, color);
+            }
+        }
+        context.popMatrix();
+        context.endGroup();
+
+
+        context.pushMatrix();
+        context.translate(540, 0, 510);
+        for (var i=0; i<2; i++) {
+            for (var j=0; j<20; j++) {
+                var y = j;
+                if (y > 9) y = 19 - y;
+                var color = (i+j)%2==0 ? lightGreen : green;
+                Util3D.tile(context, i*30-15, -20+y*5, 285-j*30, 30, color);
+            }
+        }
+        context.popMatrix();
+
+        context.setDepth(3);
+    }
+
+    function _setMobileOperation() : void {
+        dom.window.addEventListener('devicemotion', (e:Event):void -> {
+            var de = e as DeviceMotionEvent;
+
+            var az = de.accelerationIncludingGravity.y * 30;
+            var ax = de.accelerationIncludingGravity.x * 30 / 2;
+            if (az < 0) {
+                this.player.brake();
+                az = 0;
+            }
+            this.player.move(az, ax);
+        });
+
+        dom.window.addEventListener('touchstart', (e:Event):void -> {
+            if (!this.isStarted) {
+                this.isStarted = true;
+            } else {
+                this.player.vy = 80;
+            }
+        });
+    }
+
+    function _setPCOperation() : void {
+        dom.window.document.addEventListener('keypress', (e:Event):void -> {
+            if (!this.isStarted) {
+                this.isStarted = true;
+                return;
+            }
+
+            var ke = e as KeyboardEvent;
+            var accel = 100;
+            switch (ke.keyCode) {
+                case 119: // 'w'
+                    this.player.move(accel, 0);
+                    break;
+                case 115: // 's'
+                    // player.move(0, 0);
+                    this.player.brake();
+                    break;
+                case 97:  // 'a'
+                    this.player.move(0,-accel/2);
+                    break;
+                case 100: // 'd'
+                    // player.ax = 50;
+                    this.player.move(0, accel/2);
+                    break;
+
+                    // vim like key mapping :-)
+                case 104: // 'h'
+                    this.player.move(0,-accel/2);
+                    break;
+                case 106: // 'j'
+                    this.player.brake();
+                    break;
+                case 107: // 'k'
+                    this.player.move(accel, 0);
+                    break;
+                case 108: // 'l'
+                    this.player.move(0, accel/2);
+                    break;
+
+                case 32:  // ' '
+                    this.player.vy = 80;
+                    break;
+            }
+        }, false);
+    }
+
+
+
+    function run() : void {
+        this.engine.start();
+    }
+
+
+}
+
+
+
+final class _Main {
+    static function main(args:string[]) : void {
+
+        var game = new BlueBall;
+        game.run();
+
+    }
+
 }
