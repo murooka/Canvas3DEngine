@@ -112,7 +112,7 @@ class Player {
         this.az = 0;
         this.rot = Quaternion.rotating(0, 1, 0, 0);
         this.radius = 8;
-        this.isBraking = true;
+        this.isBraking = false;
     }
 
     function moveForward() : void {
@@ -213,6 +213,7 @@ class BlueBall {
 
         if (this.engine.isMobile()) {
             this.engine.camera.farZ = 200;
+            this.engine.camera.fovyX = Math.PI / 4;
             this.engine.camera.updateMatrix();
         }
 
@@ -520,6 +521,7 @@ class BlueBall {
         dom.window.addEventListener('touchstart', (e:Event):void -> {
             if (!this.isStarted) {
                 this.isStarted = true;
+                this.player.vz = 100;
             } else {
                 this.player.vy = 80;
             }
@@ -530,6 +532,7 @@ class BlueBall {
         dom.window.document.addEventListener('keypress', (e:Event):void -> {
             if (!this.isStarted) {
                 this.isStarted = true;
+                this.player.vz = 100;
                 return;
             }
 
@@ -540,18 +543,16 @@ class BlueBall {
                     this.player.move(accel, 0);
                     break;
                 case 115: // 's'
-                    // player.move(0, 0);
                     this.player.brake();
                     break;
                 case 97:  // 'a'
                     this.player.move(0,-accel/2);
                     break;
                 case 100: // 'd'
-                    // player.ax = 50;
                     this.player.move(0, accel/2);
                     break;
 
-                    // vim like key mapping :-)
+                // vim like key mapping :-)
                 case 104: // 'h'
                     this.player.move(0,-accel/2);
                     break;

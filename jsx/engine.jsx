@@ -577,14 +577,14 @@ abstract class Renderable {
     /**
      * スクリーン座標系の頂点がcanvas内に描画する必要があるかどうかを確認する
      * 描画する必要がないならばtrueを返す
-     * TODO: 下側の判定を緩くする or 全体的に少し緩くする
+     * ポリゴンの大きさの都合上、判定を少し緩くする
      */
     static function isHiddenXY(vertices:Vector[], engine:Engine) : boolean {
-        var margin = 100;
+        var margin = 0;
         for (var i=0; i<vertices.length; i++) {
             var v = vertices[i];
             if (-margin < v.x && v.x < engine._width  + margin &&
-                      0 < v.y && v.y < engine._height + margin   ) return false;
+                -margin < v.y && v.y < engine._height + margin ) return false;
         }
         return true;
     }
@@ -721,8 +721,6 @@ class Polygon extends Renderable {
                 return false;
             }
         }
-
-
 
         var colorStr = '#' + color.toHexString();
 

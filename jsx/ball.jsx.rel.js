@@ -231,7 +231,7 @@ function Player$() {
 	sin$0 = Math.sin(0);
 	this.rot = new Quaternion$NNNN(cos$0, sin$0, 0 * sin$0, 0 * sin$0);
 	this.radius = 8;
-	this.isBraking = true;
+	this.isBraking = false;
 };
 
 Player$.prototype = new Player;
@@ -730,6 +730,7 @@ function BlueBall$() {
 	this$1 = engine$1;
 	if (this$1._isMobile) {
 		(camera$0 = (engine$0 = this.engine).camera).farZ = 200;
+		camera$0.fovyX = 0.7853981633974483;
 		this$2 = camera$0;
 		view$0 = this$2.view;
 		target$0 = this$2.target;
@@ -773,7 +774,7 @@ function BlueBall$() {
 		m44$0$0 = _m41$1 * _m14$1 + _m42$1 * _m24$1 + _m43$1 * _m34$0 + _m44$1 * _m44$0;
 		this$2.matrix = new Matrix$AN([ m11$0$0, m12$0$0, m13$0$0, m14$0$0, m21$0$0, m22$0$0, m23$0$0, m24$0$0, m31$0$0, m32$0$0, m33$0$0, m34$0$0, m41$0$0, m42$0$0, m43$0$0, m44$0$0 ]);
 	}
-	this.player = {r: 12, x: 0, y: 10, z: 0, vx: 0, vy: 0, vz: 0, ax: 0, ay: - 120, az: 0, rot: Quaternion$rotating$NNNN(0, 1, 0, 0), radius: 8, isBraking: true};
+	this.player = {r: 12, x: 0, y: 10, z: 0, vx: 0, vy: 0, vz: 0, ax: 0, ay: - 120, az: 0, rot: Quaternion$rotating$NNNN(0, 1, 0, 0), radius: 8, isBraking: false};
 	this.trees = new List$Vector$E$ALVector$([ new Vector$NNN(-271, -3, 450), new Vector$NNN(-200, -3, 720), new Vector$NNN(139, -3, 351), new Vector$NNN(171, -3, 254), new Vector$NNN(214, -3, 192), new Vector$NNN(-253, -3, 555), new Vector$NNN(29, -3, 385), new Vector$NNN(-72, -3, 530), new Vector$NNN(96, -3, 678), new Vector$NNN(-49, -3, 222) ]);
 	this.treeRadius = 24;
 	this.items = new List$Vector$E$ALVector$([ new Vector$NNN(149, -10, 724), new Vector$NNN(107, -10, 483), new Vector$NNN(279, -10, 551), new Vector$NNN(-295, -10, 261), new Vector$NNN(-16, -10, 225), new Vector$NNN(95, -10, 165), new Vector$NNN(264, -10, 161), new Vector$NNN(-50, -10, 325), new Vector$NNN(-169, -10, 254), new Vector$NNN(271, -10, 401) ]);
@@ -3038,6 +3039,7 @@ BlueBall.prototype._setMobileOperation$ = function () {
 	dom.window.addEventListener('touchstart', (function (e) {
 		if (! $this.isStarted) {
 			$this.isStarted = true;
+			$this.player.vz = 100;
 		} else {
 			$this.player.vy = 80;
 		}
@@ -3059,6 +3061,7 @@ BlueBall.prototype._setPCOperation$ = function () {
 		var $this$1;
 		if (! $this.isStarted) {
 			$this.isStarted = true;
+			$this.player.vz = 100;
 			return;
 		}
 		ke = (function (o) { return o instanceof KeyboardEvent ? o : null; })(e);
@@ -7152,10 +7155,10 @@ Renderable.isHiddenXY$ALVector$LEngine$ = function (vertices, engine) {
 	var y$0;
 	/** @type {!number} */
 	var vertices$len$0;
-	margin = 100;
+	margin = 0;
 	for ((i = 0, vertices$len$0 = vertices.length); i < vertices$len$0; i++) {
 		v = vertices[i];
-		if (- margin < (x$0 = v.x) && x$0 < engine._width + margin && 0 < (y$0 = v.y) && y$0 < engine._height + margin) {
+		if (- margin < (x$0 = v.x) && x$0 < engine._width + margin && - margin < (y$0 = v.y) && y$0 < engine._height + margin) {
 			return false;
 		}
 	}
