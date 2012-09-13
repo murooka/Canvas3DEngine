@@ -497,11 +497,21 @@ final class _Main {
                         // player.ax = 50;
                         player.move(0, accel/2);
                         break;
+
+                    // vim like key mapping :-)
+                    case 104: // 'h'
+                        player.move(0,-accel/2);
+                        break;
                     case 106: // 'j'
-                        log items;
+                        player.brake();
                         break;
                     case 107: // 'k'
+                        player.move(accel, 0);
                         break;
+                    case 108: // 'l'
+                        player.move(0, accel/2);
+                        break;
+
                     case 32:  // ' '
                         player.vy = 80;
                         break;

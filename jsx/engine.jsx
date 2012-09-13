@@ -232,11 +232,11 @@ class Context3D {
 
     var camera : Camera;
     var _depth : int;
-    var modelList1 = List.<AbstractModel>;
-    var modelList2 = List.<AbstractModel>;
-    var modelList3 = List.<AbstractModel>;
-    var modelList4 = List.<AbstractModel>;
-    var modelList5 = List.<AbstractModel>;
+    var modelList1 = List.<Renderable>;
+    var modelList2 = List.<Renderable>;
+    var modelList3 = List.<Renderable>;
+    var modelList4 = List.<Renderable>;
+    var modelList5 = List.<Renderable>;
 
     var _polygonList : List.<Polygon>;
     var _groupCenter : Vector;
@@ -249,11 +249,11 @@ class Context3D {
         this._matrixStack = new List.<Matrix>;
         this.camera = camera;
         this._depth = 3;
-        this.modelList1 = new List.<AbstractModel>;
-        this.modelList2 = new List.<AbstractModel>;
-        this.modelList3 = new List.<AbstractModel>;
-        this.modelList4 = new List.<AbstractModel>;
-        this.modelList5 = new List.<AbstractModel>;
+        this.modelList1 = new List.<Renderable>;
+        this.modelList2 = new List.<Renderable>;
+        this.modelList3 = new List.<Renderable>;
+        this.modelList4 = new List.<Renderable>;
+        this.modelList5 = new List.<Renderable>;
 
         this.backgroundColor = new Color(90, 135, 158);
     }
@@ -325,7 +325,7 @@ class Context3D {
 
     function endGroup() : void {
         if (this._polygonList.length != 0) {
-            this.renderModel(new Model(this._polygonList, this._groupCenter, this._ignoringZHidden));
+            this.renderModel(new PolygonGroup(this._polygonList, this._groupCenter, this._ignoringZHidden));
         }
     }
 
@@ -350,7 +350,7 @@ class Context3D {
         this.renderModel(new SmoothTexture(vertices, src));
     }
 
-    function renderModel(model:AbstractModel) : void {
+    function renderModel(model:Renderable) : void {
         model.applyWorldMatrix(this._worldMatrix);
         model.applyViewMatrix(this.camera.viewMatrix);
         if (model.isHidden(this.camera)) return;
@@ -364,7 +364,7 @@ class Context3D {
         }
     }
 
-    function insertModelByZValue(list:List.<AbstractModel>, model:AbstractModel) : void {
+    function insertModelByZValue(list:List.<Renderable>, model:Renderable) : void {
         var inserted = false;
         for (var n=list.head; n!=null; n=n.next()) {
             if (n.value.vCenter.z < model.vCenter.z) {
@@ -536,7 +536,7 @@ class Color {
 
 
 /**
- * Engine上で表示するモデルの抽象クラス
+ * Engine上で描画する3Dオブジェクトの抽象クラス
  * このクラスを継承するクラスは、draw関数、applyViewMatrix関数、isHidden関数、centerプロパティ、vCenterプロパティ、depthプロパティを実装する必要がある
  * @property center  Zソートを行うためのモデルの中心座標
  * @property vCenter view変換を行ったあとのcenter
@@ -544,7 +544,7 @@ class Color {
  *                            小さいほど手前に表示され、大きいほど奥に表示される
  *                            デフォルトで値は3とする
  */
-abstract class AbstractModel {
+abstract class Renderable {
 
     var center : Vector;
     var vCenter : Vector;
@@ -597,7 +597,7 @@ abstract class AbstractModel {
  * Engineで利用する多角形クラス
  * @property enabledLighting 環境光、拡散光の有効無効を切り替えるフラグ
  */
-class Polygon extends AbstractModel {
+class Polygon extends Renderable {
 
     var vertices : Vector[];
     var vVertices : Vector[];
@@ -707,7 +707,7 @@ class Polygon extends AbstractModel {
 
         // canvasの外側に位置する場合は表示しない
 
-        var isHiddenXY = AbstractModel.isHiddenXY(verts, engine);
+        var isHiddenXY = Renderable.isHiddenXY(verts, engine);
         if (isHiddenXY) return false;
 
         // 裏側から見たポリゴンは表示しない
@@ -760,7 +760,7 @@ class Polygon extends AbstractModel {
  * その場合は、ignoringZHiddenをtrueにすることで全てのPolygonの描画を試みるが、前後関係が正しく表示されない可能性がある
  * TODO: クラス名を変更する
  */
-class Model extends AbstractModel {
+class PolygonGroup extends Renderable {
 
     var polygons : List.<Polygon>;
     var _ignoringZHidden : boolean;
@@ -900,7 +900,7 @@ class SmoothTexture extends Polygon {
         var srbImage = matrix.mul(wrbImage);
         var srtImage = matrix.mul(wrtImage);
 
-        var isHiddenXY = AbstractModel.isHiddenXY([sltImage, slbImage, srbImage, srtImage], engine);
+        var isHiddenXY = Renderable.isHiddenXY([sltImage, slbImage, srbImage, srtImage], engine);
         if (isHiddenXY) return false;
 
         /**
@@ -1016,7 +1016,7 @@ class SmoothTexture extends Polygon {
 /**
  * billboard(どの方向から見ても同じ画像を表示するオブジェクト)を表すクラス
  */
-class Billboard extends AbstractModel {
+class Billboard extends Renderable {
 
     var _width : number;
     var _height : number;
@@ -1066,7 +1066,7 @@ class Billboard extends AbstractModel {
         var sHalfWidth  = sLeftBottom.x - sCenter.x;
         var sHalfHeight = sLeftBottom.y - sCenter.y;
 
-        var isHiddenXY = AbstractModel.isHiddenXY([sCenter], engine);
+        var isHiddenXY = Renderable.isHiddenXY([sCenter], engine);
         if (isHiddenXY) return false;
 
         var scaleX = sHalfWidth  / this._image.width  * 2;
