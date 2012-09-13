@@ -998,7 +998,7 @@ class SmoothTexture extends Polygon {
                 context.transform(1, 0, 0, 1, slt.x, slt.y);
                 context.transform(1, skewingX, skewingY, 1, 0, 0);
                 context.transform(scaleX, 0, 0, scaleY, 0, 0);
-                context.drawImage(image, ~~(sx), ~~(sy), ~~(sw), ~~(sh), 0, 0, ~~(sw), ~~(sh));
+                context.drawImage(image, ~~(sx), ~~(sy), ~~(sw), ~~(sh), 0, 0, Math.ceil(sw), Math.ceil(sh));
 
                 context.setTransform(1, 0, 0, 1, 0, 0);
             }
