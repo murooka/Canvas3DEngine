@@ -1,150 +1,4977 @@
-var JSX={};
-(function(){function wb(a,b,c){Object.defineProperty(a,b,{get:function(){var e=c();delete a[b];return a[b]=e},set:function(c){delete a[b];a[b]=c},enumerable:!0,configurable:!0})}function Ab(){}function $a(){}function lc(){}function ab(){}function mc(){var a,b;this.r=12;this.x=0;this.y=10;this.ax=this.vz=this.vy=this.vx=this.z=0;this.ay=-120;this.az=0;a=Math.cos(0);b=Math.sin(0);this.rot=new xb(a,b,0*b,0*b);this.radius=8;this.isBraking=!1}function J(){}function ac(){var a=this,b,c,e,d,f,g,h,j,i,k,
-l,m,t,o,p,q,r,u,s,v,B,C,y,x,w,z,G,V,ha,R,yb,N,E,L,lb,nc,A,S,M,O,I,F,D,P,ia,H,oc,Fb,J,Q,Gb,qb,rb,sb,mb,bb,cb,db,eb,Xa,Na,Oa,Pa,Qa,Ra,ka,Sa,la,Ta,Ua,Ya,Va,Za,Ia,Ha,Ja,Ka,La,xa,ya,za,Aa,Ba,Ca,Da,ua,Ea,va,Fa,wa,fa,ga,Ga,aa,ba,ca,U,ma,na,oa,pa,qa,ra,sa,ta,Ma;this.trees=this.player=null;this.treeRadius=0;this.items=null;this.totalElapsedMsec=this.itemRadius=0;Lc(["./image/tree.png","./image/so-nya.png","./image/redbull_free.png","./image/sky1.jpg"]);this.isStarted=!1;Ma=this.engine=new bc("canvas");Ma._skyImageSrc=
-"./image/sky1.jpg";Ma._skyImage=K.images["./image/sky1.jpg"];Ma._isMobile&&((O=this.engine.camera).farZ=200,O.fovyX=0.7853981633974483,c=O.view,e=O.target,d=O.upper,f=O.fovyX,g=O.nearZ,h=O.farZ,j=O.aspectRatio,o=new n(e.x-c.x,e.y-c.y,e.z-c.z),p=Math.sqrt((I=o.x)*I+(F=o.y)*F+(D=o.z)*D),l=1E-9>p?new n(0,0,0):o.divSelf$N(p),q=new n((Fb=d.y)*(ia=l.z)-(P=d.z)*(oc=l.y),P*(J=l.x)-(H=d.x)*ia,H*oc-Fb*J),r=Math.sqrt((Q=q.x)*Q+(Gb=q.y)*Gb+(qb=q.z)*qb),m=1E-9>r?new n(0,0,0):q.divSelf$N(r),u=new n((cb=l.y)*(sb=
-m.z)-(rb=l.z)*(bb=m.y),rb*(db=m.x)-(mb=l.x)*sb,mb*bb-cb*db),s=Math.sqrt((eb=u.x)*eb+(Xa=u.y)*Xa+(Na=u.z)*Na),t=1E-9>s?new n(0,0,0):u.divSelf$N(s),i=new T([Oa=m.x,Pa=m.y,Qa=m.z,-(Oa*(ka=c.x)+Pa*(la=c.y)+Qa*(Ua=c.z)),Ra=t.x,Sa=t.y,Ta=t.z,-(Ra*ka+Sa*la+Ta*Ua),Ya=l.x,Va=l.y,Za=l.z,-(Ya*ka+Va*la+Za*Ua),0,0,0,1]),v=1/Math.tan(f/2),B=v/j,C=h/(h-g),y=-C*g,k=new T([v,0,0,0,0,B,0,0,0,0,C,y,0,0,1,0]),O.viewMatrix=i,O.projectionMatrix=k,x=(Ia=k._m11)*(La=i._m11)+(Ha=k._m12)*(xa=i._m21)+(Ja=k._m13)*(ya=i._m31)+
-(Ka=k._m14)*(za=i._m41),w=Ia*(Ba=i._m12)+Ha*(Da=i._m22)+Ja*(Ea=i._m32)+Ka*(Fa=i._m42),z=Ia*(wa=i._m13)+Ha*(fa=i._m23)+Ja*(ga=i._m33)+Ka*(Ga=i._m43),G=Ia*(aa=i._m14)+Ha*(ba=i._m24)+Ja*(ca=i._m34)+Ka*(U=i._m44),V=(Aa=k._m21)*La+(Ca=k._m22)*xa+(ua=k._m23)*ya+(va=k._m24)*za,ha=Aa*Ba+Ca*Da+ua*Ea+va*Fa,R=Aa*wa+Ca*fa+ua*ga+va*Ga,yb=Aa*aa+Ca*ba+ua*ca+va*U,N=(ma=k._m31)*La+(na=k._m32)*xa+(oa=k._m33)*ya+(pa=k._m34)*za,E=ma*Ba+na*Da+oa*Ea+pa*Fa,L=ma*wa+na*fa+oa*ga+pa*Ga,lb=ma*aa+na*ba+oa*ca+pa*U,nc=(qa=k._m41)*
-La+(ra=k._m42)*xa+(sa=k._m43)*ya+(ta=k._m44)*za,A=qa*Ba+ra*Da+sa*Ea+ta*Fa,S=qa*wa+ra*fa+sa*ga+ta*Ga,M=qa*aa+ra*ba+sa*ca+ta*U,O.matrix=new T([x,w,z,G,V,ha,R,yb,N,E,L,lb,nc,A,S,M]));this.player={r:12,x:0,y:10,z:0,vx:0,vy:0,vz:0,ax:0,ay:-120,az:0,rot:Mc(0,1,0,0),radius:8,isBraking:!1};this.trees=new Ib([new n(-271,-3,450),new n(-200,-3,720),new n(139,-3,351),new n(171,-3,254),new n(214,-3,192),new n(-253,-3,555),new n(29,-3,385),new n(-72,-3,530),new n(96,-3,678),new n(-49,-3,222)]);this.treeRadius=
-24;this.items=new Ib([new n(149,-10,724),new n(107,-10,483),new n(279,-10,551),new n(-295,-10,261),new n(-16,-10,225),new n(95,-10,165),new n(264,-10,161),new n(-50,-10,325),new n(-169,-10,254),new n(271,-10,401)]);this.itemRadius=8;this.engine.onUpdate=function(b){if(a.isStarted){a._checkCollisionWithFloor$N(b);a._checkCollisionWithTrees$();a._checkCollisionWithItems$();a._updateViewpoint$()}};b=new ja(90,135,150);this.engine.onRender=function(c,d){var e,f,g,h,i,j,k,l,m,o,p,q,t,r,s,n,u,v,w,x,y,B,
-z,C,G,E;a.totalElapsedMsec=a.totalElapsedMsec+d;c.backgroundColor=b;e=(g=a.player).x;f=g.y-12;g=g.z;h=c._worldMatrix;i=h._m11;j=h._m12;k=h._m13;l=h._m14;m=h._m21;o=h._m22;p=h._m23;q=h._m24;t=h._m31;r=h._m32;s=h._m33;n=h._m34;u=h._m41;v=h._m42;w=h._m43;x=h._m44;h._m11=i*1+j*0+k*0+l*0;h._m12=i*0+j*1+k*0+l*0;h._m13=i*0+j*0+k*1+l*0;h._m14=i*e+j*f+k*g+l*1;h._m21=m*1+o*0+p*0+q*0;h._m22=m*0+o*1+p*0+q*0;h._m23=m*0+o*0+p*1+q*0;h._m24=m*e+o*f+p*g+q*1;h._m31=t*1+r*0+s*0+n*0;h._m32=t*0+r*1+s*0+n*0;h._m33=t*0+
-r*0+s*1+n*0;h._m34=t*e+r*f+s*g+n*1;h._m41=u*1+v*0+w*0+x*0;h._m42=u*0+v*1+w*0+x*0;h._m43=u*0+v*0+w*1+x*0;h._m44=u*e+v*f+w*g+x*1;h=a.player.rot;e=c._worldMatrix;k=2*(z=h.x)*z;l=2*(C=h.y)*C;g=2*(G=h.z)*G;f=2*z*C;i=2*z*G;j=2*C*G;m=2*z*(z=h.t);o=2*C*z;h=2*G*z;G=1-l-g;C=f+h;z=i-o;f=f-h;g=1-k-g;h=j+m;i=i+o;j=j-m;E=1-k-l;k=e._m11;l=e._m12;m=e._m13;o=e._m14;p=e._m21;q=e._m22;t=e._m23;r=e._m24;s=e._m31;n=e._m32;u=e._m33;v=e._m34;w=e._m41;x=e._m42;y=e._m43;B=e._m44;e._m11=k*G+l*f+m*i+o*0;e._m12=k*C+l*g+m*j+
-o*0;e._m13=k*z+l*h+m*E+o*0;e._m14=k*0+l*0+m*0+o*1;e._m21=p*G+q*f+t*i+r*0;e._m22=p*C+q*g+t*j+r*0;e._m23=p*z+q*h+t*E+r*0;e._m24=p*0+q*0+t*0+r*1;e._m31=s*G+n*f+u*i+v*0;e._m32=s*C+n*g+u*j+v*0;e._m33=s*z+n*h+u*E+v*0;e._m34=s*0+n*0+u*0+v*1;e._m41=w*G+x*f+y*i+B*0;e._m42=w*C+x*g+y*j+B*0;e._m43=w*z+x*h+y*E+B*0;e._m44=w*0+x*0+y*0+B*1;rc(c,a.player.radius,6);c._worldMatrix=new nb;a._renderTrees$LContext3D$(c);a._renderItems$LContext3D$(c);a._renderField$LContext3D$(c)};this.engine._isMobile?this._setMobileOperation$():
-this._setPCOperation$()}function Tb(){}function sc(){}function D(){}function n(a,b,c){this.x=a;this.y=b;this.z=c;this.w=1}function I(a,b,c,e){a=this.x=a/e;this.y=b/e;this.z=c/e;this.w=1;NaN===a&&console.log(e)}function tc(a){this.x=a.x;this.y=a.y;this.z=a.z;this.w=1}function Q(){}function nb(){this._m11=1;this._m21=this._m14=this._m13=this._m12=0;this._m22=1;this._m32=this._m31=this._m24=this._m23=0;this._m33=1;this._m43=this._m42=this._m41=this._m34=0;this._m44=1}function T(a){this._m11=a[0];this._m12=
-a[1];this._m13=a[2];this._m14=a[3];this._m21=a[4];this._m22=a[5];this._m23=a[6];this._m24=a[7];this._m31=a[8];this._m32=a[9];this._m33=a[10];this._m34=a[11];this._m41=a[12];this._m42=a[13];this._m43=a[14];this._m44=a[15]}function X(){}function uc(a,b){this.t=a;this.x=b.x;this.y=b.y;this.z=b.z}function vc(a){this.t=0;this.x=a.x;this.y=a.y;this.z=a.z}function xb(a,b,c,e){this.t=a;this.x=b;this.y=c;this.z=e}function K(){}function bc(a){var b,c,e,d,f,g,h,j,i,k,l,m,t,o,p,q,r,u,s,v,B,C,y,x,w,z,G,V,ha,R,
-yb,N,E,L,lb,A,I,S,M,O,F,D,K,H,ia,J,Q,Fb,X,ja,Gb,qb,rb,sb,mb,bb,cb,db,eb,Xa,Na,Oa,Pa,Qa,Ra,ka,Sa,la,Ta,Ua,Ya,Va,Za,Ia,Ha,Ja,Ka,La,xa,ya,za,Aa,Ba,Ca,Da,ua,Ea,va,Fa,wa,fa,ga,Ga,aa,ba,ca,U,ma,na,oa,pa,qa,ra,sa,ta,Ma,fb,gb,hb,ib,W,Y,Z,da,ea,jb,$,Lb,Mb,Nb,Ob,Pb,Qb,Rb,Sb;this._skyImage=this._skyImageSrc=this.onRender=this.onUpdate=this.screenMatrix=this.camera=null;this._isMobile=/iPhone/.test(P.window.navigator.userAgent);var cc,pc=P.document.getElementById(a);cc=pc instanceof HTMLElement?pc:null;b=cc instanceof
-HTMLCanvasElement?cc:null;var qc=b.getContext("2d");this.context=qc instanceof CanvasRenderingContext2D?qc:null;Xa=this._width=b.width;f=this._height=b.height;g=new T([1,0,0,Xa/2,0,1,0,f/2,0,0,1,0,0,0,0,1]);y=Xa/2;x=-f/2;h=g._m11;j=g._m12;i=g._m13;k=g._m14;l=g._m21;m=g._m22;t=g._m23;o=g._m24;p=g._m31;q=g._m32;r=g._m33;u=g._m34;s=g._m41;v=g._m42;B=g._m43;C=g._m44;g._m11=h*y+0*j+0*i+0*k;g._m12=0*h+j*x+0*i+0*k;g._m13=0*h+0*j+1*i+0*k;g._m14=0*h+0*j+0*i+1*k;g._m21=l*y+0*m+0*t+0*o;g._m22=0*l+m*x+0*t+0*
-o;g._m23=0*l+0*m+1*t+0*o;g._m24=0*l+0*m+0*t+1*o;g._m31=p*y+0*q+0*r+0*u;g._m32=0*p+q*x+0*r+0*u;g._m33=0*p+0*q+1*r+0*u;g._m34=0*p+0*q+0*r+1*u;g._m41=s*y+0*v+0*B+0*C;g._m42=0*s+v*x+0*B+0*C;g._m43=0*s+0*v+1*B+0*C;g._m44=0*s+0*v+0*B+1*C;this.screenMatrix=g;this._skyImage=this._skyImageSrc=null;c=new n(0,0,-90);e=new n(0,0,0);d=new n(0,1,0);w=this.camera=new dc(c,e,d,1.0471975511965976,0,500,this._height/this._width);z=w.view;G=w.target;V=w.upper;ha=w.fovyX;R=w.nearZ;yb=w.farZ;N=w.aspectRatio;S=new n(G.x-
-z.x,G.y-z.y,G.z-z.z);M=Math.sqrt((Na=S.x)*Na+(Oa=S.y)*Oa+(Pa=S.z)*Pa);lb=1E-9>M?new n(0,0,0):S.divSelf$N(M);O=new n((la=V.y)*(Ra=lb.z)-(Qa=V.z)*(Sa=lb.y),Qa*(Ta=lb.x)-(ka=V.x)*Ra,ka*Sa-la*Ta);F=Math.sqrt((Ua=O.x)*Ua+(Ya=O.y)*Ya+(Va=O.z)*Va);A=1E-9>F?new n(0,0,0):O.divSelf$N(F);D=new n((Ka=lb.y)*(Ia=A.z)-(Za=lb.z)*(Ja=A.y),Za*(La=A.x)-(Ha=lb.x)*Ia,Ha*Ja-Ka*La);K=Math.sqrt((xa=D.x)*xa+(ya=D.y)*ya+(za=D.z)*za);I=1E-9>K?new n(0,0,0):D.divSelf$N(K);E=new T([Aa=A.x,Ba=A.y,Ca=A.z,-(Aa*(ua=z.x)+Ba*(va=z.y)+
-Ca*(wa=z.z)),Da=I.x,Ea=I.y,Fa=I.z,-(Da*ua+Ea*va+Fa*wa),fa=lb.x,ga=lb.y,Ga=lb.z,-(fa*ua+ga*va+Ga*wa),0,0,0,1]);H=1/Math.tan(ha/2);ia=H/N;J=yb/(yb-R);L=new T([H,0,0,0,0,ia,0,0,0,0,J,-J*R,0,0,1,0]);w.viewMatrix=E;w.projectionMatrix=L;Q=(aa=L._m11)*(ma=E._m11)+(ba=L._m12)*(na=E._m21)+(ca=L._m13)*(oa=E._m31)+(U=L._m14)*(pa=E._m41);Fb=aa*(ra=E._m12)+ba*(ta=E._m22)+ca*(fb=E._m32)+U*(hb=E._m42);X=aa*(ib=E._m13)+ba*(W=E._m23)+ca*(Y=E._m33)+U*(Z=E._m43);ja=aa*(da=E._m14)+ba*(ea=E._m24)+ca*(jb=E._m34)+U*($=
-E._m44);Gb=(qa=L._m21)*ma+(sa=L._m22)*na+(Ma=L._m23)*oa+(gb=L._m24)*pa;qb=qa*ra+sa*ta+Ma*fb+gb*hb;rb=qa*ib+sa*W+Ma*Y+gb*Z;sb=qa*da+sa*ea+Ma*jb+gb*$;mb=(Lb=L._m31)*ma+(Mb=L._m32)*na+(Nb=L._m33)*oa+(Ob=L._m34)*pa;bb=Lb*ra+Mb*ta+Nb*fb+Ob*hb;cb=Lb*ib+Mb*W+Nb*Y+Ob*Z;db=Lb*da+Mb*ea+Nb*jb+Ob*$;eb=(Pb=L._m41)*ma+(Qb=L._m42)*na+(Rb=L._m43)*oa+(Sb=L._m44)*pa;w.matrix=new T([Q,Fb,X,ja,Gb,qb,rb,sb,mb,bb,cb,db,eb,Pb*ra+Qb*ta+Rb*fb+Sb*hb,Pb*ib+Qb*W+Rb*Y+Sb*Z,Pb*da+Qb*ea+Rb*jb+Sb*$])}function F(){}function wc(a){this._groupCenter=
-this._polygonList=null;this._ignoringZHidden=!1;this._worldMatrix=new nb;this._matrixStack=new ec;this.camera=a;this._depth=3;this.modelList1=new $;this.modelList2=new $;this.modelList3=new $;this.modelList4=new $;this.modelList5=new $;this.backgroundColor=new ja(90,135,158)}function Bb(){}function dc(a,b,c,e,d,f,g){var h,j,i,k,l,m,t,o,p,q,r,u,s,v,B,C,y,x,w,z,G,V,ha,R,yb,N,E,L,A,D,I,S,M,O,F,K,H,P,ia,J,Q,W,X,Y,Z,da,ea,ja,$,bb,cb,db,eb,Xa,Na,Oa,Pa,Qa,Ra,ka,Sa,la,Ta,Ua,Ya,Va,Za,Ia,Ha,Ja,Ka,La,xa,ya,
-za,Aa,Ba,Ca,Da,ua,Ea,va,Fa,wa,fa,ga,Ga,aa,ba,ca,U,ma,na,oa,pa,qa,ra,sa,ta;this.matrix=this.projectionMatrix=this.viewMatrix=null;this.view=a;this.target=b;this.upper=c;this.fovyX=e;this.nearZ=d;this.farZ=f;this.aspectRatio=g;this.rotatingMatrix=new nb;h=this.view;j=this.target;i=this.upper;k=this.fovyX;l=this.nearZ;m=this.farZ;t=this.aspectRatio;s=new n(j.x-h.x,j.y-h.y,j.z-h.z);v=Math.sqrt((F=s.x)*F+(K=s.y)*K+(H=s.z)*H);q=1E-9>v?new n(0,0,0):s.divSelf$N(v);B=new n((W=i.y)*(ia=q.z)-(P=i.z)*(Q=q.y),
-P*(X=q.x)-(J=i.x)*ia,J*Q-W*X);C=Math.sqrt((Y=B.x)*Y+(Z=B.y)*Z+(da=B.z)*da);r=1E-9>C?new n(0,0,0):B.divSelf$N(C);y=new n((cb=q.y)*(ja=r.z)-(ea=q.z)*(bb=r.y),ea*(db=r.x)-($=q.x)*ja,$*bb-cb*db);x=Math.sqrt((eb=y.x)*eb+(Xa=y.y)*Xa+(Na=y.z)*Na);u=1E-9>x?new n(0,0,0):y.divSelf$N(x);o=new T([Oa=r.x,Pa=r.y,Qa=r.z,-(Oa*(ka=h.x)+Pa*(la=h.y)+Qa*(Ua=h.z)),Ra=u.x,Sa=u.y,Ta=u.z,-(Ra*ka+Sa*la+Ta*Ua),Ya=q.x,Va=q.y,Za=q.z,-(Ya*ka+Va*la+Za*Ua),0,0,0,1]);w=1/Math.tan(k/2);z=w/t;G=m/(m-l);p=new T([w,0,0,0,0,z,0,0,0,
-0,G,-G*l,0,0,1,0]);this.viewMatrix=o;this.projectionMatrix=p;V=(Ia=p._m11)*(La=o._m11)+(Ha=p._m12)*(xa=o._m21)+(Ja=p._m13)*(ya=o._m31)+(Ka=p._m14)*(za=o._m41);ha=Ia*(Ba=o._m12)+Ha*(Da=o._m22)+Ja*(Ea=o._m32)+Ka*(Fa=o._m42);R=Ia*(wa=o._m13)+Ha*(fa=o._m23)+Ja*(ga=o._m33)+Ka*(Ga=o._m43);yb=Ia*(aa=o._m14)+Ha*(ba=o._m24)+Ja*(ca=o._m34)+Ka*(U=o._m44);N=(Aa=p._m21)*La+(Ca=p._m22)*xa+(ua=p._m23)*ya+(va=p._m24)*za;E=Aa*Ba+Ca*Da+ua*Ea+va*Fa;L=Aa*wa+Ca*fa+ua*ga+va*Ga;A=Aa*aa+Ca*ba+ua*ca+va*U;D=(ma=p._m31)*La+
-(na=p._m32)*xa+(oa=p._m33)*ya+(pa=p._m34)*za;I=ma*Ba+na*Da+oa*Ea+pa*Fa;S=ma*wa+na*fa+oa*ga+pa*Ga;M=ma*aa+na*ba+oa*ca+pa*U;O=(qa=p._m41)*La+(ra=p._m42)*xa+(sa=p._m43)*ya+(ta=p._m44)*za;this.matrix=new T([V,ha,R,yb,N,E,L,A,D,I,S,M,O,qa*Ba+ra*Da+sa*Ea+ta*Fa,qa*wa+ra*fa+sa*ga+ta*Ga,qa*aa+ra*ba+sa*ca+ta*U])}function Cb(){}function ja(a,b,c){this.r=a;this.g=b;this.b=c}function ob(){}function xc(){this.vCenter=this.center=null}function Wa(){}function Hb(a,b){this.vVertices=this.vCenter=this.center=null;
-this.vertices=a;this._color=b;this._enabledLighting=!0;this.updateCenter$()}function pb(){}function yc(a,b){this.vCenter=null;this.polygons=a;this.center=b;this._ignoringZHidden=!1}function fc(a,b,c){this.vCenter=null;this.polygons=a;this.center=b;this._ignoringZHidden=c}function kb(){}function gc(a,b){Ub.call(this,a,b,6,6,4,2)}function Ub(a,b,c,e,d,f){var g,h,j,i,k;g=new ja(0,0,0);this.vVertices=this.vCenter=this.center=null;this.vertices=a;this._color=g;this._enabledLighting=!0;this.updateCenter$();
-this._src=b;this._image=K.images[b];this.vertices=a;b=a[1];g=a[0];i=b.x-g.x;k=b.y-g.y;b=Math.sqrt(i*i+k*k+(h=b.z-g.z)*h);this._width=0<=b?b:-b;h=a[2];a=a[1];b=h.x-a.x;g=h.y-a.y;a=Math.sqrt(b*b+g*g+(j=h.z-a.z)*j);this._height=0<=a?a:-a;this._maxHorizontalDiv=c;this._maxVerticalDiv=e;this._maxDiv=d;this._minDiv=f;this.updateCenter$()}function zb(){}function hc(a,b,c,e){this.vCenter=null;this._width=b;this._height=c;this._src=e;this._image=K.images[e];this.center=a}function Y(){}function Ib(a){var b,
-c;this.tail=this.head=null;this.length=0;b=a.length;for(c=0;c<b;c++)this.prepend$LVector$(a.pop())}function Vb(){}function Z(){}function ec(){this.tail=this.head=null;this.length=0}function Wb(){}function da(){}function $(){this.tail=this.head=null;this.length=0}function Xb(){}function ea(){}function Db(){this.tail=this.head=null;this.length=0}function Yb(){}function P(){}function zc(){}function H(){}function Ac(){}function ic(){}function Bc(){}function Jb(){}function Cc(){}function W(){}function Dc(){this._lastLapMsec=
-null;this._elapsedMsec=0;this._startedMsec=null}function tb(){}function Ec(){this._fpsElement=null;this._stopwatch={_elapsedMsec:0,_startedMsec:null,_lastLapMsec:null};this._recentlyMsecLog=[];this._lastMsec=0;this._enabledHtmlLog=!1;this._enabledConsoleLog=!0}function Fc(a){a=P.document.getElementById(a);this._fpsElement=a instanceof HTMLElement?a:null;this._stopwatch={_elapsedMsec:0,_startedMsec:null,_lastLapMsec:null};this._recentlyMsecLog=[];this._lastMsec=0;this._enabledHtmlLog=!0;this._enabledConsoleLog=
-!1}function A(){}function Gc(){}function Zb(){window.removeEventListener("load",Zb);document.removeEventListener("DOMContentLoaded",Zb);JSX.runMain("jsx/ball.jsx",[])}JSX.require=function(a){a=Nc[a];return void 0!==a?a:null};JSX.profilerIsRunning=function(){return null!=Ab.getResults};JSX.getProfileResults=function(){return(Ab.getResults||function(){return{}})()};JSX.postProfileResults=function(a){if(null==Ab.postResults)throw Error("profiler has not been turned on");return Ab.postResults(a)};JSX.resetProfileResults=
-function(){if(null==Ab.resetResults)throw Error("profiler has not been turned on");return Ab.resetResults()};$a.prototype={};lc.prototype=new $a;$a.sphere$LContext3D$NI=function(a,b,c){var e,d,f,g,h,j,i,k,l;e=2*c;d=Math.sin;f=Math.cos;g=new n(0,0,0);a._polygonList=new Db;a._groupCenter=g;a._ignoringZHidden=!1;for(g=0;g<e;g++)j=1,i=g+1,k=g,$b(a,[new n(f(6.283185307179586*i/e)*d(0/c)*b,f(0/c)*b,d(6.283185307179586*i/e)*d(0/c)*b),new n(f(6.283185307179586*i/e)*d(3.141592653589793*j/c)*b,f(3.141592653589793*
-j/c)*b,d(6.283185307179586*i/e)*d(3.141592653589793*j/c)*b),new n(f(6.283185307179586*k/e)*d(3.141592653589793*j/c)*b,f(3.141592653589793*j/c)*b,d(6.283185307179586*k/e)*d(3.141592653589793*j/c)*b)],new ja(128,128,255));for(g=1;g<c-1;g++)for(l=0;l<e;l++)h=g,j=g+1,i=l+1,k=l,$b(a,[new n(f(6.283185307179586*i/e)*d(3.141592653589793*g/c)*b,f(3.141592653589793*g/c)*b,d(6.283185307179586*i/e)*d(3.141592653589793*g/c)*b),new n(f(6.283185307179586*i/e)*d(3.141592653589793*j/c)*b,f(3.141592653589793*j/c)*
-b,d(6.283185307179586*i/e)*d(3.141592653589793*j/c)*b),new n(f(6.283185307179586*k/e)*d(3.141592653589793*j/c)*b,f(3.141592653589793*j/c)*b,d(6.283185307179586*k/e)*d(3.141592653589793*j/c)*b),new n(f(6.283185307179586*k/e)*d(3.141592653589793*h/c)*b,f(3.141592653589793*h/c)*b,d(6.283185307179586*k/e)*d(3.141592653589793*h/c)*b)],new ja(128,128,255));for(g=0;g<e;g++)h=c-1,j=c,i=g+1,k=g,$b(a,[new n(f(6.283185307179586*g/e)*d(3.141592653589793*h/c)*b,f(3.141592653589793*h/c)*b,d(6.283185307179586*g/
-e)*d(3.141592653589793*h/c)*b),new n(f(6.283185307179586*i/e)*d(3.141592653589793*h/c)*b,f(3.141592653589793*h/c)*b,d(6.283185307179586*i/e)*d(3.141592653589793*h/c)*b),new n(f(6.283185307179586*k/e)*d(3.141592653589793*j/c)*b,f(3.141592653589793*j/c)*b,d(6.283185307179586*k/e)*d(3.141592653589793*j/c)*b)],new ja(128,128,255));jc(a)};var rc=$a.sphere$LContext3D$NI;$a.tile$LContext3D$IIIILColor$=function(a,b,c,e,d,f){b=[new n(b-d/2,c,e-d/2),new n(b-d/2,c,e+d/2),new n(b+d/2,c,e+d/2),new n(b+d/2,c,e-
-d/2)];Eb(a,new Hb(b,f))};var Oc=$a.tile$LContext3D$IIIILColor$;$a.tileOnGroup$LContext3D$IIIILColor$=function(a,b,c,e,d,f){$b(a,[new n(b-d/2,c,e-d/2),new n(b-d/2,c,e+d/2),new n(b+d/2,c,e+d/2),new n(b+d/2,c,e-d/2)],f)};var ub=$a.tileOnGroup$LContext3D$IIIILColor$;ab.prototype={};mc.prototype=new ab;ab.moveForward$LPlayer$=function(a){vb(a,50,0)};ab.move$LPlayer$NN=function(a,b,c){var e,d,f;a.isBraking=!1;e=a.vx;d=a.vz;f=Math.sqrt(e*e+d*d);if(1E-9<(0<=d?d:-d))d/=f;if(1E-9<(0<=e?e:-e))e/=f;d=Math.atan2(e,
-d);e=Math.sin(d);d=Math.cos(d);a.az=d*b-e*c;a.ax=e*b+d*c};var vb=ab.move$LPlayer$NN;ab.brake$LPlayer$=function(a){a.isBraking=!0};ab.update$LPlayer$N=function(a,b){var c,e,d,f,g,h,j,i,k,l;c=b/1E3;0.1<c&&(c=0.1);e=a.vx+=a.ax*c;a.vy+=a.ay*c;a.vz+=a.az*c;e=-100>=e?-100:e;a.vx=100<=e?100:e;e=a.vy;e=-3E3>=e?-3E3:e;a.vy=3E3<=e?3E3:e;e=a.vz;e=-100>=e?-100:e;f=a.vz=100<=e?100:e;e=a.vx*c;d=a.vy*c;f*=c;a.x+=e;a.y+=d;a.z+=f;d=a.isBraking?0.1:0.01;a.vx-=(0<=e?e:-e)*a.vx*d;a.vz-=(0<=f?f:-f)*a.vz*d;a.isBraking&&
-(c=Math.pow(2.718281828459045,-c),a.az*=c,a.ax*=c);c=new n(0-1*f,0*f-0*e,1*e-0);d=Math.sqrt((g=c.x)*g+(h=c.y)*h+(j=c.z)*j);g=1E-9>d?new n(0,0,0):c.divSelf$N(d);e=Math.sqrt(e*e+0+f*f)/a.r;h=g.x;j=g.y;c=g.z;g=Math.cos(e/2);e=Math.sin(e/2);h*=e;j*=e;l=c*e;c=a.rot;e=(f=c.t)*g-((d=c.x)*h+(i=c.y)*j+(k=c.z)*l);c.t=e;c.x=f*h+g*d+(i*l-k*j);c.y=f*j+g*i+(k*h-d*l);c.z=f*l+g*k+(d*j-i*h)};var Pc=ab.update$LPlayer$N;J.prototype={};ac.prototype=new J;J.prototype._initTrees$=function(){this.trees=new Ib([new n(-271,
--3,450),new n(-200,-3,720),new n(139,-3,351),new n(171,-3,254),new n(214,-3,192),new n(-253,-3,555),new n(29,-3,385),new n(-72,-3,530),new n(96,-3,678),new n(-49,-3,222)]);this.treeRadius=24};J.prototype._initItems$=function(){this.items=new Ib([new n(149,-10,724),new n(107,-10,483),new n(279,-10,551),new n(-295,-10,261),new n(-16,-10,225),new n(95,-10,165),new n(264,-10,161),new n(-50,-10,325),new n(-169,-10,254),new n(271,-10,401)]);this.itemRadius=8};J.prototype._checkCollisionWithFloor$N=function(a){var b,
-c,e;b=this.player;Pc(b,a);c=b.x;a=b.y;e=b.z;if((-30<=c&&30>=c&&-30<=e&&150>=e||-300<=c&&300>=c&&150<=e&&750>=e||-30<=c&&30>=c&&750<=e&&810>=e||-30<=c&&570>=c&&810<=e&&870>=e)&&2*-b.radius<a&&0>a)b.vy=0.5*-b.vy,b.y=0;510<=c&&(570>=c&&210<=e&&810>=e)&&(c=Math.floor((810-e)/30),9<c&&(c=19-c),c*=5,c-2*b.radius<a&&a<c&&(b.vy=0.5*-b.vy,b.y=c))};J.prototype._checkCollisionWithTrees$=function(){var a=this,b;b=this.player;this.trees.forEach$F$LVector$V$(function(c){var e,d,f,g,h,j,i,k,l;e=b.x-c.x;d=b.y-c.y;
-c=b.z-c.z;f=a.treeRadius+b.radius;e*e+d*d+c*c<f*f&&(e=new n(e,d,c),d=Math.sqrt((g=e.x)*g+(h=e.y)*h+(j=e.z)*j),g=1E-9>d?new n(0,0,0):e.divSelf$N(d),h=Math.sqrt((i=b.vx)*i+(k=b.vy)*k+(l=b.vz)*l),b.ax+=2*h*(i=g.x),b.vy+=2*h*g.y,b.az+=2*h*(k=g.z),b.x+=i*(i=a.treeRadius)/4,b.z+=k*i/4)})};J.prototype._checkCollisionWithItems$=function(){var a,b,c,e,d,f,g,h;a=this.player;b=this.items;c=this.itemRadius;for(e=b.head;e;e=e._next)d=e.value,f=d.x-a.x,g=d.y-a.y,d=d.z-a.z,h=c+a.radius,f*f+g*g+d*d<h*h&&b.remove$LNode$Vector$E$(e)};
-J.prototype._updateViewpoint$=function(){var a,b,c,e,d,f,g,h,j,i,k,l,m,t,o,p,q,r,u,s,v,B,C,y,x,w,z,G,V,ha,R,A,N,E,L,D,I,F,S,M,O,K,H,P,J,ia,Q,W,X,Y,Z,da,ea,ja,$,mb,bb,cb,db,eb,Xa,Na,Oa,Pa,Qa,Ra,ka,Sa,la,Ta,Ua,Ya,Va,Za,Ia,Ha,Ja,Ka,La,xa,ya,za,Aa,Ba,Ca,Da,ua,Ea,va,Fa,wa,fa,ga,Ga,aa,ba,ca,U,ma,na,oa,pa,qa,ra,sa,ta,Ma,fb,gb,hb,ib;a=this.player;b=-a.vz;c=-a.vx;e=Math.sqrt(b*b+c*c);1E-9>e?(b=-1,c=0):(b/=e,c/=e);d=a.y;0>d&&(d=-d/2);f=10;g=Math.sqrt((P=a.vx)*P+(J=a.vz)*J);50>g&&(f-=0.6*(50-g));h=new n(a.x+
-50*c,1.2*d+f,a.z+50*b);j=new n(a.x,a.y,a.z);(ia=this.engine.camera).target=j;ia.view=h;i=ia.view;k=ia.target;l=ia.upper;m=ia.fovyX;t=ia.nearZ;o=ia.farZ;p=ia.aspectRatio;B=new n(k.x-i.x,k.y-i.y,k.z-i.z);C=Math.sqrt((Q=B.x)*Q+(W=B.y)*W+(X=B.z)*X);u=1E-9>C?new n(0,0,0):B.divSelf$N(C);y=new n((ja=l.y)*(Z=u.z)-(Y=l.z)*(ea=u.y),Y*($=u.x)-(da=l.x)*Z,da*ea-ja*$);x=Math.sqrt((mb=y.x)*mb+(bb=y.y)*bb+(cb=y.z)*cb);s=1E-9>x?new n(0,0,0):y.divSelf$N(x);w=new n((Oa=u.y)*(eb=s.z)-(db=u.z)*(Na=s.y),db*(Pa=s.x)-(Xa=
-u.x)*eb,Xa*Na-Oa*Pa);z=Math.sqrt((Qa=w.x)*Qa+(Ra=w.y)*Ra+(ka=w.z)*ka);v=1E-9>z?new n(0,0,0):w.divSelf$N(z);q=new T([Sa=s.x,la=s.y,Ta=s.z,-(Sa*(Ya=i.x)+la*(Za=i.y)+Ta*(Ha=i.z)),Ua=v.x,Va=v.y,Ia=v.z,-(Ua*Ya+Va*Za+Ia*Ha),Ja=u.x,Ka=u.y,La=u.z,-(Ja*Ya+Ka*Za+La*Ha),0,0,0,1]);G=1/Math.tan(m/2);V=G/p;ha=o/(o-t);r=new T([G,0,0,0,0,V,0,0,0,0,ha,-ha*t,0,0,1,0]);ia.viewMatrix=q;ia.projectionMatrix=r;R=(xa=r._m11)*(Ba=q._m11)+(ya=r._m12)*(Ca=q._m21)+(za=r._m13)*(Da=q._m31)+(Aa=r._m14)*(ua=q._m41);A=xa*(va=q._m12)+
-ya*(wa=q._m22)+za*(ga=q._m32)+Aa*(aa=q._m42);N=xa*(ba=q._m13)+ya*(ca=q._m23)+za*(U=q._m33)+Aa*(ma=q._m43);E=xa*(na=q._m14)+ya*(oa=q._m24)+za*(pa=q._m34)+Aa*(qa=q._m44);L=(Ea=r._m21)*Ba+(Fa=r._m22)*Ca+(fa=r._m23)*Da+(Ga=r._m24)*ua;D=Ea*va+Fa*wa+fa*ga+Ga*aa;I=Ea*ba+Fa*ca+fa*U+Ga*ma;F=Ea*na+Fa*oa+fa*pa+Ga*qa;S=(ra=r._m31)*Ba+(sa=r._m32)*Ca+(ta=r._m33)*Da+(Ma=r._m34)*ua;M=ra*va+sa*wa+ta*ga+Ma*aa;O=ra*ba+sa*ca+ta*U+Ma*ma;K=ra*na+sa*oa+ta*pa+Ma*qa;H=(fb=r._m41)*Ba+(gb=r._m42)*Ca+(hb=r._m43)*Da+(ib=r._m44)*
-ua;ia.matrix=new T([R,A,N,E,L,D,I,F,S,M,O,K,H,fb*va+gb*wa+hb*ga+ib*aa,fb*ba+gb*ca+hb*U+ib*ma,fb*na+gb*oa+hb*pa+ib*qa])};J.prototype._renderPlayer$LContext3D$=function(a){var b,c,e,d,f,g,h,j,i,k,l,m,t,o,p,q,r,n,s,v,B,C,y,x,w,z;b=(e=this.player).x;c=e.y-12;e=e.z;d=a._worldMatrix;f=d._m11;g=d._m12;h=d._m13;j=d._m14;i=d._m21;k=d._m22;l=d._m23;m=d._m24;t=d._m31;o=d._m32;p=d._m33;q=d._m34;r=d._m41;n=d._m42;s=d._m43;v=d._m44;d._m11=1*f+0*g+0*h+0*j;d._m12=0*f+1*g+0*h+0*j;d._m13=0*f+0*g+1*h+0*j;d._m14=f*b+
-g*c+h*e+1*j;d._m21=1*i+0*k+0*l+0*m;d._m22=0*i+1*k+0*l+0*m;d._m23=0*i+0*k+1*l+0*m;d._m24=i*b+k*c+l*e+1*m;d._m31=1*t+0*o+0*p+0*q;d._m32=0*t+1*o+0*p+0*q;d._m33=0*t+0*o+1*p+0*q;d._m34=t*b+o*c+p*e+1*q;d._m41=1*r+0*n+0*s+0*v;d._m42=0*r+1*n+0*s+0*v;d._m43=0*r+0*n+1*s+0*v;d._m44=r*b+n*c+s*e+1*v;d=this.player.rot;b=a._worldMatrix;h=2*(y=d.x)*y;j=2*(x=d.y)*x;e=2*(w=d.z)*w;c=2*y*x;f=2*y*w;g=2*x*w;i=2*y*(y=d.t);k=2*x*y;d=2*w*y;w=1-j-e;x=c+d;y=f-k;c-=d;e=1-h-e;d=g+i;f+=k;g-=i;z=1-h-j;h=b._m11;j=b._m12;i=b._m13;
-k=b._m14;l=b._m21;m=b._m22;t=b._m23;o=b._m24;p=b._m31;q=b._m32;r=b._m33;n=b._m34;s=b._m41;v=b._m42;B=b._m43;C=b._m44;b._m11=h*w+j*c+i*f+0*k;b._m12=h*x+j*e+i*g+0*k;b._m13=h*y+j*d+i*z+0*k;b._m14=0*h+0*j+0*i+1*k;b._m21=l*w+m*c+t*f+0*o;b._m22=l*x+m*e+t*g+0*o;b._m23=l*y+m*d+t*z+0*o;b._m24=0*l+0*m+0*t+1*o;b._m31=p*w+q*c+r*f+0*n;b._m32=p*x+q*e+r*g+0*n;b._m33=p*y+q*d+r*z+0*n;b._m34=0*p+0*q+0*r+1*n;b._m41=s*w+v*c+B*f+0*C;b._m42=s*x+v*e+B*g+0*C;b._m43=s*y+v*d+B*z+0*C;b._m44=0*s+0*v+0*B+1*C;rc(a,this.player.radius,
-6);a._worldMatrix=new nb};J.prototype._renderTrees$LContext3D$=function(a){this.trees.forEach$F$LVector$V$(function(b){var c,e,d,f,g,h,j,i,k,l,m,t,o,p,q,r,u,s,v;c=b.x;e=b.y;b=b.z;a._matrixStack.prepend$LMatrix$(a._worldMatrix.copy$());d=a._worldMatrix;f=d._m11;g=d._m12;h=d._m13;j=d._m14;i=d._m21;k=d._m22;l=d._m23;m=d._m24;t=d._m31;o=d._m32;p=d._m33;q=d._m34;r=d._m41;u=d._m42;s=d._m43;v=d._m44;d._m11=1*f+0*g+0*h+0*j;d._m12=0*f+1*g+0*h+0*j;d._m13=0*f+0*g+1*h+0*j;d._m14=f*c+g*e+h*b+1*j;d._m21=1*i+0*
-k+0*l+0*m;d._m22=0*i+1*k+0*l+0*m;d._m23=0*i+0*k+1*l+0*m;d._m24=i*c+k*e+l*b+1*m;d._m31=1*t+0*o+0*p+0*q;d._m32=0*t+1*o+0*p+0*q;d._m33=0*t+0*o+1*p+0*q;d._m34=t*c+o*e+p*b+1*q;d._m41=1*r+0*u+0*s+0*v;d._m42=0*r+1*u+0*s+0*v;d._m43=0*r+0*u+1*s+0*v;d._m44=r*c+u*e+s*b+1*v;Qc(a,new n(0,0,0),50,34,"./image/tree.png");a._worldMatrix=a._matrixStack.removeFirst$()})};J.prototype._renderItems$LContext3D$=function(a){var b,c,e,d,f;b=3.141592653589793*this.totalElapsedMsec/1E3;c=Math.cos(b/2);e=Math.sin(b/2);d=0*e;
-f=0*e;this.items.forEach$F$LVector$V$(function(b){var h,j,i,k,l,m,t,o,p,q,r,u,s,v,B,C,y,x,w,z,G,V,ha,R,A;h=b.x;j=b.y;b=b.z;a._matrixStack.prepend$LMatrix$(a._worldMatrix.copy$());i=a._worldMatrix;k=i._m11;l=i._m12;m=i._m13;t=i._m14;o=i._m21;p=i._m22;q=i._m23;r=i._m24;u=i._m31;s=i._m32;v=i._m33;B=i._m34;C=i._m41;y=i._m42;x=i._m43;w=i._m44;i._m11=1*k+0*l+0*m+0*t;i._m12=0*k+1*l+0*m+0*t;i._m13=0*k+0*l+1*m+0*t;i._m14=k*h+l*j+m*b+1*t;i._m21=1*o+0*p+0*q+0*r;i._m22=0*o+1*p+0*q+0*r;i._m23=0*o+0*p+1*q+0*r;
-i._m24=o*h+p*j+q*b+1*r;i._m31=1*u+0*s+0*v+0*B;i._m32=0*u+1*s+0*v+0*B;i._m33=0*u+0*s+1*v+0*B;i._m34=u*h+s*j+v*b+1*B;i._m41=1*C+0*y+0*x+0*w;i._m42=0*C+1*y+0*x+0*w;i._m43=0*C+0*y+1*x+0*w;i._m44=C*h+y*j+x*b+1*w;h=a._worldMatrix;p=2*d*d;q=2*e*e;l=2*f*f;k=2*d*e;t=2*d*f;o=2*e*f;r=2*d*c;u=2*e*c;m=2*f*c;j=1-q-l;b=k+m;i=t-u;k-=m;l=1-p-l;m=o+r;t+=u;o-=r;A=1-p-q;p=h._m11;q=h._m12;r=h._m13;u=h._m14;s=h._m21;v=h._m22;B=h._m23;C=h._m24;y=h._m31;x=h._m32;w=h._m33;z=h._m34;G=h._m41;V=h._m42;ha=h._m43;R=h._m44;h._m11=
-p*j+q*k+r*t+0*u;h._m12=p*b+q*l+r*o+0*u;h._m13=p*i+q*m+r*A+0*u;h._m14=0*p+0*q+0*r+1*u;h._m21=s*j+v*k+B*t+0*C;h._m22=s*b+v*l+B*o+0*C;h._m23=s*i+v*m+B*A+0*C;h._m24=0*s+0*v+0*B+1*C;h._m31=y*j+x*k+w*t+0*z;h._m32=y*b+x*l+w*o+0*z;h._m33=y*i+x*m+w*A+0*z;h._m34=0*y+0*x+0*w+1*z;h._m41=G*j+V*k+ha*t+0*R;h._m42=G*b+V*l+ha*o+0*R;h._m43=G*i+V*m+ha*A+0*R;h._m44=0*G+0*V+0*ha+1*R;Rc(a,[new n(-15,-10,0),new n(15,-10,0),new n(15,10,0),new n(-15,10,0)],"./image/redbull_free.png",2,2,1,1);a._worldMatrix=a._matrixStack.removeFirst$()})};
-J.prototype._renderField$LContext3D$=function(a){var b,c,e,d,f,g,h,j,i,k,l,m,t,o,p,q,r,u,s;b=new ja(192,192,192);c=new ja(160,255,160);e=new ja(96,255,96);Hc(a,5);d=new n(0,0,0);a._polygonList=new Db;a._groupCenter=d;a._ignoringZHidden=!0;for(d=0;6>d;d++)ub(a,-15,-20,-15+30*d,30,b),ub(a,15,-20,-15+30*d,30,b);a._matrixStack.prepend$LMatrix$(a._worldMatrix.copy$());d=a._worldMatrix;b=d._m11;f=d._m12;g=d._m13;h=d._m14;j=d._m21;i=d._m22;k=d._m23;l=d._m24;m=d._m31;t=d._m32;o=d._m33;p=d._m34;q=d._m41;r=
-d._m42;u=d._m43;s=d._m44;d._m11=1*b+0*f+0*g+0*h;d._m12=0*b+1*f+0*g+0*h;d._m13=0*b+0*f+1*g+0*h;d._m14=0*b+0*f+450*g+1*h;d._m21=1*j+0*i+0*k+0*l;d._m22=0*j+1*i+0*k+0*l;d._m23=0*j+0*i+1*k+0*l;d._m24=0*j+0*i+450*k+1*l;d._m31=1*m+0*t+0*o+0*p;d._m32=0*m+1*t+0*o+0*p;d._m33=0*m+0*t+1*o+0*p;d._m34=0*m+0*t+450*o+1*p;d._m41=1*q+0*r+0*u+0*s;d._m42=0*q+1*r+0*u+0*s;d._m43=0*q+0*r+1*u+0*s;d._m44=0*q+0*r+450*u+1*s;for(d=0;20>d;d++)for(b=0;20>b;b++)f=0===(d+b)%2?c:e,ub(a,30*d-285,-20,30*b-285,30,f);a._worldMatrix=
-a._matrixStack.removeFirst$();jc(a);d=new n(0,0,0);a._polygonList=new Db;a._groupCenter=d;a._ignoringZHidden=!0;ub(a,-15,-20,765,30,e);ub(a,-15,-20,795,30,c);ub(a,15,-20,795,30,e);ub(a,15,-20,765,30,c);a._matrixStack.prepend$LMatrix$(a._worldMatrix.copy$());d=a._worldMatrix;b=d._m11;f=d._m12;g=d._m13;h=d._m14;j=d._m21;i=d._m22;k=d._m23;l=d._m24;m=d._m31;t=d._m32;o=d._m33;p=d._m34;q=d._m41;r=d._m42;u=d._m43;s=d._m44;d._m11=1*b+0*f+0*g+0*h;d._m12=0*b+1*f+0*g+0*h;d._m13=0*b+0*f+1*g+0*h;d._m14=0*b+0*
-f+840*g+1*h;d._m21=1*j+0*i+0*k+0*l;d._m22=0*j+1*i+0*k+0*l;d._m23=0*j+0*i+1*k+0*l;d._m24=0*j+0*i+840*k+1*l;d._m31=1*m+0*t+0*o+0*p;d._m32=0*m+1*t+0*o+0*p;d._m33=0*m+0*t+1*o+0*p;d._m34=0*m+0*t+840*o+1*p;d._m41=1*q+0*r+0*u+0*s;d._m42=0*q+1*r+0*u+0*s;d._m43=0*q+0*r+1*u+0*s;d._m44=0*q+0*r+840*u+1*s;for(d=0;2>d;d++)for(b=0;20>b;b++)f=1===(d+b)%2?c:e,ub(a,30*b-15,-20,30*d-15,30,f);a._worldMatrix=a._matrixStack.removeFirst$();jc(a);a._matrixStack.prepend$LMatrix$(a._worldMatrix.copy$());d=a._worldMatrix;b=
-d._m11;f=d._m12;g=d._m13;h=d._m14;j=d._m21;i=d._m22;k=d._m23;l=d._m24;m=d._m31;t=d._m32;o=d._m33;p=d._m34;q=d._m41;r=d._m42;u=d._m43;s=d._m44;d._m11=1*b+0*f+0*g+0*h;d._m12=0*b+1*f+0*g+0*h;d._m13=0*b+0*f+1*g+0*h;d._m14=540*b+0*f+510*g+1*h;d._m21=1*j+0*i+0*k+0*l;d._m22=0*j+1*i+0*k+0*l;d._m23=0*j+0*i+1*k+0*l;d._m24=540*j+0*i+510*k+1*l;d._m31=1*m+0*t+0*o+0*p;d._m32=0*m+1*t+0*o+0*p;d._m33=0*m+0*t+1*o+0*p;d._m34=540*m+0*t+510*o+1*p;d._m41=1*q+0*r+0*u+0*s;d._m42=0*q+1*r+0*u+0*s;d._m43=0*q+0*r+1*u+0*s;d._m44=
-540*q+0*r+510*u+1*s;for(d=0;2>d;d++)for(b=0;20>b;b++)g=b,9<b&&(g=19-g),f=0===(d+b)%2?c:e,Oc(a,30*d-15,-20+5*g,285-30*b,30,f);a._worldMatrix=a._matrixStack.removeFirst$();Hc(a,3)};J.prototype._setMobileOperation$=function(){var a=this;P.window.addEventListener("devicemotion",function(b){var c;c=b instanceof DeviceMotionEvent?b:null;b=30*c.accelerationIncludingGravity.y;c=30*c.accelerationIncludingGravity.x/2;0>b&&(b=a.player,b.isBraking=!0,b=0);vb(a.player,b,c)});P.window.addEventListener("touchstart",
-function(){a.isStarted?a.player.vy=80:(a.isStarted=!0,a.player.vz=100)})};J.prototype._setPCOperation$=function(){var a=this;P.window.document.addEventListener("keypress",function(b){if(a.isStarted)switch(b=b instanceof KeyboardEvent?b:null,b.keyCode){case 119:vb(a.player,100,0);break;case 115:b=a.player;b.isBraking=!0;break;case 97:vb(a.player,0,-50);break;case 100:vb(a.player,0,50);break;case 104:vb(a.player,0,-50);break;case 106:b=a.player;b.isBraking=!0;break;case 107:vb(a.player,100,0);break;
-case 108:vb(a.player,0,50);break;case 32:a.player.vy=80}else a.isStarted=!0,a.player.vz=100},!1)};J.prototype.run$=function(){this.engine.start$()};Tb.prototype={};sc.prototype=new Tb;Tb.main$AS=function(){(new ac).engine.start$()};D.prototype={};n.prototype=new D;I.prototype=new D;tc.prototype=new D;D.origin$=function(){return new n(0,0,0)};D.prototype.add$LVector$=function(a){return new n(this.x+a.x,this.y+a.y,this.z+a.z)};D.prototype.addSelf$LVector$=function(a){this.x+=a.x;this.y+=a.y;this.z+=
-a.z;return this};D.prototype.sub$LVector$=function(a){return new n(this.x-a.x,this.y-a.y,this.z-a.z)};D.prototype.subSelf$LVector$=function(a){this.x-=a.x;this.y-=a.y;this.z-=a.z;return this};D.prototype.mul$N=function(a){return new n(this.x*a,this.y*a,this.z*a)};D.prototype.mulSelf$N=function(a){this.x*=a;this.y*=a;this.z*=a;return this};D.prototype.div$N=function(a){return new n(this.x/a,this.y/a,this.z/a)};D.prototype.divSelf$N=function(a){this.x/=a;this.y/=a;this.z/=a;return this};D.prototype.dot$LVector$=
-function(a){return this.x*a.x+this.y*a.y+this.z*a.z};D.prototype.cross$LVector$=function(a){var b,c,e,d,f,g;return new n((f=this.y)*(c=a.z)-(b=this.z)*(d=a.y),b*(g=a.x)-(e=this.x)*c,e*d-f*g)};D.prototype.crossSelf$LVector$=function(a){var b,c,e,d,f;b=(f=this.y)*(c=a.z)-(e=this.z)*(d=a.y);c=e*(e=a.x)-(a=this.x)*c;this.x=b;this.y=c;this.z=a*d-f*e;return this};D.prototype.unit$=function(){var a,b,c,e;a=Math.sqrt((b=this.x)*b+(c=this.y)*c+(e=this.z)*e);return 1E-9>a?new n(0,0,0):new n(this.x/a,this.y/
-a,this.z/a)};D.prototype.unitSelf$=function(){var a,b,c,e;a=Math.sqrt((b=this.x)*b+(c=this.y)*c+(e=this.z)*e);return 1E-9>a?new n(0,0,0):this.divSelf$N(a)};D.prototype.sqabs$=function(){var a,b,c;return(a=this.x)*a+(b=this.y)*b+(c=this.z)*c};D.prototype.abs$=function(){var a,b,c;return Math.sqrt((a=this.x)*a+(b=this.y)*b+(c=this.z)*c)};D.prototype.rotateX$N=function(a){var b,c,e;b=Math.sin(a);a=Math.cos(a);return new n(this.x,(e=this.y)*a-(c=this.z)*b,c*a+e*b)};D.prototype.rotateXSelf$N=function(a){var b,
-c,e,d;b=Math.sin(a);a=Math.cos(a);this.y=c=(d=this.y)*a-(e=this.z)*b;this.z=e*a+d*b;return this};D.prototype.rotateY$N=function(a){var b,c,e;b=Math.sin(a);a=Math.cos(a);return new n((e=this.x)*a+(c=this.z)*b,this.y,c*a-e*b)};D.prototype.rotateYSelf$N=function(a){var b,c,e,d;b=Math.sin(a);a=Math.cos(a);this.x=c=(d=this.x)*a+(e=this.z)*b;this.z=e*a-d*b;return this};D.prototype.rotateZ$N=function(a){var b,c,e;b=Math.sin(a);a=Math.cos(a);return new n(this.x*a-(c=this.y)*b,c*a+(e=this.z)*b,e)};D.prototype.rotateZSelf$N=
-function(a){var b,c,e;b=Math.sin(a);c=Math.cos(a);a=this.x*c-(e=this.y)*b;b=e*c+this.z*b;this.x=a;this.y=b;return this};D.prototype.toString=function(){var a;a=function(a){var c,e,a=a.toFixed(1);c=a.length;for(e=0;e<8-c;e++)a=" "+a;return a};return"("+a(this.x)+","+a(this.y)+","+a(this.z)+","+a(this.w)+")"};Q.prototype={};nb.prototype=new Q;T.prototype=new Q;Q.prototype.copy$=function(){return new T([this._m11,this._m12,this._m13,this._m14,this._m21,this._m22,this._m23,this._m24,this._m31,this._m32,
-this._m33,this._m34,this._m41,this._m42,this._m43,this._m44])};Q.translating$LVector$=function(a){return new T([1,0,0,a.x,0,1,0,a.y,0,0,1,a.z,0,0,0,1])};Q.translating$NNN=function(a,b,c){return new T([1,0,0,a,0,1,0,b,0,0,1,c,0,0,0,1])};Q.rotatingX$N=function(a){var b;b=Math.sin(a);a=Math.cos(a);return new T([1,0,0,0,0,a,-b,0,0,b,a,0,0,0,0,1])};Q.rotatingY$N=function(a){var b;b=Math.sin(a);a=Math.cos(a);return new T([a,0,b,0,0,1,0,0,-b,0,a,0,0,0,0,1])};Q.rotatingZ$N=function(a){var b;b=Math.sin(a);
-a=Math.cos(a);return new T([a,-b,0,0,b,a,0,0,0,0,1,0,0,0,0,1])};Q.scaling$NNN=function(a,b,c){return new T([a,0,0,0,0,b,0,0,0,0,c,0,0,0,0,1])};Q.prototype.mul$LVector$=function(a){var b,c,e,d,a=this._m11*(b=a.x)+this._m12*(c=a.y)+this._m13*(e=a.z)+this._m14*(d=a.w);return new I(a,this._m21*b+this._m22*c+this._m23*e+this._m24*d,this._m31*b+this._m32*c+this._m33*e+this._m34*d,this._m41*b+this._m42*c+this._m43*e+this._m44*d)};Q.prototype.compose$LMatrix$=function(a){var b,c,e,d,f,g,h,j,i,k,l,m,t,o,p,
-q,r,n,s,v,B,C,y,x,w,z,G,V,ha,A;b=(h=this._m11)*(k=a._m11)+(j=this._m12)*(l=a._m21)+(i=this._m13)*(m=a._m31)+(d=this._m14)*(g=a._m41);c=h*(o=a._m12)+j*(q=a._m22)+i*(n=a._m32)+d*(v=a._m42);e=h*(B=a._m13)+j*(C=a._m23)+i*(y=a._m33)+d*(x=a._m43);a=h*(h=a._m14)+j*(j=a._m24)+i*(i=a._m34)+d*(w=a._m44);d=(t=this._m21)*k+(p=this._m22)*l+(r=this._m23)*m+(s=this._m24)*g;f=(z=this._m31)*k+(G=this._m32)*l+(V=this._m33)*m+(ha=this._m34)*g;g=(A=this._m41)*k+(k=this._m42)*l+(l=this._m43)*m+(m=this._m44)*g;return new T([b,
-c,e,a,d,t*o+p*q+r*n+s*v,t*B+p*C+r*y+s*x,t*h+p*j+r*i+s*w,f,z*o+G*q+V*n+ha*v,z*B+G*C+V*y+ha*x,z*h+G*j+V*i+ha*w,g,A*o+k*q+l*n+m*v,A*B+k*C+l*y+m*x,A*h+k*j+l*i+m*w])};Q.prototype.composeSelf$LMatrix$=function(a){var b,c,e,d,f,g,h,j,i,k,l,m,t,o,p,q,r,n,s,v,B,C,y,x,w,z,G,V;b=this._m11;c=this._m12;e=this._m13;d=this._m14;f=this._m21;g=this._m22;h=this._m23;j=this._m24;i=this._m31;k=this._m32;l=this._m33;m=this._m34;t=this._m41;o=this._m42;p=this._m43;q=this._m44;this._m11=b*(r=a._m11)+c*(n=a._m21)+e*(s=a._m31)+
-d*(v=a._m41);this._m12=b*(B=a._m12)+c*(C=a._m22)+e*(y=a._m32)+d*(x=a._m42);this._m13=b*(w=a._m13)+c*(z=a._m23)+e*(G=a._m33)+d*(V=a._m43);this._m14=b*(b=a._m14)+c*(c=a._m24)+e*(e=a._m34)+d*(a=a._m44);this._m21=f*r+g*n+h*s+j*v;this._m22=f*B+g*C+h*y+j*x;this._m23=f*w+g*z+h*G+j*V;this._m24=f*b+g*c+h*e+j*a;this._m31=i*r+k*n+l*s+m*v;this._m32=i*B+k*C+l*y+m*x;this._m33=i*w+k*z+l*G+m*V;this._m34=i*b+k*c+l*e+m*a;this._m41=t*r+o*n+p*s+q*v;this._m42=t*B+o*C+p*y+q*x;this._m43=t*w+o*z+p*G+q*V;this._m44=t*b+o*
-c+p*e+q*a;return this};Q.prototype.toString=function(){var a,b;a=function(a){var b,d,a=a.toFixed(1);b=a.length;for(d=0;d<8-b;d++)a=" "+a;return a};b=""+("|"+a(this._m11)+","+a(this._m12)+","+a(this._m13)+","+a(this._m14)+"|\n");b+="|"+a(this._m21)+","+a(this._m22)+","+a(this._m23)+","+a(this._m24)+"|\n";b+="|"+a(this._m31)+","+a(this._m32)+","+a(this._m33)+","+a(this._m34)+"|\n";return b+="|"+a(this._m41)+","+a(this._m42)+","+a(this._m43)+","+a(this._m44)+"|\n"};Q.prototype.invert$=function(){var a,
-b,c,e,d,f;e=[this._m11,this._m12,this._m13,this._m14,this._m21,this._m22,this._m23,this._m24,this._m31,this._m32,this._m33,this._m34,this._m41,this._m42,this._m43,this._m44];d=[1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1];for(a=0;3>a;a++){c=e[4*a+a];for(b=0;4>b;b++)e[4*a+b]/=c,d[4*a+b]/=c;for(b=a+1;4>b;b++){f=e[4*b+a];for(c=0;4>c;c++)e[4*b+c]-=e[4*a+c]*f,d[4*b+c]-=d[4*a+c]*f}}for(a=3;0<a;a--)for(b=a-1;0<=b;b--){f=e[4*b+a];for(c=0;4>c;c++)e[4*b+c]-=e[4*a+c]*f,d[4*b+c]-=d[4*a+c]*f}return new T(d)};X.prototype=
-{};uc.prototype=new X;vc.prototype=new X;xb.prototype=new X;X.prototype.copy$=function(){return new xb(this.t,this.x,this.y,this.z)};X.prototype.mul$LQuaternion$=function(a){var b,c,e,d,f,g,h,j,i;b=new xb(this.t,this.x,this.y,this.z);a=(c=b.t)*(d=a.t)-((f=b.x)*(e=a.x)+(g=b.y)*(i=a.y)+(j=b.z)*(h=a.z));b.t=a;b.x=c*e+d*f+(g*h-j*i);b.y=c*i+d*g+(j*e-f*h);b.z=c*h+d*j+(f*i-g*e);return b};X.prototype.mulSelf$LQuaternion$=function(a){var b,c,e,d,f,g,h,j;this.t=a=(b=this.t)*(e=a.t)-((d=this.x)*(c=a.x)+(f=this.y)*
-(j=a.y)+(h=this.z)*(g=a.z));this.x=b*c+e*d+(f*g-h*j);this.y=b*j+e*f+(h*c-d*g);this.z=b*g+e*h+(d*j-f*c);return this};X.prototype.toMatrix$=function(){var a,b,c,e,d,f,g,h,j,i;a=2*(g=this.x)*g;b=2*(h=this.y)*h;c=2*(j=this.z)*j;e=2*g*h;d=2*g*j;f=2*h*j;g=2*g*(i=this.t);h=2*h*i;j=2*j*i;return new T([1-b-c,e+j,d-h,0,e-j,1-a-c,f+g,0,d+h,f-g,1-a-b,0,0,0,0,1])};X.prototype.toString=function(){var a,b,c;a=this.x.toFixed(3);b=this.y.toFixed(3);c=this.z.toFixed(3);return this.t.toFixed(3)+" : ("+a+", "+b+", "+
-c+", )"};X.rotating$NNNN=function(a,b,c,e){var d;d=Math.cos(a/2);a=Math.sin(a/2);return new xb(d,b*a,c*a,e*a)};var Mc=X.rotating$NNNN;X.rotating$NLVector$=function(a,b){var c,e,d,f,g;c=b.x;e=b.y;d=b.z;f=Math.cos(a/2);g=Math.sin(a/2);return new xb(f,c*g,e*g,d*g)};X.rotate$LVector$LVector$N=function(a,b,c){var e,d,f,g,h,j,i,k,l,m;e=Math.cos(c/2);d=Math.sin(c/2);c=a.x;g=a.y;h=a.z;a=b.x*d;j=b.y*d;i=b.z*d;k=-b.x*d;l=-b.y*d;m=-b.z*d;b=0*e-(k*c+l*g+m*h);d=e*c+0*k+(l*h-m*g);f=e*g+0*l+(m*c-k*h);c=e*h+0*m+
-(k*g-l*c);return new n(b*a+e*d+(f*i-c*j),b*j+e*f+(c*a-d*i),b*i+e*c+(d*j-f*a))};K.prototype={};bc.prototype=new K;K.prototype.isMobile$=function(){return this._isMobile};K.loadImages$AS=function(a){var b,c,e,d,f;c=P.document.getElementById("tmp_canvas");c=c instanceof HTMLElement?c:null;c=(c instanceof HTMLCanvasElement?c:null).getContext("2d");b=c instanceof CanvasRenderingContext2D?c:null;c=function(a){K.images[a].onload=function(){var c;c=K.images[a];K.isLoadedImage[a]=!0;b.drawImage(c,0,0);K.imageDatas[a]=
-b.getImageData(0,0,c.width,c.height)}};for(e=0;e<a.length;e++)d=a[e],f=P.document.createElement("img"),f=f instanceof HTMLImageElement?f:null,f.src=d,K.isLoadedImage[d]=!1,K.images[d]=f,c(d)};var Lc=K.loadImages$AS;K.prototype.setSkyImage$S=function(a){this._skyImageSrc=a;this._skyImage=K.images[a]};K.prototype.start$=function(){var a=this,b,c,e=P.document.getElementById("fps");b={_stopwatch:{_elapsedMsec:0,_startedMsec:null,_lastLapMsec:null},_recentlyMsecLog:[],_lastMsec:0,_fpsElement:e instanceof
-HTMLElement?e:null,_enabledHtmlLog:!0,_enabledConsoleLog:!1};Ic(b._stopwatch);c=function(){var d,e;Sc(b);d=b._lastMsec;a.onUpdate(d);e={_worldMatrix:new nb,_matrixStack:new ec,camera:a.camera,_depth:3,modelList1:new $,modelList2:new $,modelList3:new $,modelList4:new $,modelList5:new $,_polygonList:null,_groupCenter:null,_ignoringZHidden:!1,backgroundColor:new ja(90,135,158)};a._skyImage&&K.isLoadedImage[a._skyImageSrc]?(a.context.fillStyle="#"+e.backgroundColor.toHexString$(),a.context.fillRect(0,
-0,a._width,a._height),a.renderSkyImage$()):(a.context.fillStyle="#"+e.backgroundColor.toHexString$(),a.context.fillRect(0,0,a._width,a._height));a.onRender(e,d);e.modelList5.forEach$F$LRenderable$V$(function(b){b.draw$LEngine$(a)});e.modelList4.forEach$F$LRenderable$V$(function(b){b.draw$LEngine$(a)});e.modelList3.forEach$F$LRenderable$V$(function(b){b.draw$LEngine$(a)});e.modelList2.forEach$F$LRenderable$V$(function(b){b.draw$LEngine$(a)});e.modelList1.forEach$F$LRenderable$V$(function(b){b.draw$LEngine$(a)});
-A.global.setTimeout(c,0)};A.global.setTimeout(function(){P.window.scrollTo(0,1)},500);A.global.setTimeout(c,0)};K.prototype.renderSkyImage$=function(){var a,b,c,e,d,f,g,h,j,i;d=(e=this.camera).target;f=e.view;e=d.x-f.x;a=d.y-f.y;d=d.z-f.z;a=-a;b=Math.atan2(e,d);c=Math.atan2(a,Math.sqrt(e*e+d*d));e=(d=this._skyImage).width;a=d.height;d=(f=this.camera).fovyX/3.141592653589793/2*e;f=d*f.aspectRatio;b=(b/3.141592653589793/2+0.5)*e-d/2;c=(c/3.141592653589793+0.5)*a-f/2;0>b&&(b+=e);0>c&&(c+=a);g=b+d>=e;
-h=c+f>=a;g&&h?(j=(e-b)/d,f=(a-c)/f,this.context.drawImage(this._skyImage,~~b,~~c,~~(e-b),~~(a-c),0,0,~~(this._width*j),~~(this._height*f)),0!==~~(b+d-e)&&this.context.drawImage(this._skyImage,0,~~c,~~(b+d-e),~~(a-c),~~((i=this._width)*j),0,~~(i*(1-j)),~~(this._height*f))):g?(i=(e-b)/d,0!==~~(e-b)&&0!==~~(this._width*i)&&this.context.drawImage(this._skyImage,~~b,~~c,~~(e-b),~~f,0,0,~~(this._width*i),this._height),0!==~~(b+d-e)&&0!==~~(this._width*(1-i))&&this.context.drawImage(this._skyImage,0,~~c,
-~~(b+d-e),~~f,~~((j=this._width)*i),0,~~(j*(1-i)),this._height)):h?this.context.drawImage(this._skyImage,~~b,~~c,~~d,~~(a-c),0,0,this._width,~~(this._height*((a-c)/f))):this.context.drawImage(this._skyImage,~~b,~~c,~~d,~~f,0,0,this._width,this._height)};K.prototype.setScreenMatrix$NN=function(a,b){var c,e,d,f,g,h,j,i,k,l,m,t,o,p,q,n,u,s,v;c=new T([1,0,0,a/2,0,1,0,b/2,0,0,1,0,0,0,0,1]);s=a/2;v=-b/2;e=c._m11;d=c._m12;f=c._m13;g=c._m14;h=c._m21;j=c._m22;i=c._m23;k=c._m24;l=c._m31;m=c._m32;t=c._m33;o=
-c._m34;p=c._m41;q=c._m42;n=c._m43;u=c._m44;c._m11=e*s+0*d+0*f+0*g;c._m12=0*e+d*v+0*f+0*g;c._m13=0*e+0*d+1*f+0*g;c._m14=0*e+0*d+0*f+1*g;c._m21=h*s+0*j+0*i+0*k;c._m22=0*h+j*v+0*i+0*k;c._m23=0*h+0*j+1*i+0*k;c._m24=0*h+0*j+0*i+1*k;c._m31=l*s+0*m+0*t+0*o;c._m32=0*l+m*v+0*t+0*o;c._m33=0*l+0*m+1*t+0*o;c._m34=0*l+0*m+0*t+1*o;c._m41=p*s+0*q+0*n+0*u;c._m42=0*p+q*v+0*n+0*u;c._m43=0*p+0*q+1*n+0*u;c._m44=0*p+0*q+0*n+1*u;this.screenMatrix=c};K.prototype.updateMatrix$=function(){var a,b,c,e,d,f,g,h,j,i,k,l,m,t,
-o,p,q,r,u,s,v,B,C,y,x,w,z,G,V,A,R,D,N,E,L,I,F,K,S,M,O,H;a=this.camera;b=a.view;c=a.target;e=a.upper;d=a.fovyX;f=a.nearZ;g=a.farZ;h=a.aspectRatio;c=new n(c.x-b.x,c.y-b.y,c.z-b.z);m=Math.sqrt((i=c.x)*i+(u=c.y)*u+(s=c.z)*s);i=1E-9>m?new n(0,0,0):c.divSelf$N(m);e=new n((y=e.y)*(v=i.z)-(t=e.z)*(C=i.y),t*(x=i.x)-(B=e.x)*v,B*C-y*x);t=Math.sqrt((k=e.x)*k+(o=e.y)*o+(w=e.z)*w);k=1E-9>t?new n(0,0,0):e.divSelf$N(t);o=new n((V=i.y)*(q=k.z)-(p=i.z)*(G=k.y),p*(A=k.x)-(z=i.x)*q,z*G-V*A);p=Math.sqrt((l=o.x)*l+(R=
-o.y)*R+(D=o.z)*D);l=1E-9>p?new n(0,0,0):o.divSelf$N(p);b=new T([N=k.x,E=k.y,L=k.z,-(N*(F=b.x)+E*(S=b.y)+L*(M=b.z)),I=l.x,K=l.y,r=l.z,-(I*F+K*S+r*M),j=i.x,O=i.y,H=i.z,-(j*F+O*S+H*M),0,0,0,1]);d=1/Math.tan(d/2);g/=g-f;j=new T([d,0,0,0,0,d/h,0,0,0,0,g,-g*f,0,0,1,0]);a.viewMatrix=b;a.projectionMatrix=j;f=(M=j._m11)*(D=b._m11)+(H=j._m12)*(l=b._m21)+(R=j._m13)*(O=b._m31)+(p=j._m14)*(r=b._m41);h=M*(d=b._m12)+H*(N=b._m22)+R*(E=b._m32)+p*(L=b._m42);g=M*(I=b._m13)+H*(F=b._m23)+R*(K=b._m33)+p*(S=b._m43);b=M*
-(M=b._m14)+H*(H=b._m24)+R*(R=b._m34)+p*(k=b._m44);p=(z=j._m21)*D+(G=j._m22)*l+(V=j._m23)*O+(A=j._m24)*r;q=(o=j._m31)*D+(w=j._m32)*l+(t=j._m33)*O+(v=j._m34)*r;r=(B=j._m41)*D+(D=j._m42)*l+(l=j._m43)*O+(j=j._m44)*r;a.matrix=new T([f,h,g,b,p,z*d+G*N+V*E+A*L,z*I+G*F+V*K+A*S,z*M+G*H+V*R+A*k,q,o*d+w*N+t*E+v*L,o*I+w*F+t*K+v*S,o*M+w*H+t*R+v*k,r,B*d+D*N+l*E+j*L,B*I+D*F+l*K+j*S,B*M+D*H+l*R+j*k])};F.prototype={};wc.prototype=new F;F.setDepth$LContext3D$I=function(a,b){if(!(1<=b&&5>=b)){debugger;throw Error("[jsx/engine.jsx:263] assertion failure");
-}a._depth=b};var Hc=F.setDepth$LContext3D$I;F.getDepth$LContext3D$=function(a){return a._depth};F.setBackgroundColor$LContext3D$LColor$=function(a,b){a.backgroundColor=b};F.pushMatrix$LContext3D$=function(a){a._matrixStack.prepend$LMatrix$(a._worldMatrix.copy$())};F.popMatrix$LContext3D$=function(a){a._worldMatrix=a._matrixStack.removeFirst$()};F.resetMatrix$LContext3D$=function(a){a._worldMatrix=new nb};F.translate$LContext3D$NNN=function(a,b,c,e){var d,f,g,h,j,i,k,l,m,n,o,p,q,r,u,s,a=a._worldMatrix;
-d=a._m11;f=a._m12;g=a._m13;h=a._m14;j=a._m21;i=a._m22;k=a._m23;l=a._m24;m=a._m31;n=a._m32;o=a._m33;p=a._m34;q=a._m41;r=a._m42;u=a._m43;s=a._m44;a._m11=1*d+0*f+0*g+0*h;a._m12=0*d+1*f+0*g+0*h;a._m13=0*d+0*f+1*g+0*h;a._m14=d*b+f*c+g*e+1*h;a._m21=1*j+0*i+0*k+0*l;a._m22=0*j+1*i+0*k+0*l;a._m23=0*j+0*i+1*k+0*l;a._m24=j*b+i*c+k*e+1*l;a._m31=1*m+0*n+0*o+0*p;a._m32=0*m+1*n+0*o+0*p;a._m33=0*m+0*n+1*o+0*p;a._m34=m*b+n*c+o*e+1*p;a._m41=1*q+0*r+0*u+0*s;a._m42=0*q+1*r+0*u+0*s;a._m43=0*q+0*r+1*u+0*s;a._m44=q*b+r*
-c+u*e+1*s};F.scale$LContext3D$NNN=function(a,b,c,e){var d,f,g,h,j,i,k,l,m,n,o,p,q,r,u,s,a=a._worldMatrix;d=a._m11;f=a._m12;g=a._m13;h=a._m14;j=a._m21;i=a._m22;k=a._m23;l=a._m24;m=a._m31;n=a._m32;o=a._m33;p=a._m34;q=a._m41;r=a._m42;u=a._m43;s=a._m44;a._m11=d*b+0*f+0*g+0*h;a._m12=0*d+f*c+0*g+0*h;a._m13=0*d+0*f+g*e+0*h;a._m14=0*d+0*f+0*g+1*h;a._m21=j*b+0*i+0*k+0*l;a._m22=0*j+i*c+0*k+0*l;a._m23=0*j+0*i+k*e+0*l;a._m24=0*j+0*i+0*k+1*l;a._m31=m*b+0*n+0*o+0*p;a._m32=0*m+n*c+0*o+0*p;a._m33=0*m+0*n+o*e+0*p;
-a._m34=0*m+0*n+0*o+1*p;a._m41=q*b+0*r+0*u+0*s;a._m42=0*q+r*c+0*u+0*s;a._m43=0*q+0*r+u*e+0*s;a._m44=0*q+0*r+0*u+1*s};F.rotate$LContext3D$LQuaternion$=function(a,b){var c,e,d,f,g,h,j,i,k,l,m,n,o,p,q,r,u,s,v,B,C,y,x,w,z,G;c=a._worldMatrix;e=2*(x=b.x)*x;d=2*(w=b.y)*w;s=2*(z=b.z)*z;v=2*x*w;B=2*x*z;C=2*w*z;f=2*x*(x=b.t);g=2*w*x;y=2*z*x;z=1-d-s;w=v+y;x=B-g;v-=y;s=1-e-s;y=C+f;B+=g;C-=f;G=1-e-d;e=c._m11;d=c._m12;f=c._m13;g=c._m14;h=c._m21;j=c._m22;i=c._m23;k=c._m24;l=c._m31;m=c._m32;n=c._m33;o=c._m34;p=c._m41;
-q=c._m42;r=c._m43;u=c._m44;c._m11=e*z+d*v+f*B+0*g;c._m12=e*w+d*s+f*C+0*g;c._m13=e*x+d*y+f*G+0*g;c._m14=0*e+0*d+0*f+1*g;c._m21=h*z+j*v+i*B+0*k;c._m22=h*w+j*s+i*C+0*k;c._m23=h*x+j*y+i*G+0*k;c._m24=0*h+0*j+0*i+1*k;c._m31=l*z+m*v+n*B+0*o;c._m32=l*w+m*s+n*C+0*o;c._m33=l*x+m*y+n*G+0*o;c._m34=0*l+0*m+0*n+1*o;c._m41=p*z+q*v+r*B+0*u;c._m42=p*w+q*s+r*C+0*u;c._m43=p*x+q*y+r*G+0*u;c._m44=0*p+0*q+0*r+1*u};F.beginGroup$LContext3D$LVector$=function(a,b){a._polygonList=new Db;a._groupCenter=b;a._ignoringZHidden=
-!1};F.beginGroup$LContext3D$LVector$B=function(a,b,c){a._polygonList=new Db;a._groupCenter=b;a._ignoringZHidden=c};F.renderPolygonGroup$LContext3D$ALVector$LColor$=function(a,b,c){b=new Hb(b,c);b.applyWorldMatrix$LMatrix$(a._worldMatrix);b.applyViewMatrix$LMatrix$(a.camera.viewMatrix);b.isHidden$LCamera$(a.camera)||a._polygonList.prepend$LPolygon$(b)};var $b=F.renderPolygonGroup$LContext3D$ALVector$LColor$;F.endGroup$LContext3D$=function(a){0!==a._polygonList.length&&Eb(a,new fc(a._polygonList,a._groupCenter,
-a._ignoringZHidden))};var jc=F.endGroup$LContext3D$;F.renderPolygon$LContext3D$ALVector$LColor$=function(a,b,c){Eb(a,new Hb(b,c))};F.renderBillboard$LContext3D$LVector$IIS=function(a,b,c,e,d){Eb(a,new hc(b,c,e,d))};var Qc=F.renderBillboard$LContext3D$LVector$IIS;F.renderTexture$LContext3D$ALVector$SIIII=function(a,b,c,e,d,f,g){Eb(a,new Ub(b,c,e,d,f,g))};var Rc=F.renderTexture$LContext3D$ALVector$SIIII;F.renderTexture$LContext3D$ALVector$S=function(a,b,c){Eb(a,new gc(b,c))};F.renderModel$LContext3D$LRenderable$=
-function(a,b){b.applyWorldMatrix$LMatrix$(a._worldMatrix);b.applyViewMatrix$LMatrix$(a.camera.viewMatrix);if(!b.isHidden$LCamera$(a.camera))switch(a._depth){case 1:Kb(a,a.modelList1,b);break;case 2:Kb(a,a.modelList2,b);break;case 3:Kb(a,a.modelList3,b);break;case 4:Kb(a,a.modelList4,b);break;case 5:Kb(a,a.modelList5,b)}};var Eb=F.renderModel$LContext3D$LRenderable$;F.insertModelByZValue$LContext3D$LList$Renderable$E$LRenderable$=function(a,b,c){var e,a=!1;for(e=b.head;null!=e;e=e._next)if(e.value.vCenter.z<
-c.vCenter.z){b.insertBefore$LNode$Renderable$E$LRenderable$(e,c);a=!0;break}a||b.append$LRenderable$(c)};var Kb=F.insertModelByZValue$LContext3D$LList$Renderable$E$LRenderable$;Bb.prototype={};dc.prototype=new Bb;Bb.prototype.move$LVector$=function(a){var b,c,e,d,f;c=this.rotatingMatrix;a=c._m11*(d=a.x)+c._m12*(b=a.y)+c._m13*(e=a.z)+c._m14*(f=a.w);b=new I(a,c._m21*d+c._m22*b+c._m23*e+c._m24*f,c._m31*d+c._m32*b+c._m33*e+c._m34*f,c._m41*d+c._m42*b+c._m43*e+c._m44*f);e=this.view;e.x+=c=b.x;e.y+=d=b.y;
-e.z+=e=b.z;b=this.target;b.x+=c;b.y+=d;b.z+=e};Bb.prototype.rotateY$N=function(a){var b,c,e,d,f,g,h,j,i,k,l,m,t,o,p,q,r,u,s,v,B,C,y,x,w,z,G,A,D;c=this.target;e=this.view;b=new n(c.x-e.x,c.y-e.y,c.z-e.z);c=Math.sin(a);e=Math.cos(a);b=e*(i=b.x)+0*(k=b.y)+c*(l=b.z)+0*(m=b.w);b=new I(b,0*i+1*k+0*l+0*m,-c*i+0*k+e*l+0*m,0*i+0*k+0*l+1*m);c=this.view;b.x+=c.x;b.y+=c.y;b.z+=c.z;this.target=b;c=Math.sin(a);a=Math.cos(a);a=new T([a,0,c,0,0,1,0,0,-c,0,a,0,0,0,0,1]);d=this.rotatingMatrix;f=a._m11;g=a._m12;h=a._m13;
-j=a._m14;c=a._m21;e=a._m22;i=a._m23;k=a._m24;l=a._m31;b=a._m32;m=a._m33;t=a._m34;o=a._m41;p=a._m42;q=a._m43;r=a._m44;a._m11=f*(u=d._m11)+g*(s=d._m21)+h*(v=d._m31)+j*(B=d._m41);a._m12=f*(C=d._m12)+g*(y=d._m22)+h*(x=d._m32)+j*(w=d._m42);a._m13=f*(z=d._m13)+g*(G=d._m23)+h*(A=d._m33)+j*(D=d._m43);a._m14=f*(f=d._m14)+g*(g=d._m24)+h*(h=d._m34)+j*(d=d._m44);a._m21=c*u+e*s+i*v+k*B;a._m22=c*C+e*y+i*x+k*w;a._m23=c*z+e*G+i*A+k*D;a._m24=c*f+e*g+i*h+k*d;a._m31=l*u+b*s+m*v+t*B;a._m32=l*C+b*y+m*x+t*w;a._m33=l*z+
-b*G+m*A+t*D;a._m34=l*f+b*g+m*h+t*d;a._m41=o*u+p*s+q*v+r*B;a._m42=o*C+p*y+q*x+r*w;a._m43=o*z+p*G+q*A+r*D;a._m44=o*f+p*g+q*h+r*d;this.rotatingMatrix=a};Bb.prototype.updateMatrix$=function(){var a,b,c,e,d,f,g,h,j,i,k,l,m,t,o,p,q,r,u,s,v,B,C,y,x,w,z,G,A,D,I,F,N,E,L,H,K,P,S,M,O;a=this.view;b=this.target;c=this.upper;e=this.fovyX;d=this.nearZ;f=this.farZ;g=this.aspectRatio;b=new n(b.x-a.x,b.y-a.y,b.z-a.z);l=Math.sqrt((j=b.x)*j+(r=b.y)*r+(u=b.z)*u);j=1E-9>l?new n(0,0,0):b.divSelf$N(l);c=new n((C=c.y)*(s=
-j.z)-(m=c.z)*(B=j.y),m*(y=j.x)-(v=c.x)*s,v*B-C*y);m=Math.sqrt((i=c.x)*i+(t=c.y)*t+(x=c.z)*x);i=1E-9>m?new n(0,0,0):c.divSelf$N(m);t=new n((G=j.y)*(p=i.z)-(o=j.z)*(z=i.y),o*(A=i.x)-(w=j.x)*p,w*z-G*A);o=Math.sqrt((k=t.x)*k+(D=t.y)*D+(I=t.z)*I);k=1E-9>o?new n(0,0,0):t.divSelf$N(o);a=new T([F=i.x,N=i.y,E=i.z,-(F*(H=a.x)+N*(P=a.y)+E*(S=a.z)),L=k.x,K=k.y,q=k.z,-(L*H+K*P+q*S),h=j.x,M=j.y,O=j.z,-(h*H+M*P+O*S),0,0,0,1]);e=1/Math.tan(e/2);f/=f-d;h=new T([e,0,0,0,0,e/g,0,0,0,0,f,-f*d,0,0,1,0]);this.viewMatrix=
-a;this.projectionMatrix=h;d=(S=h._m11)*(I=a._m11)+(O=h._m12)*(k=a._m21)+(D=h._m13)*(M=a._m31)+(o=h._m14)*(q=a._m41);g=S*(e=a._m12)+O*(F=a._m22)+D*(N=a._m32)+o*(E=a._m42);f=S*(L=a._m13)+O*(H=a._m23)+D*(K=a._m33)+o*(P=a._m43);a=S*(S=a._m14)+O*(O=a._m24)+D*(D=a._m34)+o*(i=a._m44);o=(w=h._m21)*I+(z=h._m22)*k+(G=h._m23)*M+(A=h._m24)*q;p=(t=h._m31)*I+(x=h._m32)*k+(m=h._m33)*M+(s=h._m34)*q;q=(v=h._m41)*I+(I=h._m42)*k+(k=h._m43)*M+(h=h._m44)*q;this.matrix=new T([d,g,f,a,o,w*e+z*F+G*N+A*E,w*L+z*H+G*K+A*P,
-w*S+z*O+G*D+A*i,p,t*e+x*F+m*N+s*E,t*L+x*H+m*K+s*P,t*S+x*O+m*D+s*i,q,v*e+I*F+k*N+h*E,v*L+I*H+k*K+h*P,v*S+I*O+k*D+h*i])};Cb.prototype={};ja.prototype=new Cb;Cb.prototype._to2DigitHex$I=function(a){a=Math.floor(a).toString(16);1===a.length&&(a="0"+a);return a};Cb.prototype.toHexString$=function(){return this._to2DigitHex$I(this.r)+this._to2DigitHex$I(this.g)+this._to2DigitHex$I(this.b)};Cb.prototype.toString=function(){return"#"+this._to2DigitHex$I(this.r)+this._to2DigitHex$I(this.g)+this._to2DigitHex$I(this.b)};
-ob.prototype={};xc.prototype=new ob;ob.isHiddenXY$ALVector$LEngine$=function(a,b){var c,e,d,f,g;c=0;for(g=a.length;c<g;c++)if(e=a[c],-0<(d=e.x)&&d<b._width+0&&-0<(f=e.y)&&f<b._height+0)return!1;return!0};var kc=ob.isHiddenXY$ALVector$LEngine$;Wa.prototype=new ob;Hb.prototype=new Wa;Wa.prototype.applyWorldMatrix$LMatrix$=function(a){var b;for(b=0;b<this.vertices.length;b++)this.vertices[b]=a.mul$LVector$(this.vertices[b]);this.updateCenter$()};Wa.prototype.applyViewMatrix$LMatrix$=function(a){var b,
-c,e,d,f,g,h,j,i,k,l,m;b=[];for(c=m=l=k=0;c<this.vertices.length;c++)e=this.vertices[c],e=a._m11*(g=e.x)+a._m12*(h=e.y)+a._m13*(j=e.z)+a._m14*(i=e.w),d=a._m21*g+a._m22*h+a._m23*j+a._m24*i,f=a._m31*g+a._m32*h+a._m33*j+a._m34*i,g=a._m41*g+a._m42*h+a._m43*j+a._m44*i,e=new I(e,d,f,g),b.push(e),k+=e.x,l+=e.y,m+=e.z;a=this.vertices.length;this.vCenter=new n(k/a,l/a,m/a);this.vVertices=b};Wa.prototype.isHidden$LCamera$=function(a){var b;return a.nearZ<(b=this.vCenter.z)&&b<a.farZ?!1:!0};Wa.prototype.move$LVector$=
-function(a){var b,c;for(b=0;b<this.vertices.length;b++)c=this.vertices[b],c.x+=a.x,c.y+=a.y,c.z+=a.z;this.updateCenter$()};Wa.prototype.updateCenter$=function(){var a,b,c,e,d;for(a=d=e=c=0;a<this.vertices.length;a++)b=this.vertices[a],c+=b.x,e+=b.y,d+=b.z;a=this.vertices.length;this.center=new n(c/a,e/a,d/a)};Wa.prototype.toString=function(){var a,b;a="[";for(b=0;b<this.vertices.length;b++)a+=this.vertices[b].toString()+",";return a+"]"};Wa.prototype.draw$LEngine$=function(a){var b,c,e,d,f,g,h,j,
-i,k,l,m,t,o,p,q,r;b=a.context;c=this.vertices.length;e=this.vVertices;d=this._color;this._enabledLighting&&(f=this.vCenter,i=e[0],l=i.x-f.x,m=i.y-f.y,i=i.z-f.z,k=e[1],q=k.x-f.x,r=k.y-f.y,k=k.z-f.z,l=new n(r*i-k*m,k*l-q*i,q*m-r*l),m=Math.sqrt((h=l.x)*h+(t=l.y)*t+(p=l.z)*p),h=1E-9>m?new n(0,0,0):new n(l.x/m,l.y/m,l.z/m),t=Math.sqrt((g=f.x)*g+(j=f.y)*j+(o=f.z)*o),f=1E-9>t?new n(0,0,0):new n(f.x/t,f.y/t,f.z/t),j=h.x*f.x+h.y*f.y+h.z*f.z,f=(0.5599999999999999*j+0.5)*d.r,g=(0.5599999999999999*j+0.5)*d.g,
-d=(0.5599999999999999*j+0.5)*d.b,d=new ja(255<=f?255:f,255<=g?255:g,255<=d?255:d));for(f=0;f<c;f++)g=a.camera.projectionMatrix,j=e[f],j=g._m11*(t=j.x)+g._m12*(p=j.y)+g._m13*(l=j.z)+g._m14*(m=j.w),o=g._m21*t+g._m22*p+g._m23*l+g._m24*m,h=g._m31*t+g._m32*p+g._m33*l+g._m34*m,g=g._m41*t+g._m42*p+g._m43*l+g._m44*m,e[f]=new I(j,o,h,g);for(f=0;f<c;f++)g=a.screenMatrix,j=e[f],j=g._m11*(t=j.x)+g._m12*(p=j.y)+g._m13*(l=j.z)+g._m14*(m=j.w),o=g._m21*t+g._m22*p+g._m23*l+g._m24*m,h=g._m31*t+g._m32*p+g._m33*l+g._m34*
-m,g=g._m41*t+g._m42*p+g._m43*l+g._m44*m,e[f]=new I(j,o,h,g);if(kc(e,a))return!1;f=0;for(j=e.length;f<j;f++)if(a=(f+1)%j,g=(f+2)%j,0>Tc(e[a].x-e[f].x,e[a].y-e[f].y,e[g].x-e[f].x,e[g].y-e[f].y))return!1;d="#"+(d._to2DigitHex$I(d.r)+d._to2DigitHex$I(d.g)+d._to2DigitHex$I(d.b));b.strokeStyle=d;for(f=0;f<c;f++)b.beginPath(),b.moveTo(e[f].x,e[f].y),b.lineTo(e[(f+1)%c].x,e[(f+1)%c].y),b.stroke();b.fillStyle=d;b.beginPath();for(f=0;f<c;f++)d=e[f].x,a=e[f].y,b.lineTo(d,a);b.closePath();b.fill();return!0};
-pb.prototype=new ob;yc.prototype=new pb;fc.prototype=new pb;pb.prototype.applyWorldMatrix$LMatrix$=function(a){var b,c,e,d,f;b=this.center;b=a._m11*(c=b.x)+a._m12*(e=b.y)+a._m13*(d=b.z)+a._m14*(f=b.w);this.center=new I(b,a._m21*c+a._m22*e+a._m23*d+a._m24*f,a._m31*c+a._m32*e+a._m33*d+a._m34*f,a._m41*c+a._m42*e+a._m43*d+a._m44*f)};pb.prototype.applyViewMatrix$LMatrix$=function(a){var b,c,e,d,f;b=this.center;b=a._m11*(c=b.x)+a._m12*(e=b.y)+a._m13*(d=b.z)+a._m14*(f=b.w);this.vCenter=new I(b,a._m21*c+
-a._m22*e+a._m23*d+a._m24*f,a._m31*c+a._m32*e+a._m33*d+a._m34*f,a._m41*c+a._m42*e+a._m43*d+a._m44*f)};pb.prototype.isHidden$LCamera$=function(a){return this._ignoringZHidden?!1:a.nearZ<this.vCenter.z&&this.vCenter.z<a.farZ?!1:!0};pb.prototype.draw$LEngine$=function(a){this.polygons.forEach$F$LPolygon$V$(function(b){b.isHidden$LCamera$(a.camera)||b.draw$LEngine$(a)});return!0};kb.prototype=new Wa;gc.prototype=new kb;Ub.prototype=new kb;kb.prototype.applyWorldMatrix$LMatrix$=function(a){var b,c,e,d,
-f;for(b=0;b<this.vertices.length;b++)this.vertices[b]=a.mul$LVector$(this.vertices[b]);c=this.center;c=a._m11*(b=c.x)+a._m12*(e=c.y)+a._m13*(d=c.z)+a._m14*(f=c.w);this.center=new I(c,a._m21*b+a._m22*e+a._m23*d+a._m24*f,a._m31*b+a._m32*e+a._m33*d+a._m34*f,a._m41*b+a._m42*e+a._m43*d+a._m44*f)};kb.prototype.applyViewMatrix$LMatrix$=function(a){var b,c,e,d,f;b=[];for(c=0;c<this.vertices.length;c++)b.push(a.mul$LVector$(this.vertices[c]));this.vVertices=b;e=this.center;e=a._m11*(b=e.x)+a._m12*(c=e.y)+
-a._m13*(d=e.z)+a._m14*(f=e.w);this.vCenter=new I(e,a._m21*b+a._m22*c+a._m23*d+a._m24*f,a._m31*b+a._m32*c+a._m33*d+a._m34*f,a._m41*b+a._m42*c+a._m43*d+a._m44*f)};kb.prototype.isHidden$LCamera$=function(a){var b;return a.nearZ<(b=this.vCenter.z)&&b<a.farZ?!1:!0};kb.prototype.draw$LEngine$=function(a){var b=this,c,e,d,f,g,h,j,i,k,l,m,t,o,p,q,r,u,s,v,B,C,y,x,w,z,G,A,D,F,H,N,E,L,P,T,J,S,M,O,Q,W,X,Y,ia,Z,da,ea,ja,$,Wa,qb,rb,sb,mb,bb,cb,db,eb,Xa,Na,Oa,Pa,Qa,Ra,ka,Sa,la,Ta,Ua,Ya,Va,Za,Ia,Ha,Ja,Ka,La,xa,ya,
-za,Aa,Ba,Ca,Da,ua,Ea,va,Fa,wa,fa,ga,Ga,aa,ba,ca,U,ma,na,oa,pa,qa,ra,sa,ta,Ma,fb,gb,hb,ib,$a,ab,nb,ob,pb,jb,kb;if(!K.isLoadedImage[this._src])return!1;c=a.context;e=(ja=this.vertices)[3];d=ja[0];f=ja[1];g=ja[2];m=a.screenMatrix;N=($=a.camera).projectionMatrix;E=$.viewMatrix;L=(Wa=N._m11)*(mb=E._m11)+(qb=N._m12)*(bb=E._m21)+(rb=N._m13)*(cb=E._m31)+(sb=N._m14)*(db=E._m41);P=Wa*(Xa=E._m12)+qb*(Oa=E._m22)+rb*(Qa=E._m32)+sb*(ka=E._m42);T=Wa*(Sa=E._m13)+qb*(la=E._m23)+rb*(Ta=E._m33)+sb*(Ua=E._m43);J=Wa*
-(Ya=E._m14)+qb*(Va=E._m24)+rb*(Za=E._m34)+sb*(Ia=E._m44);S=(eb=N._m21)*mb+(Na=N._m22)*bb+(Pa=N._m23)*cb+(Ra=N._m24)*db;M=eb*Xa+Na*Oa+Pa*Qa+Ra*ka;O=eb*Sa+Na*la+Pa*Ta+Ra*Ua;Q=eb*Ya+Na*Va+Pa*Za+Ra*Ia;W=(Ha=N._m31)*mb+(Ja=N._m32)*bb+(Ka=N._m33)*cb+(La=N._m34)*db;X=Ha*Xa+Ja*Oa+Ka*Qa+La*ka;Y=Ha*Sa+Ja*la+Ka*Ta+La*Ua;ia=Ha*Ya+Ja*Va+Ka*Za+La*Ia;Z=(xa=N._m41)*mb+(ya=N._m42)*bb+(za=N._m43)*cb+(Aa=N._m44)*db;da=xa*Xa+ya*Oa+za*Qa+Aa*ka;ea=xa*Sa+ya*la+za*Ta+Aa*Ua;kb=xa*Ya+ya*Va+za*Za+Aa*Ia;t=(Ba=m._m11)*L+(Ca=
-m._m12)*S+(Da=m._m13)*W+(ua=m._m14)*Z;o=Ba*P+Ca*M+Da*X+ua*da;p=Ba*T+Ca*O+Da*Y+ua*ea;q=Ba*J+Ca*Q+Da*ia+ua*kb;r=(Ea=m._m21)*L+(va=m._m22)*S+(Fa=m._m23)*W+(wa=m._m24)*Z;u=Ea*P+va*M+Fa*X+wa*da;s=Ea*T+va*O+Fa*Y+wa*ea;v=Ea*J+va*Q+Fa*ia+wa*kb;B=(fa=m._m31)*L+(ga=m._m32)*S+(Ga=m._m33)*W+(aa=m._m34)*Z;C=fa*P+ga*M+Ga*X+aa*da;y=fa*T+ga*O+Ga*Y+aa*ea;x=fa*J+ga*Q+Ga*ia+aa*kb;w=(ba=m._m41)*L+(ca=m._m42)*S+(U=m._m43)*W+(ma=m._m44)*Z;z=ba*P+ca*M+U*X+ma*da;G=ba*T+ca*O+U*Y+ma*ea;jb=ba*J+ca*Q+U*ia+ma*kb;A=t*(na=e.x)+
-o*(oa=e.y)+p*(pa=e.z)+q*(qa=e.w);h=new I(A,r*na+u*oa+s*pa+v*qa,B*na+C*oa+y*pa+x*qa,w*na+z*oa+G*pa+jb*qa);D=t*(ra=d.x)+o*(sa=d.y)+p*(ta=d.z)+q*(Ma=d.w);j=new I(D,r*ra+u*sa+s*ta+v*Ma,B*ra+C*sa+y*ta+x*Ma,w*ra+z*sa+G*ta+jb*Ma);F=t*(fb=f.x)+o*(gb=f.y)+p*(hb=f.z)+q*(ib=f.w);i=new I(F,r*fb+u*gb+s*hb+v*ib,B*fb+C*gb+y*hb+x*ib,w*fb+z*gb+G*hb+jb*ib);H=t*($a=g.x)+o*(ab=g.y)+p*(nb=g.z)+q*(ob=g.w);k=new I(H,r*$a+u*ab+s*nb+v*ob,B*$a+C*ab+y*nb+x*ob,w*$a+z*ab+G*nb+jb*ob);if(kc([h,j,i,k],a))return!1;l=function(a,d,
-e,f,g,h,i,j,k,m,A,D,E,F){var H,K,V,N,O,L,P,S,T,M,J,R,Q,ha,W,X,Y,Z,da,ea,ia,ja,$,aa,ba,ca,U,ma,na,oa,pa,qa,ra,sa,ta,ua,va,wa,xa,ya,za,Aa,Ba,Ca,Da,Ea,Fa,fa,ga,Ga,Ha,Ia,Ja,Ka,La,Ma,yb,ka,la,Ua,Xa,Ya,Za,bb,cb,db,eb,Na,Oa,Pa,Qa,Ra,Sa,Ta,Va,Wa,$a,ab,fb,gb,hb,ib,kb,lb,mb,nb,ob,pb,qb,rb,sb,tb,ub,vb,wb,xb,zb,Ab,Bb,Cb,Db,Eb,Fb,Gb,Ib,Hb,Jb;H=function(a,b){return Math.sqrt(a*a+b*b)};K=H(j.x-i.x,j.y-i.y);V=H(k.x-h.x,k.y-h.y);N=H(h.x-i.x,h.y-i.y);O=H(k.x-j.x,k.y-j.y);L=K/V;P=O/N;1>L&&(L=1/L);1>P&&(P=1/P);S=1.01<
-L;T=1.01<P;m<=b._minDiv||m<=b._maxDiv&&S&&T?($=new n(d.x+g.x,d.y+g.y,d.z+g.z),$.x/=2,$.y/=2,$.z/=2,M=$,aa=new n(e.x+f.x,e.y+f.y,e.z+f.z),aa.x/=2,aa.y/=2,aa.z/=2,J=aa,ba=new n(d.x+e.x,d.y+e.y,d.z+e.z),ba.x/=2,ba.y/=2,ba.z/=2,R=ba,ca=new n(g.x+f.x,g.y+f.y,g.z+f.z),ca.x/=2,ca.y/=2,ca.z/=2,Q=ca,U=new n(d.x+f.x,d.y+f.y,d.z+f.z),U.x/=2,U.y/=2,U.z/=2,ma=t*(Na=M.x)+o*(Oa=M.y)+p*(Pa=M.z)+q*(Qa=M.w),na=r*Na+u*Oa+s*Pa+v*Qa,oa=B*Na+C*Oa+y*Pa+x*Qa,pa=w*Na+z*Oa+G*Pa+jb*Qa,ha=new I(ma,na,oa,pa),qa=t*(Ra=J.x)+o*
-(Sa=J.y)+p*(Ta=J.z)+q*(Va=J.w),ra=r*Ra+u*Sa+s*Ta+v*Va,sa=B*Ra+C*Sa+y*Ta+x*Va,ta=w*Ra+z*Sa+G*Ta+jb*Va,W=new I(qa,ra,sa,ta),ua=t*(Wa=R.x)+o*($a=R.y)+p*(ab=R.z)+q*(fb=R.w),va=r*Wa+u*$a+s*ab+v*fb,wa=B*Wa+C*$a+y*ab+x*fb,xa=w*Wa+z*$a+G*ab+jb*fb,X=new I(ua,va,wa,xa),ya=t*(gb=Q.x)+o*(hb=Q.y)+p*(ib=Q.z)+q*(kb=Q.w),za=r*gb+u*hb+s*ib+v*kb,Aa=B*gb+C*hb+y*ib+x*kb,Ba=w*gb+z*hb+G*ib+jb*kb,Y=new I(ya,za,Aa,Ba),Ca=t*(lb=U.x)+o*(mb=U.y)+p*(nb=U.z)+q*(ob=U.w),Da=r*lb+u*mb+s*nb+v*ob,Ea=B*lb+C*mb+y*nb+x*ob,Fa=w*lb+z*
-mb+G*nb+jb*ob,Z=new I(Ca,Da,Ea,Fa),l(a,d,R,U,M,h,X,Z,ha,m+1,A,D,E/2,F/2),l(a,R,e,J,U,X,i,W,Z,m+1,A,D+F/2,E/2,F/2),l(a,M,U,Q,g,ha,Z,Y,k,m+1,A+E/2,D,E/2,F/2),l(a,U,J,f,Q,Z,W,j,Y,m+1,A+E/2,D+F/2,E/2,F/2)):m<=b._maxVerticalDiv&&T?(fa=new n(d.x+g.x,d.y+g.y,d.z+g.z),fa.x/=2,fa.y/=2,fa.z/=2,M=fa,ga=new n(e.x+f.x,e.y+f.y,e.z+f.z),ga.x/=2,ga.y/=2,ga.z/=2,J=ga,Ga=t*(pb=M.x)+o*(qb=M.y)+p*(rb=M.z)+q*(sb=M.w),Ha=r*pb+u*qb+s*rb+v*sb,Ia=B*pb+C*qb+y*rb+x*sb,Ja=w*pb+z*qb+G*rb+jb*sb,ha=new I(Ga,Ha,Ia,Ja),Ka=t*(tb=
-J.x)+o*(ub=J.y)+p*(vb=J.z)+q*(wb=J.w),La=r*tb+u*ub+s*vb+v*wb,Ma=B*tb+C*ub+y*vb+x*wb,yb=w*tb+z*ub+G*vb+jb*wb,W=new I(Ka,La,Ma,yb),l(a,d,e,J,M,h,i,W,ha,m+1,A,D,E/2,F),l(a,M,J,f,g,ha,W,j,k,m+1,A+E/2,D,E/2,F)):m<=b._maxHorizontalDiv&&S?(ka=new n(d.x+e.x,d.y+e.y,d.z+e.z),ka.x/=2,ka.y/=2,ka.z/=2,R=ka,la=new n(g.x+f.x,g.y+f.y,g.z+f.z),la.x/=2,la.y/=2,la.z/=2,Q=la,Ua=t*(xb=R.x)+o*(zb=R.y)+p*(Ab=R.z)+q*(Bb=R.w),Xa=r*xb+u*zb+s*Ab+v*Bb,Ya=B*xb+C*zb+y*Ab+x*Bb,Za=w*xb+z*zb+G*Ab+jb*Bb,X=new I(Ua,Xa,Ya,Za),bb=t*
-(Cb=Q.x)+o*(Db=Q.y)+p*(Eb=Q.z)+q*(Fb=Q.w),cb=r*Cb+u*Db+s*Eb+v*Fb,db=B*Cb+C*Db+y*Eb+x*Fb,eb=w*Cb+z*Db+G*Eb+jb*Fb,Y=new I(bb,cb,db,eb),l(a,d,R,Q,g,h,X,Y,k,m+1,A,D,E,F/2),l(a,R,e,f,Q,X,i,j,Y,m+1,A,D+F/2,E,F/2)):(da=((Ib=k.x)-(Hb=h.x))/E,ea=((Jb=i.y)-(Gb=h.y))/F,ia=(k.y-Gb)/(Ib-Hb),ja=(i.x-Hb)/(Jb-Gb),c.transform(1,0,0,1,Hb,Gb),c.transform(1,ia,ja,1,0,0),c.transform(da,0,0,ea,0,0),c.drawImage(a,~~A,~~D,~~E,~~F,0,0,Math.ceil(E),Math.ceil(F)),c.setTransform(1,0,0,1,0,0))};l(pb=this._image,e,d,f,g,h,j,i,
-k,1,0,0,pb.width,pb.height);return!0};zb.prototype=new ob;hc.prototype=new zb;zb.prototype.applyWorldMatrix$LMatrix$=function(a){var b,c,e,d,f;b=this.center;b=a._m11*(c=b.x)+a._m12*(e=b.y)+a._m13*(d=b.z)+a._m14*(f=b.w);this.center=new I(b,a._m21*c+a._m22*e+a._m23*d+a._m24*f,a._m31*c+a._m32*e+a._m33*d+a._m34*f,a._m41*c+a._m42*e+a._m43*d+a._m44*f)};zb.prototype.applyViewMatrix$LMatrix$=function(a){var b,c,e,d,f;b=this.center;b=a._m11*(c=b.x)+a._m12*(e=b.y)+a._m13*(d=b.z)+a._m14*(f=b.w);this.vCenter=
-new I(b,a._m21*c+a._m22*e+a._m23*d+a._m24*f,a._m31*c+a._m32*e+a._m33*d+a._m34*f,a._m41*c+a._m42*e+a._m43*d+a._m44*f)};zb.prototype.isHidden$LCamera$=function(a){var b;return a.nearZ<(b=this.vCenter.z)&&b<a.farZ?!1:!0};zb.prototype.draw$LEngine$=function(a){var b,c,e,d,f,g,h,j,i,k,l,m,n,o,p,q,r,u,s,v,B,C,y,x,w,z,A,D,F,H,J,N,E;if(!K.isLoadedImage[this._src])return!1;b=a.context;g=a.screenMatrix;h=a.camera.projectionMatrix;d=(l=g._m11)*(v=h._m11)+(k=g._m12)*(B=h._m21)+(i=g._m13)*(C=h._m31)+(j=g._m14)*
-(q=h._m41);e=l*(r=h._m12)+k*(y=h._m22)+i*(x=h._m32)+j*(w=h._m42);f=l*(u=h._m13)+k*(z=h._m23)+i*(A=h._m33)+j*(D=h._m43);h=l*(c=h._m14)+k*(s=h._m24)+i*(F=h._m34)+j*(H=h._m44);j=(l=g._m21)*v+(m=g._m22)*B+(n=g._m23)*C+(o=g._m24)*q;i=l*r+m*y+n*x+o*w;k=l*u+m*z+n*A+o*D;l=l*c+m*s+n*F+o*H;m=(p=g._m31)*v+(J=g._m32)*B+(N=g._m33)*C+(E=g._m34)*q;n=p*r+J*y+N*x+E*w;o=p*u+J*z+N*A+E*D;p=p*c+J*s+N*F+E*H;q=(J=g._m41)*v+(v=g._m42)*B+(B=g._m43)*C+(g=g._m44)*q;r=J*r+v*y+B*x+g*w;u=J*u+v*z+B*A+g*D;z=J*c+v*s+B*F+g*H;c=this.vCenter;
-A=this._width/2;D=this._height/2;A=c.x-A;D=c.y-D;y=c.z-0;s=this.vCenter;s=d*(c=s.x)+e*(x=s.y)+f*(w=s.z)+h*(F=s.w);c=new I(s,j*c+i*x+k*w+l*F,m*c+n*x+o*w+p*F,q*c+r*x+u*w+z*F);e=new I(d*A+e*D+f*y+1*h,j*A+i*D+k*y+1*l,m*A+n*D+o*y+1*p,q*A+r*D+u*y+1*z);d=e.x-c.x;e=e.y-c.y;if(kc([c],a))return!1;a=2*(d/(f=this._image).width);f=2*(e/f.height);b.setTransform(a,0,0,f,0,0);b.drawImage(this._image,~~((c.x-d)/a),~~((c.y-e)/f));b.setTransform(1,0,0,1,0,0);return!0};Y.prototype={};(function(){this.tail=this.head=
-null;this.length=0}).prototype=new Y;Ib.prototype=new Y;Y.prototype.prepend$LVector$=function(a){var b,a={value:a,_prev:null,_next:null};0===this.length?this.tail=this.head=a:(a._next=b=this.head,this.head=b._prev=a);this.length++;return this};Y.prototype.append$LVector$=function(a){var b,a={value:a,_prev:null,_next:null};0===this.length?this.head=a:(a._prev=b=this.tail,b._next=a);this.tail=a;this.length++;return this};Y.prototype.remove$LNode$Vector$E$=function(a){a._prev?a._prev._next=a._next:this.head=
-a._next;a._next?a._next._prev=a._prev:this.tail=a._prev;return a.value};Y.prototype.removeFirst$=function(){var a,b;a=this.head;this.head=b=a._next;null!=b&&(a._next._prev=null);this.length--;return a.value};Y.prototype.removeLast$=function(){var a,b;a=this.tail;this.tail=b=a._prev;null!=b&&(a._prev._next=null);this.length--;return a.value};Y.prototype.insertAfter$LNode$Vector$E$LVector$=function(a,b){var c,e;c={value:b,_prev:null,_next:null};null==a._next?(c._prev=a,this.tail=a._next=c):(c._next=
-e=a._next,c._prev=a,e._prev=c,a._next=c);this.length++;return this};Y.prototype.insertBefore$LNode$Vector$E$LVector$=function(a,b){var c,e;c={value:b,_prev:null,_next:null};null==a._prev?(c._next=a,this.head=a._prev=c):(c._next=a,c._prev=e=a._prev,e._next=c,a._prev=c);this.length++;return this};Y.prototype.forEach$F$LVector$V$=function(a){var b;for(b=this.head;b;b=b._next)a(b.value)};Y.prototype.toString=function(){var a,b;a="list : [";for(b=this.head;null!=b;b=b._next)a+=" "+b.value.toString()+",";
-return a+"]"};Vb.prototype={};(function(a){this.value=a;this._next=this._prev=null}).prototype=new Vb;Vb.prev$LNode$Vector$E$=function(a){return a._prev};Vb.next$LNode$Vector$E$=function(a){return a._next};Z.prototype={};ec.prototype=new Z;(function(a){var b,c;this.tail=this.head=null;this.length=0;b=a.length;for(c=0;c<b;c++)this.prepend$LMatrix$(a.pop())}).prototype=new Z;Z.prototype.prepend$LMatrix$=function(a){var b,a={value:a,_prev:null,_next:null};0===this.length?this.tail=this.head=a:(a._next=
-b=this.head,this.head=b._prev=a);this.length++;return this};Z.prototype.append$LMatrix$=function(a){var b,a={value:a,_prev:null,_next:null};0===this.length?this.head=a:(a._prev=b=this.tail,b._next=a);this.tail=a;this.length++;return this};Z.prototype.remove$LNode$Matrix$E$=function(a){a._prev?a._prev._next=a._next:this.head=a._next;a._next?a._next._prev=a._prev:this.tail=a._prev;return a.value};Z.prototype.removeFirst$=function(){var a,b;a=this.head;this.head=b=a._next;null!=b&&(a._next._prev=null);
-this.length--;return a.value};Z.prototype.removeLast$=function(){var a,b;a=this.tail;this.tail=b=a._prev;null!=b&&(a._prev._next=null);this.length--;return a.value};Z.prototype.insertAfter$LNode$Matrix$E$LMatrix$=function(a,b){var c,e;c={value:b,_prev:null,_next:null};null==a._next?(c._prev=a,this.tail=a._next=c):(c._next=e=a._next,c._prev=a,e._prev=c,a._next=c);this.length++;return this};Z.prototype.insertBefore$LNode$Matrix$E$LMatrix$=function(a,b){var c,e;c={value:b,_prev:null,_next:null};null==
-a._prev?(c._next=a,this.head=a._prev=c):(c._next=a,c._prev=e=a._prev,e._next=c,a._prev=c);this.length++;return this};Z.prototype.forEach$F$LMatrix$V$=function(a){var b;for(b=this.head;b;b=b._next)a(b.value)};Z.prototype.toString=function(){var a,b;a="list : [";for(b=this.head;null!=b;b=b._next)a+=" "+b.value.toString()+",";return a+"]"};Wb.prototype={};(function(a){this.value=a;this._next=this._prev=null}).prototype=new Wb;Wb.prev$LNode$Matrix$E$=function(a){return a._prev};Wb.next$LNode$Matrix$E$=
-function(a){return a._next};da.prototype={};$.prototype=new da;(function(a){var b,c;this.tail=this.head=null;this.length=0;b=a.length;for(c=0;c<b;c++)this.prepend$LRenderable$(a.pop())}).prototype=new da;da.prototype.prepend$LRenderable$=function(a){var b,a={value:a,_prev:null,_next:null};0===this.length?this.tail=this.head=a:(a._next=b=this.head,this.head=b._prev=a);this.length++;return this};da.prototype.append$LRenderable$=function(a){var b,a={value:a,_prev:null,_next:null};0===this.length?this.head=
-a:(a._prev=b=this.tail,b._next=a);this.tail=a;this.length++;return this};da.prototype.remove$LNode$Renderable$E$=function(a){a._prev?a._prev._next=a._next:this.head=a._next;a._next?a._next._prev=a._prev:this.tail=a._prev;return a.value};da.prototype.removeFirst$=function(){var a,b;a=this.head;this.head=b=a._next;null!=b&&(a._next._prev=null);this.length--;return a.value};da.prototype.removeLast$=function(){var a,b;a=this.tail;this.tail=b=a._prev;null!=b&&(a._prev._next=null);this.length--;return a.value};
-da.prototype.insertAfter$LNode$Renderable$E$LRenderable$=function(a,b){var c,e;c={value:b,_prev:null,_next:null};null==a._next?(c._prev=a,this.tail=a._next=c):(c._next=e=a._next,c._prev=a,e._prev=c,a._next=c);this.length++;return this};da.prototype.insertBefore$LNode$Renderable$E$LRenderable$=function(a,b){var c,e;c={value:b,_prev:null,_next:null};null==a._prev?(c._next=a,this.head=a._prev=c):(c._next=a,c._prev=e=a._prev,e._next=c,a._prev=c);this.length++;return this};da.prototype.forEach$F$LRenderable$V$=
-function(a){var b;for(b=this.head;b;b=b._next)a(b.value)};da.prototype.toString=function(){var a,b;a="list : [";for(b=this.head;null!=b;b=b._next)a+=" "+b.value.toString()+",";return a+"]"};Xb.prototype={};(function(a){this.value=a;this._next=this._prev=null}).prototype=new Xb;Xb.prev$LNode$Renderable$E$=function(a){return a._prev};Xb.next$LNode$Renderable$E$=function(a){return a._next};ea.prototype={};Db.prototype=new ea;(function(a){var b,c;this.tail=this.head=null;this.length=0;b=a.length;for(c=
-0;c<b;c++)this.prepend$LPolygon$(a.pop())}).prototype=new ea;ea.prototype.prepend$LPolygon$=function(a){var b,a={value:a,_prev:null,_next:null};0===this.length?this.tail=this.head=a:(a._next=b=this.head,this.head=b._prev=a);this.length++;return this};ea.prototype.append$LPolygon$=function(a){var b,a={value:a,_prev:null,_next:null};0===this.length?this.head=a:(a._prev=b=this.tail,b._next=a);this.tail=a;this.length++;return this};ea.prototype.remove$LNode$Polygon$E$=function(a){a._prev?a._prev._next=
-a._next:this.head=a._next;a._next?a._next._prev=a._prev:this.tail=a._prev;return a.value};ea.prototype.removeFirst$=function(){var a,b;a=this.head;this.head=b=a._next;null!=b&&(a._next._prev=null);this.length--;return a.value};ea.prototype.removeLast$=function(){var a,b;a=this.tail;this.tail=b=a._prev;null!=b&&(a._prev._next=null);this.length--;return a.value};ea.prototype.insertAfter$LNode$Polygon$E$LPolygon$=function(a,b){var c,e;c={value:b,_prev:null,_next:null};null==a._next?(c._prev=a,this.tail=
-a._next=c):(c._next=e=a._next,c._prev=a,e._prev=c,a._next=c);this.length++;return this};ea.prototype.insertBefore$LNode$Polygon$E$LPolygon$=function(a,b){var c,e;c={value:b,_prev:null,_next:null};null==a._prev?(c._next=a,this.head=a._prev=c):(c._next=a,c._prev=e=a._prev,e._next=c,a._prev=c);this.length++;return this};ea.prototype.forEach$F$LPolygon$V$=function(a){var b;for(b=this.head;b;b=b._next)a(b.value)};ea.prototype.toString=function(){var a,b;a="list : [";for(b=this.head;null!=b;b=b._next)a+=
-" "+b.value.toString()+",";return a+"]"};Yb.prototype={};(function(a){this.value=a;this._next=this._prev=null}).prototype=new Yb;Yb.prev$LNode$Polygon$E$=function(a){return a._prev};Yb.next$LNode$Polygon$E$=function(a){return a._next};P.prototype={};zc.prototype=new P;P.id$S=function(a){a=P.document.getElementById(a);return a instanceof HTMLElement?a:null};P.getElementById$S=function(a){a=P.document.getElementById(a);return a instanceof HTMLElement?a:null};P.createElement$S=function(a){return P.document.createElement(a)};
-H.prototype={};Ac.prototype=new H;H.setTimeout$F$V$N=function(a,b){return A.global.setTimeout(a,b)};H.clearTimeout$LTimerHandle$=function(a){A.global.clearTimeout(a)};var Uc=H.clearTimeout$LTimerHandle$;H.setInterval$F$V$N=function(a,b){return A.global.setInterval(a,b)};H.clearInterval$LTimerHandle$=function(a){A.global.clearInterval(a)};H.requestAnimationFrame$F$NV$=function(a){return H._requestAnimationFrame(a)};H.cancelAnimationFrame$LTimerHandle$=function(a){H._cancelAnimationFrame(a)};H.useNativeRAF$B=
-function(a){H._requestAnimationFrame=Jc(a);H._cancelAnimationFrame=Kc(a)};H._getRequestAnimationFrameImpl$B=function(a){var b;if(a){if(A.global.requestAnimationFrame)return function(a){return A.global.requestAnimationFrame(a)};if(A.global.webkitRequestAnimationFrame)return function(a){return A.global.webkitRequestAnimationFrame(a)};if(A.global.mozRequestAnimationFrame)return function(a){return A.global.mozRequestAnimationFrame(a)};if(A.global.oRequestAnimationFrame)return function(a){return A.global.oRequestAnimationFrame(a)};
-if(A.global.msRequestAnimationFrame)return function(a){return A.global.msRequestAnimationFrame(a)}}b=0;return function(a){var e,d,f;e=Date.now();f=16-(e-b);d=0>=f?0:f;b=e+d;return A.global.setTimeout(function(){a(e+d)},d)}};var Jc=H._getRequestAnimationFrameImpl$B;H._getCancelAnimationFrameImpl$B=function(a){if(a){if(A.global.cancelAnimationFrame)return function(a){A.global.cancelAnimationFrame(a)};if(A.global.webkitCancelAnimationFrame)return function(a){A.global.webkitCancelAnimationFrame(a)};if(A.global.mozCancelAnimationFrame)return function(a){A.global.mozCancelAnimationFrame(a)};
-if(A.global.oCancelAnimationFrame)return function(a){A.global.oCancelAnimationFrame(a)};if(A.global.msCancelAnimationFrame)return function(a){A.global.msCancelAnimationFrame(a)}}return Uc};var Kc=H._getCancelAnimationFrameImpl$B;ic.prototype={};Bc.prototype=new ic;Jb.prototype={};Cc.prototype=new Jb;Jb.cross$NNNN=function(a,b,c,e){return a*e-c*b};var Tc=Jb.cross$NNNN;W.prototype={};Dc.prototype=new W;W._currentMsec$LStopwatch$=function(){return Date.now()};W.start$LStopwatch$=function(a){if(null!=
-a._startedMsec){debugger;throw Error("[jsx/util.jsx:39] assertion failure");}a._startedMsec=a._lastLapMsec=Date.now()};var Ic=W.start$LStopwatch$;W.stop$LStopwatch$=function(a){if(null==a._startedMsec){debugger;throw Error("[jsx/util.jsx:45] assertion failure");}a._elapsedMsec+=Date.now()-a._startedMsec;a._startedMsec=null;a._lastLapMsec=null};W.isStarted$LStopwatch$=function(a){return null!=a._startedMsec};W.isStopped$LStopwatch$=function(a){return null==a._startedMsec};var Vc=W.isStopped$LStopwatch$;
-W.lap$LStopwatch$=function(a){var b,c;if(null==a._lastLapMsec){debugger;throw Error("[jsx/util.jsx:65] assertion failure");}b=Date.now();c=b-a._lastLapMsec;a._lastLapMsec=b;return c};var Wc=W.lap$LStopwatch$;W.getElapsedMsec$LStopwatch$=function(a){return a._elapsedMsec};tb.prototype={};Ec.prototype=new tb;Fc.prototype=new tb;tb.start$LFpsManager$=function(a){Ic(a._stopwatch)};tb.lastLap$LFpsManager$=function(a){return a._lastMsec};tb.update$LFpsManager$=function(a){var b,c,e;if(Vc(a._stopwatch)){debugger;
-throw Error("[jsx/util.jsx:126] assertion failure");}b=Wc(a._stopwatch);a._lastMsec=b;1>a._recentlyMsecLog.length?a._recentlyMsecLog.push(b):(a._recentlyMsecLog.push(b),a._recentlyMsecLog.shift());b=a._recentlyMsecLog.length;for(e=c=0;e<b;e++)c+=a._recentlyMsecLog[e];b/=c/1E3;null!=a._fpsElement&&a._enabledHtmlLog?a._fpsElement.innerHTML=b.toFixed(1)+"fps":a._enabledConsoleLog&&console.log(b.toFixed(1)+"fps")};var Sc=tb.update$LFpsManager$;A.prototype={};Gc.prototype=new A;wb(K,"images",function(){return{}});
-wb(K,"imageDatas",function(){return{}});wb(K,"isLoadedImage",function(){return{}});wb(P,"window",function(){return A.global.window});wb(P,"document",function(){return A.global.document});wb(H,"_requestAnimationFrame",function(){return Jc(!0)});wb(H,"_cancelAnimationFrame",function(){return Kc(!0)});A.global=function(){return this}();var Nc={"jsx/ball.jsx":{Util3D:$a,Util3D$:lc,Player:ab,Player$:mc,BlueBall:J,BlueBall$:ac,_Main:Tb,_Main$:sc},"jsx/vector.jsx":{Vector:D,Vector$NNN:n,Vector$NNNN:I,Vector$LVector$:tc},
-"jsx/matrix.jsx":{Matrix:Q,Matrix$:nb,Matrix$AN:T},"jsx/quaternion.jsx":{Quaternion:X,Quaternion$NLVector$:uc,Quaternion$LVector$:vc,Quaternion$NNNN:xb},"jsx/engine.jsx":{Engine:K,Engine$S:bc,Context3D:F,Context3D$LCamera$:wc,Camera:Bb,Camera$LVector$LVector$LVector$NNNN:dc,Color:Cb,Color$III:ja,Renderable:ob,Renderable$:xc,Polygon:Wa,Polygon$ALVector$LColor$:Hb,PolygonGroup:pb,PolygonGroup$LList$Polygon$E$LVector$:yc,PolygonGroup$LList$Polygon$E$LVector$B:fc,SmoothTexture:kb,SmoothTexture$ALVector$S:gc,
-SmoothTexture$ALVector$SIIII:Ub,Billboard:zb,Billboard$LVector$NNS:hc},"system:lib/js/js/web.jsx":{dom:P,dom$:zc},"system:lib/js/timer.jsx":{Timer:H,Timer$:Ac,TimerHandle:ic,TimerHandle$:Bc},"jsx/util.jsx":{Math2D:Jb,Math2D$:Cc,Stopwatch:W,Stopwatch$:Dc,FpsManager:tb,FpsManager$:Ec,FpsManager$S:Fc},"system:lib/js/js.jsx":{js:A,js$:Gc}};JSX.runMain=function(a,b){var c=JSX.require(a);if(!c._Main)throw Error("entry point _Main not found in "+a);if(!c._Main.main$AS)throw Error("entry point _Main.main(:string[]):void not found in "+
-a);c._Main.main$AS(b)};JSX.runTests=function(a,b){var c=JSX.require(a)._Test$;if(c){if(0===b.length){var e=c.prototype,d;for(d in e)e[d]instanceof Function&&/^test.*[$]$/.test(d)&&b.push(d)}var f=new c;null!=f.beforeClass$AS&&f.beforeClass$AS(b);for(c=0;c<b.length;++c)(function(a){f.run$SF$V$(a,function(){f[a]()})})(b[c]);null!=f.afterClass$&&f.afterClass$()}};window.addEventListener("load",Zb);document.addEventListener("DOMContentLoaded",Zb)})();
+var JSX = {};
+(function () {
+
+/**
+ * copies the implementations from source interface to target
+ */
+function $__jsx_merge_interface(target, source) {
+	for (var k in source.prototype)
+		if (source.prototype.hasOwnProperty(k))
+			target.prototype[k] = source.prototype[k];
+}
+
+/**
+ * defers the initialization of the property
+ */
+function $__jsx_lazy_init(obj, prop, func) {
+	function reset(obj, prop, value) {
+		delete obj[prop];
+		obj[prop] = value;
+		return value;
+	}
+
+	Object.defineProperty(obj, prop, {
+		get: function () {
+			return reset(obj, prop, func());
+		},
+		set: function (v) {
+			reset(obj, prop, v);
+		},
+		enumerable: true,
+		configurable: true
+	});
+}
+
+/**
+ * sideeffect().a /= b
+ */
+function $__jsx_div_assign(obj, prop, divisor) {
+	return obj[prop] = (obj[prop] / divisor) | 0;
+}
+
+/*
+ * global functions called by JSX
+ * (enamed so that they do not conflict with local variable names)
+ */
+var $__jsx_parseInt = parseInt;
+var $__jsx_parseFloat = parseFloat;
+var $__jsx_isNaN = isNaN;
+var $__jsx_isFinite = isFinite;
+
+var $__jsx_encodeURIComponent = encodeURIComponent;
+var $__jsx_decodeURIComponent = decodeURIComponent;
+var $__jsx_encodeURI = encodeURI;
+var $__jsx_decodeURI = decodeURI;
+
+var $__jsx_ObjectToString = Object.prototype.toString;
+var $__jsx_ObjectHasOwnProperty = Object.prototype.hasOwnProperty;
+
+/*
+ * profiler object, initialized afterwards
+ */
+function $__jsx_profiler() {
+}
+
+/*
+ * public interface to JSX code
+ */
+JSX.require = function (path) {
+	var m = $__jsx_classMap[path];
+	return m !== undefined ? m : null;
+};
+
+JSX.profilerIsRunning = function () {
+	return $__jsx_profiler.getResults != null;
+};
+
+JSX.getProfileResults = function () {
+	return ($__jsx_profiler.getResults || function () { return {}; })();
+};
+
+JSX.postProfileResults = function (url) {
+	if ($__jsx_profiler.postResults == null)
+		throw new Error("profiler has not been turned on");
+	return $__jsx_profiler.postResults(url);
+};
+
+JSX.resetProfileResults = function () {
+	if ($__jsx_profiler.resetResults == null)
+		throw new Error("profiler has not been turned on");
+	return $__jsx_profiler.resetResults();
+};
+/**
+ * class Util3D extends Object
+ * @constructor
+ */
+function Util3D() {
+}
+
+Util3D.prototype = new Object;
+/**
+ * @constructor
+ */
+function Util3D$() {
+};
+
+Util3D$.prototype = new Util3D;
+
+/**
+ * @param {Context3D} context
+ * @param {!number} size
+ * @param {!number} div
+ */
+Util3D.sphere$LContext3D$NI = function (context, size, div) {
+	/** @type {!number} */
+	var ver;
+	/** @type {!number} */
+	var hor;
+	var sin;
+	var cos;
+	/** @type {!number} */
+	var pi;
+	/** @type {!number} */
+	var i;
+	/** @type {!number} */
+	var i1;
+	/** @type {!number} */
+	var i2;
+	/** @type {!number} */
+	var j1;
+	/** @type {!number} */
+	var j2;
+	/** @type {!number} */
+	var j;
+	ver = div;
+	hor = div * 2;
+	sin = Math.sin;
+	cos = Math.cos;
+	pi = Math.PI;
+	context.beginGroup$LVector$(new Vector$NNN(0, 0, 0));
+	for (i = 0; i < hor; i++) {
+		i1 = 0;
+		i2 = 1;
+		j1 = i + 1;
+		j2 = i;
+		context.renderPolygonGroup$ALVector$LColor$([ new Vector$NNN(cos(2 * pi * j1 / hor) * sin(pi * i1 / ver) * size, cos(pi * i1 / ver) * size, sin(2 * pi * j1 / hor) * sin(pi * i1 / ver) * size), new Vector$NNN(cos(2 * pi * j1 / hor) * sin(pi * i2 / ver) * size, cos(pi * i2 / ver) * size, sin(2 * pi * j1 / hor) * sin(pi * i2 / ver) * size), new Vector$NNN(cos(2 * pi * j2 / hor) * sin(pi * i2 / ver) * size, cos(pi * i2 / ver) * size, sin(2 * pi * j2 / hor) * sin(pi * i2 / ver) * size) ], new Color$III(128, 128, 255));
+	}
+	for (i = 1; i < ver - 1; i++) {
+		for (j = 0; j < hor; j++) {
+			i1 = i;
+			i2 = i + 1;
+			j1 = j + 1;
+			j2 = j;
+			context.renderPolygonGroup$ALVector$LColor$([ new Vector$NNN(cos(2 * pi * j1 / hor) * sin(pi * i1 / ver) * size, cos(pi * i1 / ver) * size, sin(2 * pi * j1 / hor) * sin(pi * i1 / ver) * size), new Vector$NNN(cos(2 * pi * j1 / hor) * sin(pi * i2 / ver) * size, cos(pi * i2 / ver) * size, sin(2 * pi * j1 / hor) * sin(pi * i2 / ver) * size), new Vector$NNN(cos(2 * pi * j2 / hor) * sin(pi * i2 / ver) * size, cos(pi * i2 / ver) * size, sin(2 * pi * j2 / hor) * sin(pi * i2 / ver) * size), new Vector$NNN(cos(2 * pi * j2 / hor) * sin(pi * i1 / ver) * size, cos(pi * i1 / ver) * size, sin(2 * pi * j2 / hor) * sin(pi * i1 / ver) * size) ], new Color$III(128, 128, 255));
+		}
+	}
+	for (i = 0; i < hor; i++) {
+		i1 = ver - 1;
+		i2 = ver;
+		j1 = i + 1;
+		j2 = i;
+		context.renderPolygonGroup$ALVector$LColor$([ new Vector$NNN(cos(2 * pi * j2 / hor) * sin(pi * i1 / ver) * size, cos(pi * i1 / ver) * size, sin(2 * pi * j2 / hor) * sin(pi * i1 / ver) * size), new Vector$NNN(cos(2 * pi * j1 / hor) * sin(pi * i1 / ver) * size, cos(pi * i1 / ver) * size, sin(2 * pi * j1 / hor) * sin(pi * i1 / ver) * size), new Vector$NNN(cos(2 * pi * j2 / hor) * sin(pi * i2 / ver) * size, cos(pi * i2 / ver) * size, sin(2 * pi * j2 / hor) * sin(pi * i2 / ver) * size) ], new Color$III(128, 128, 255));
+	}
+	context.endGroup$();
+};
+
+var Util3D$sphere$LContext3D$NI = Util3D.sphere$LContext3D$NI;
+
+/**
+ * @param {Context3D} context
+ * @param {!number} x
+ * @param {!number} y
+ * @param {!number} z
+ * @param {!number} size
+ * @param {Color} color
+ */
+Util3D.tile$LContext3D$IIIILColor$ = function (context, x, y, z, size, color) {
+	context.renderPolygon$ALVector$LColor$([ new Vector$NNN(x - size / 2, y, z - size / 2), new Vector$NNN(x - size / 2, y, z + size / 2), new Vector$NNN(x + size / 2, y, z + size / 2), new Vector$NNN(x + size / 2, y, z - size / 2) ], color);
+};
+
+var Util3D$tile$LContext3D$IIIILColor$ = Util3D.tile$LContext3D$IIIILColor$;
+
+/**
+ * @param {Context3D} context
+ * @param {!number} x
+ * @param {!number} y
+ * @param {!number} z
+ * @param {!number} size
+ * @param {Color} color
+ */
+Util3D.tileOnGroup$LContext3D$IIIILColor$ = function (context, x, y, z, size, color) {
+	context.renderPolygonGroup$ALVector$LColor$([ new Vector$NNN(x - size / 2, y, z - size / 2), new Vector$NNN(x - size / 2, y, z + size / 2), new Vector$NNN(x + size / 2, y, z + size / 2), new Vector$NNN(x + size / 2, y, z - size / 2) ], color);
+};
+
+var Util3D$tileOnGroup$LContext3D$IIIILColor$ = Util3D.tileOnGroup$LContext3D$IIIILColor$;
+
+/**
+ * class Player extends Object
+ * @constructor
+ */
+function Player() {
+}
+
+Player.prototype = new Object;
+/**
+ * @constructor
+ */
+function Player$() {
+	this.r = 12;
+	this.x = 0;
+	this.y = 10;
+	this.z = 0;
+	this.vx = 0;
+	this.vy = 0;
+	this.vz = 0;
+	this.ax = 0;
+	this.ay = - 120;
+	this.az = 0;
+	this.rot = Quaternion$rotating$NNNN(0, 1, 0, 0);
+	this.radius = 8;
+	this.isBraking = false;
+};
+
+Player$.prototype = new Player;
+
+/**
+ */
+Player.prototype.moveForward$ = function () {
+	this.move$NN(50, 0);
+};
+
+/**
+ * @param {!number} dz
+ * @param {!number} dx
+ */
+Player.prototype.move$NN = function (dz, dx) {
+	/** @type {!number} */
+	var x;
+	/** @type {!number} */
+	var z;
+	/** @type {!number} */
+	var len;
+	/** @type {!number} */
+	var rad;
+	/** @type {!number} */
+	var sin;
+	/** @type {!number} */
+	var cos;
+	this.isBraking = false;
+	x = this.vx;
+	z = this.vz;
+	len = Math.sqrt(x * x + z * z);
+	if ((z >= 0 ? z : - z) > 1e-9) {
+		z /= len;
+	}
+	if ((x >= 0 ? x : - x) > 1e-9) {
+		x /= len;
+	}
+	rad = Math.atan2(x, z);
+	sin = Math.sin(rad);
+	cos = Math.cos(rad);
+	this.az = cos * dz - sin * dx;
+	this.ax = sin * dz + cos * dx;
+};
+
+/**
+ */
+Player.prototype.brake$ = function () {
+	this.isBraking = true;
+};
+
+/**
+ * @param {!number} elapsedMsec
+ */
+Player.prototype.update$N = function (elapsedMsec) {
+	/** @type {!number} */
+	var sec;
+	/** @type {!number} */
+	var dx;
+	/** @type {!number} */
+	var dy;
+	/** @type {!number} */
+	var dz;
+	/** @type {!number} */
+	var velocityDecl;
+	/** @type {!number} */
+	var decl;
+	/** @type {Vector} */
+	var v;
+	/** @type {Vector} */
+	var c;
+	/** @type {Quaternion} */
+	var q;
+	sec = elapsedMsec / 1000;
+	if (sec > 0.1) {
+		sec = 0.1;
+	}
+	this.vx += this.ax * sec;
+	this.vy += this.ay * sec;
+	this.vz += this.az * sec;
+	this.vx = Math.min(100, Math.max(- 100, this.vx));
+	this.vy = Math.min(3000, Math.max(- 3000, this.vy));
+	this.vz = Math.min(100, Math.max(- 100, this.vz));
+	dx = this.vx * sec;
+	dy = this.vy * sec;
+	dz = this.vz * sec;
+	this.x += dx;
+	this.y += dy;
+	this.z += dz;
+	velocityDecl = (this.isBraking ? 0.1 : 0.01);
+	this.vx -= (dx >= 0 ? dx : - dx) * this.vx * velocityDecl;
+	this.vz -= (dz >= 0 ? dz : - dz) * this.vz * velocityDecl;
+	if (this.isBraking) {
+		decl = Math.pow(Math.E, - sec);
+		this.az *= decl;
+		this.ax *= decl;
+	}
+	v = new Vector$NNN(dx, 0, dz);
+	c = v.cross$LVector$(new Vector$NNN(0, 1, 0)).unitSelf$();
+	q = Quaternion$rotating$NLVector$(v.abs$() / this.r, c);
+	this.rot.mulSelf$LQuaternion$(q);
+};
+
+/**
+ * class BlueBall extends Object
+ * @constructor
+ */
+function BlueBall() {
+}
+
+BlueBall.prototype = new Object;
+/**
+ * @constructor
+ */
+function BlueBall$() {
+	var $this = this;
+	/** @type {Color} */
+	var backgroundColor;
+	this.player = null;
+	this.trees = null;
+	this.treeRadius = 0;
+	this.items = null;
+	this.itemRadius = 0;
+	this.totalElapsedMsec = 0;
+	Engine$loadImages$AS([ './image/tree.png', './image/so-nya.png', './image/redbull_free.png', './image/sky1.jpg' ]);
+	this.isStarted = false;
+	this.engine = new Engine$S('canvas');
+	this.engine.setSkyImage$S('./image/sky1.jpg');
+	if (this.engine.isMobile$()) {
+		this.engine.camera.farZ = 200;
+		this.engine.camera.fovyX = Math.PI / 4;
+		this.engine.camera.updateMatrix$();
+	}
+	this.player = new Player$();
+	this._initTrees$();
+	this._initItems$();
+	this.engine.onUpdate = (function (elapsedMsec) {
+		if (! $this.isStarted) {
+			return;
+		}
+		$this._checkCollisionWithFloor$N(elapsedMsec);
+		$this._checkCollisionWithTrees$();
+		$this._checkCollisionWithItems$();
+		$this._updateViewpoint$();
+	});
+	backgroundColor = new Color$III(90, 135, 150);
+	this.engine.onRender = (function (context, elapsedMsec) {
+		$this.totalElapsedMsec += elapsedMsec;
+		context.setBackgroundColor$LColor$(backgroundColor);
+		$this._renderPlayer$LContext3D$(context);
+		$this._renderTrees$LContext3D$(context);
+		$this._renderItems$LContext3D$(context);
+		$this._renderField$LContext3D$(context);
+	});
+	if (this.engine.isMobile$()) {
+		this._setMobileOperation$();
+	} else {
+		this._setPCOperation$();
+	}
+};
+
+BlueBall$.prototype = new BlueBall;
+
+/**
+ */
+BlueBall.prototype._initTrees$ = function () {
+	this.trees = new List$Vector$E$ALVector$([ new Vector$NNN(- 271, - 3, 450), new Vector$NNN(- 200, - 3, 720), new Vector$NNN(139, - 3, 351), new Vector$NNN(171, - 3, 254), new Vector$NNN(214, - 3, 192), new Vector$NNN(- 253, - 3, 555), new Vector$NNN(29, - 3, 385), new Vector$NNN(- 72, - 3, 530), new Vector$NNN(96, - 3, 678), new Vector$NNN(- 49, - 3, 222) ]);
+	this.treeRadius = 24;
+};
+
+/**
+ */
+BlueBall.prototype._initItems$ = function () {
+	this.items = new List$Vector$E$ALVector$([ new Vector$NNN(149, - 10, 724), new Vector$NNN(107, - 10, 483), new Vector$NNN(279, - 10, 551), new Vector$NNN(- 295, - 10, 261), new Vector$NNN(- 16, - 10, 225), new Vector$NNN(95, - 10, 165), new Vector$NNN(264, - 10, 161), new Vector$NNN(- 50, - 10, 325), new Vector$NNN(- 169, - 10, 254), new Vector$NNN(271, - 10, 401) ]);
+	this.itemRadius = 8;
+};
+
+/**
+ * @param {!number} elapsedMsec
+ */
+BlueBall.prototype._checkCollisionWithFloor$N = function (elapsedMsec) {
+	/** @type {Player} */
+	var player;
+	/** @type {!number} */
+	var x;
+	/** @type {!number} */
+	var y;
+	/** @type {!number} */
+	var z;
+	/** @type {!number} */
+	var height;
+	player = this.player;
+	player.update$N(elapsedMsec);
+	x = player.x;
+	y = player.y;
+	z = player.z;
+	if (- 30 <= x && x <= 30 && - 30 <= z && z <= 150 || - 300 <= x && x <= 300 && 150 <= z && z <= 750 || - 30 <= x && x <= 30 && 750 <= z && z <= 810 || - 30 <= x && x <= 570 && 810 <= z && z <= 870) {
+		if (- player.radius * 2 < y && y < 0) {
+			player.vy = - player.vy * 0.5;
+			player.y = 0;
+		}
+	}
+	if (510 <= x && x <= 570 && 210 <= z && z <= 810) {
+		height = Math.floor((810 - z) / 30);
+		if (height > 9) {
+			height = 19 - height;
+		}
+		height *= 5;
+		if (height - player.radius * 2 < y && y < height) {
+			player.vy = - player.vy * 0.5;
+			player.y = height;
+		}
+	}
+};
+
+/**
+ */
+BlueBall.prototype._checkCollisionWithTrees$ = function () {
+	var $this = this;
+	/** @type {Player} */
+	var player;
+	player = this.player;
+	this.trees.forEach$F$LVector$V$((function (tree) {
+		/** @type {!number} */
+		var dx;
+		/** @type {!number} */
+		var dy;
+		/** @type {!number} */
+		var dz;
+		/** @type {!number} */
+		var dr;
+		/** @type {Vector} */
+		var normalVec;
+		/** @type {!number} */
+		var a;
+		dx = player.x - tree.x;
+		dy = player.y - tree.y;
+		dz = player.z - tree.z;
+		dr = $this.treeRadius + player.radius;
+		if (dx * dx + dy * dy + dz * dz < dr * dr) {
+			normalVec = new Vector$NNN(dx, dy, dz).unitSelf$();
+			a = Math.sqrt(player.vx * player.vx + player.vy * player.vy + player.vz * player.vz);
+			player.ax += 2 * a * normalVec.x;
+			player.vy += 2 * a * normalVec.y;
+			player.az += 2 * a * normalVec.z;
+			player.x += normalVec.x * $this.treeRadius / 4;
+			player.z += normalVec.z * $this.treeRadius / 4;
+		}
+	}));
+};
+
+/**
+ */
+BlueBall.prototype._checkCollisionWithItems$ = function () {
+	/** @type {Player} */
+	var player;
+	/** @type {List$Vector$E} */
+	var items;
+	/** @type {!number} */
+	var radius;
+	/** @type {Node$Vector$E} */
+	var n;
+	/** @type {Vector} */
+	var item;
+	/** @type {!number} */
+	var dx;
+	/** @type {!number} */
+	var dy;
+	/** @type {!number} */
+	var dz;
+	/** @type {!number} */
+	var dr;
+	player = this.player;
+	items = this.items;
+	radius = this.itemRadius;
+	for (n = items.head; n; n = n.next$()) {
+		item = n.value;
+		dx = item.x - player.x;
+		dy = item.y - player.y;
+		dz = item.z - player.z;
+		dr = radius + player.radius;
+		if (dx * dx + dy * dy + dz * dz < dr * dr) {
+			items.remove$LNode$Vector$E$(n);
+		}
+	}
+};
+
+/**
+ */
+BlueBall.prototype._updateViewpoint$ = function () {
+	/** @type {Player} */
+	var player;
+	/** @type {!number} */
+	var dz;
+	/** @type {!number} */
+	var dx;
+	/** @type {!number} */
+	var len;
+	/** @type {!number} */
+	var y;
+	/** @type {!number} */
+	var yOffset;
+	/** @type {!number} */
+	var xzVelocity;
+	/** @type {Vector} */
+	var view;
+	/** @type {Vector} */
+	var target;
+	player = this.player;
+	dz = - player.vz;
+	dx = - player.vx;
+	len = Math.sqrt(dz * dz + dx * dx);
+	if (len < 1e-9) {
+		dz = - 1;
+		dx = 0;
+	} else {
+		dz /= len;
+		dx /= len;
+	}
+	y = player.y;
+	if (y < 0) {
+		y = - y / 2;
+	}
+	yOffset = 10;
+	xzVelocity = Math.sqrt(player.vx * player.vx + player.vz * player.vz);
+	if (xzVelocity < 50) {
+		yOffset -= (50 - xzVelocity) * 0.6;
+	}
+	view = new Vector$NNN(player.x + dx * 50, y * 1.2 + yOffset, player.z + dz * 50);
+	target = new Vector$NNN(player.x, player.y, player.z);
+	this.engine.camera.target = target;
+	this.engine.camera.view = view;
+	this.engine.camera.updateMatrix$();
+};
+
+/**
+ * @param {Context3D} context
+ */
+BlueBall.prototype._renderPlayer$LContext3D$ = function (context) {
+	context.translate$NNN(this.player.x, this.player.y - 12, this.player.z);
+	context.rotate$LQuaternion$(this.player.rot);
+	Util3D$sphere$LContext3D$NI(context, this.player.radius, 6);
+	context.resetMatrix$();
+};
+
+/**
+ * @param {Context3D} context
+ */
+BlueBall.prototype._renderTrees$LContext3D$ = function (context) {
+	var $this = this;
+	this.trees.forEach$F$LVector$V$((function (tree) {
+		/** @type {!number} */
+		var x;
+		/** @type {!number} */
+		var y;
+		/** @type {!number} */
+		var z;
+		x = tree.x;
+		y = tree.y;
+		z = tree.z;
+		context.pushMatrix$();
+		context.translate$NNN(x, y, z);
+		context.renderBillboard$LVector$IIS(new Vector$NNN(0, 0, 0), 50, 34, './image/tree.png');
+		context.popMatrix$();
+	}));
+};
+
+/**
+ * @param {Context3D} context
+ */
+BlueBall.prototype._renderItems$LContext3D$ = function (context) {
+	var $this = this;
+	/** @type {!number} */
+	var rad;
+	/** @type {Quaternion} */
+	var axis;
+	rad = Math.PI * this.totalElapsedMsec / 1000;
+	axis = Quaternion$rotating$NNNN(rad, 0, 1, 0);
+	this.items.forEach$F$LVector$V$((function (item) {
+		/** @type {!number} */
+		var x;
+		/** @type {!number} */
+		var y;
+		/** @type {!number} */
+		var z;
+		x = item.x;
+		y = item.y;
+		z = item.z;
+		context.pushMatrix$();
+		context.translate$NNN(x, y, z);
+		context.rotate$LQuaternion$(axis);
+		context.renderTexture$ALVector$SIIII([ new Vector$NNN(- 15, - 10, 0), new Vector$NNN(15, - 10, 0), new Vector$NNN(15, 10, 0), new Vector$NNN(- 15, 10, 0) ], './image/redbull_free.png', 2, 2, 1, 1);
+		context.popMatrix$();
+	}));
+};
+
+/**
+ * @param {Context3D} context
+ */
+BlueBall.prototype._renderField$LContext3D$ = function (context) {
+	/** @type {Color} */
+	var gray;
+	/** @type {Color} */
+	var lightGreen;
+	/** @type {Color} */
+	var green;
+	/** @type {!number} */
+	var size;
+	/** @type {!number} */
+	var i;
+	/** @type {!number} */
+	var j;
+	/** @type {Color} */
+	var color;
+	/** @type {!number} */
+	var y;
+	gray = new Color$III(192, 192, 192);
+	lightGreen = new Color$III(160, 255, 160);
+	green = new Color$III(96, 255, 96);
+	size = 30;
+	context.setDepth$I(5);
+	context.beginGroup$LVector$B(new Vector$NNN(0, 0, 0), true);
+	for (i = 0; i < 6; i++) {
+		Util3D$tileOnGroup$LContext3D$IIIILColor$(context, - 15, - 20, - 15 + i * size, size, gray);
+		Util3D$tileOnGroup$LContext3D$IIIILColor$(context, + 15, - 20, - 15 + i * size, size, gray);
+	}
+	context.pushMatrix$();
+	context.translate$NNN(0, 0, 450);
+	for (i = 0; i < 20; i++) {
+		for (j = 0; j < 20; j++) {
+			color = ((i + j) % 2 === 0 ? lightGreen : green);
+			Util3D$tileOnGroup$LContext3D$IIIILColor$(context, i * 30 - 285, - 20, j * 30 - 285, 30, color);
+		}
+	}
+	context.popMatrix$();
+	context.endGroup$();
+	context.beginGroup$LVector$B(new Vector$NNN(0, 0, 0), true);
+	Util3D$tileOnGroup$LContext3D$IIIILColor$(context, - 15, - 20, 765, 30, green);
+	Util3D$tileOnGroup$LContext3D$IIIILColor$(context, - 15, - 20, 795, 30, lightGreen);
+	Util3D$tileOnGroup$LContext3D$IIIILColor$(context, 15, - 20, 795, 30, green);
+	Util3D$tileOnGroup$LContext3D$IIIILColor$(context, 15, - 20, 765, 30, lightGreen);
+	context.pushMatrix$();
+	context.translate$NNN(0, 0, 840);
+	for (i = 0; i < 2; i++) {
+		for (j = 0; j < 20; j++) {
+			color = ((i + j) % 2 === 1 ? lightGreen : green);
+			Util3D$tileOnGroup$LContext3D$IIIILColor$(context, j * 30 - 15, - 20, i * 30 - 15, 30, color);
+		}
+	}
+	context.popMatrix$();
+	context.endGroup$();
+	context.pushMatrix$();
+	context.translate$NNN(540, 0, 510);
+	for (i = 0; i < 2; i++) {
+		for (j = 0; j < 20; j++) {
+			y = j;
+			if (y > 9) {
+				y = 19 - y;
+			}
+			color = ((i + j) % 2 === 0 ? lightGreen : green);
+			Util3D$tile$LContext3D$IIIILColor$(context, i * 30 - 15, - 20 + y * 5, 285 - j * 30, 30, color);
+		}
+	}
+	context.popMatrix$();
+	context.setDepth$I(3);
+};
+
+/**
+ */
+BlueBall.prototype._setMobileOperation$ = function () {
+	var $this = this;
+	dom.window.addEventListener('devicemotion', (function (e) {
+		/** @type {DeviceMotionEvent} */
+		var de;
+		/** @type {!number} */
+		var az;
+		/** @type {!number} */
+		var ax;
+		de = (function (o) { return o instanceof DeviceMotionEvent ? o : null; })(e);
+		az = (function (v) {
+			if (! (v != null)) {
+				debugger;
+				throw new Error("[jsx/ball.jsx:512] null access");
+			}
+			return v;
+		}(de.accelerationIncludingGravity.y)) * 30;
+		ax = (function (v) {
+			if (! (v != null)) {
+				debugger;
+				throw new Error("[jsx/ball.jsx:513] null access");
+			}
+			return v;
+		}(de.accelerationIncludingGravity.x)) * 30 / 2;
+		if (az < 0) {
+			$this.player.brake$();
+			az = 0;
+		}
+		$this.player.move$NN(az, ax);
+	}));
+	dom.window.addEventListener('touchstart', (function (e) {
+		if (! $this.isStarted) {
+			$this.isStarted = true;
+			$this.player.vz = 100;
+		} else {
+			$this.player.vy = 80;
+		}
+	}));
+};
+
+/**
+ */
+BlueBall.prototype._setPCOperation$ = function () {
+	var $this = this;
+	dom.window.document.addEventListener('keypress', (function (e) {
+		/** @type {KeyboardEvent} */
+		var ke;
+		/** @type {!number} */
+		var accel;
+		if (! $this.isStarted) {
+			$this.isStarted = true;
+			$this.player.vz = 100;
+			return;
+		}
+		ke = (function (o) { return o instanceof KeyboardEvent ? o : null; })(e);
+		accel = 100;
+		switch (ke.keyCode) {
+		case 119:
+			$this.player.move$NN(accel, 0);
+			break;
+		case 115:
+			$this.player.brake$();
+			break;
+		case 97:
+			$this.player.move$NN(0, - accel / 2);
+			break;
+		case 100:
+			$this.player.move$NN(0, accel / 2);
+			break;
+		case 104:
+			$this.player.move$NN(0, - accel / 2);
+			break;
+		case 106:
+			$this.player.brake$();
+			break;
+		case 107:
+			$this.player.move$NN(accel, 0);
+			break;
+		case 108:
+			$this.player.move$NN(0, accel / 2);
+			break;
+		case 32:
+			$this.player.vy = 80;
+			break;
+		}
+	}), false);
+};
+
+/**
+ */
+BlueBall.prototype.run$ = function () {
+	this.engine.start$();
+};
+
+/**
+ * class _Main extends Object
+ * @constructor
+ */
+function _Main() {
+}
+
+_Main.prototype = new Object;
+/**
+ * @constructor
+ */
+function _Main$() {
+};
+
+_Main$.prototype = new _Main;
+
+/**
+ * @param {Array.<undefined|!string>} args
+ */
+_Main.main$AS = function (args) {
+	/** @type {BlueBall} */
+	var game;
+	game = new BlueBall$();
+	game.run$();
+};
+
+var _Main$main$AS = _Main.main$AS;
+
+/**
+ * class Vector extends Object
+ * @constructor
+ */
+function Vector() {
+}
+
+Vector.prototype = new Object;
+/**
+ * @constructor
+ * @param {!number} x
+ * @param {!number} y
+ * @param {!number} z
+ */
+function Vector$NNN(x, y, z) {
+	this.x = x;
+	this.y = y;
+	this.z = z;
+	this.w = 1;
+};
+
+Vector$NNN.prototype = new Vector;
+
+/**
+ * @constructor
+ * @param {!number} x
+ * @param {!number} y
+ * @param {!number} z
+ * @param {!number} w
+ */
+function Vector$NNNN(x, y, z, w) {
+	this.x = x / w;
+	this.y = y / w;
+	this.z = z / w;
+	this.w = 1;
+	if (this.x === NaN) {
+		console.log(w);
+	}
+};
+
+Vector$NNNN.prototype = new Vector;
+
+/**
+ * @constructor
+ * @param {Vector} v
+ */
+function Vector$LVector$(v) {
+	this.x = v.x;
+	this.y = v.y;
+	this.z = v.z;
+	this.w = 1;
+};
+
+Vector$LVector$.prototype = new Vector;
+
+/**
+ * @return {Vector}
+ */
+Vector.origin$ = function () {
+	return new Vector$NNN(0, 0, 0);
+};
+
+var Vector$origin$ = Vector.origin$;
+
+/**
+ * @param {Vector} other
+ * @return {Vector}
+ */
+Vector.prototype.add$LVector$ = function (other) {
+	return new Vector$NNN(this.x + other.x, this.y + other.y, this.z + other.z);
+};
+
+/**
+ * @param {Vector} other
+ * @return {Vector}
+ */
+Vector.prototype.addSelf$LVector$ = function (other) {
+	this.x += other.x;
+	this.y += other.y;
+	this.z += other.z;
+	return this;
+};
+
+/**
+ * @param {Vector} other
+ * @return {Vector}
+ */
+Vector.prototype.sub$LVector$ = function (other) {
+	return new Vector$NNN(this.x - other.x, this.y - other.y, this.z - other.z);
+};
+
+/**
+ * @param {Vector} other
+ * @return {Vector}
+ */
+Vector.prototype.subSelf$LVector$ = function (other) {
+	this.x -= other.x;
+	this.y -= other.y;
+	this.z -= other.z;
+	return this;
+};
+
+/**
+ * @param {!number} other
+ * @return {Vector}
+ */
+Vector.prototype.mul$N = function (other) {
+	return new Vector$NNN(this.x * other, this.y * other, this.z * other);
+};
+
+/**
+ * @param {!number} other
+ * @return {Vector}
+ */
+Vector.prototype.mulSelf$N = function (other) {
+	this.x *= other;
+	this.y *= other;
+	this.z *= other;
+	return this;
+};
+
+/**
+ * @param {!number} other
+ * @return {Vector}
+ */
+Vector.prototype.div$N = function (other) {
+	return new Vector$NNN(this.x / other, this.y / other, this.z / other);
+};
+
+/**
+ * @param {!number} other
+ * @return {Vector}
+ */
+Vector.prototype.divSelf$N = function (other) {
+	this.x /= other;
+	this.y /= other;
+	this.z /= other;
+	return this;
+};
+
+/**
+ * @param {Vector} other
+ * @return {!number}
+ */
+Vector.prototype.dot$LVector$ = function (other) {
+	return this.x * other.x + this.y * other.y + this.z * other.z;
+};
+
+/**
+ * @param {Vector} other
+ * @return {Vector}
+ */
+Vector.prototype.cross$LVector$ = function (other) {
+	return new Vector$NNN(this.y * other.z - this.z * other.y, this.z * other.x - this.x * other.z, this.x * other.y - this.y * other.x);
+};
+
+/**
+ * @param {Vector} other
+ * @return {Vector}
+ */
+Vector.prototype.crossSelf$LVector$ = function (other) {
+	/** @type {!number} */
+	var x;
+	/** @type {!number} */
+	var y;
+	/** @type {!number} */
+	var z;
+	x = this.y * other.z - this.z * other.y;
+	y = this.z * other.x - this.x * other.z;
+	z = this.x * other.y - this.y * other.x;
+	this.x = x;
+	this.y = y;
+	this.z = z;
+	return this;
+};
+
+/**
+ * @return {Vector}
+ */
+Vector.prototype.unit$ = function () {
+	/** @type {!number} */
+	var length;
+	length = this.abs$();
+	if (length < 1e-9) {
+		return new Vector$NNN(0, 0, 0);
+	}
+	return this.div$N(length);
+};
+
+/**
+ * @return {Vector}
+ */
+Vector.prototype.unitSelf$ = function () {
+	/** @type {!number} */
+	var length;
+	length = this.abs$();
+	if (length < 1e-9) {
+		return new Vector$NNN(0, 0, 0);
+	}
+	return this.divSelf$N(length);
+};
+
+/**
+ * @return {!number}
+ */
+Vector.prototype.sqabs$ = function () {
+	return this.dot$LVector$(this);
+};
+
+/**
+ * @return {!number}
+ */
+Vector.prototype.abs$ = function () {
+	return Math.sqrt(this.sqabs$());
+};
+
+/**
+ * @param {!number} rad
+ * @return {Vector}
+ */
+Vector.prototype.rotateX$N = function (rad) {
+	/** @type {!number} */
+	var sin;
+	/** @type {!number} */
+	var cos;
+	sin = Math.sin(rad);
+	cos = Math.cos(rad);
+	return new Vector$NNN(this.x, this.y * cos - this.z * sin, this.z * cos + this.y * sin);
+};
+
+/**
+ * @param {!number} rad
+ * @return {Vector}
+ */
+Vector.prototype.rotateXSelf$N = function (rad) {
+	/** @type {!number} */
+	var sin;
+	/** @type {!number} */
+	var cos;
+	/** @type {!number} */
+	var y;
+	/** @type {!number} */
+	var z;
+	sin = Math.sin(rad);
+	cos = Math.cos(rad);
+	y = this.y * cos - this.z * sin;
+	z = this.z * cos + this.y * sin;
+	this.y = y;
+	this.z = z;
+	return this;
+};
+
+/**
+ * @param {!number} rad
+ * @return {Vector}
+ */
+Vector.prototype.rotateY$N = function (rad) {
+	/** @type {!number} */
+	var sin;
+	/** @type {!number} */
+	var cos;
+	sin = Math.sin(rad);
+	cos = Math.cos(rad);
+	return new Vector$NNN(this.x * cos + this.z * sin, this.y, this.z * cos - this.x * sin);
+};
+
+/**
+ * @param {!number} rad
+ * @return {Vector}
+ */
+Vector.prototype.rotateYSelf$N = function (rad) {
+	/** @type {!number} */
+	var sin;
+	/** @type {!number} */
+	var cos;
+	/** @type {!number} */
+	var x;
+	/** @type {!number} */
+	var z;
+	sin = Math.sin(rad);
+	cos = Math.cos(rad);
+	x = this.x * cos + this.z * sin;
+	z = this.z * cos - this.x * sin;
+	this.x = x;
+	this.z = z;
+	return this;
+};
+
+/**
+ * @param {!number} rad
+ * @return {Vector}
+ */
+Vector.prototype.rotateZ$N = function (rad) {
+	/** @type {!number} */
+	var sin;
+	/** @type {!number} */
+	var cos;
+	sin = Math.sin(rad);
+	cos = Math.cos(rad);
+	return new Vector$NNN(this.x * cos - this.y * sin, this.y * cos + this.z * sin, this.z);
+};
+
+/**
+ * @param {!number} rad
+ * @return {Vector}
+ */
+Vector.prototype.rotateZSelf$N = function (rad) {
+	/** @type {!number} */
+	var sin;
+	/** @type {!number} */
+	var cos;
+	/** @type {!number} */
+	var x;
+	/** @type {!number} */
+	var y;
+	sin = Math.sin(rad);
+	cos = Math.cos(rad);
+	x = this.x * cos - this.y * sin;
+	y = this.y * cos + this.z * sin;
+	this.x = x;
+	this.y = y;
+	return this;
+};
+
+/**
+ * @param {Matrix} m
+ * @return {Vector}
+ */
+Vector.prototype.transform$LMatrix$ = function (m) {
+	/** @type {!number} */
+	var x;
+	/** @type {!number} */
+	var y;
+	/** @type {!number} */
+	var z;
+	/** @type {!number} */
+	var w;
+	x = m._m11 * this.x + m._m12 * this.y + m._m13 * this.z + m._m14 * this.w;
+	y = m._m21 * this.x + m._m22 * this.y + m._m23 * this.z + m._m24 * this.w;
+	z = m._m31 * this.x + m._m32 * this.y + m._m33 * this.z + m._m34 * this.w;
+	w = m._m41 * this.x + m._m42 * this.y + m._m43 * this.z + m._m44 * this.w;
+	return new Vector$NNNN(x, y, z, w);
+};
+
+/**
+ * @param {Matrix} m
+ * @return {Vector}
+ */
+Vector.prototype.transformSelf$LMatrix$ = function (m) {
+	/** @type {!number} */
+	var x;
+	/** @type {!number} */
+	var y;
+	/** @type {!number} */
+	var z;
+	/** @type {!number} */
+	var w;
+	x = m._m11 * this.x + m._m12 * this.y + m._m13 * this.z + m._m14 * this.w;
+	y = m._m21 * this.x + m._m22 * this.y + m._m23 * this.z + m._m24 * this.w;
+	z = m._m31 * this.x + m._m32 * this.y + m._m33 * this.z + m._m34 * this.w;
+	w = m._m41 * this.x + m._m42 * this.y + m._m43 * this.z + m._m44 * this.w;
+	this.x = x / w;
+	this.y = y / w;
+	this.z = z / w;
+	this.w = 1;
+	return this;
+};
+
+/**
+ * @return {!string}
+ */
+Vector.prototype.toString = function () {
+	var $this = this;
+	var fix;
+	fix = (function (value) {
+		/** @type {!string} */
+		var str;
+		/** @type {!number} */
+		var len;
+		/** @type {!number} */
+		var i;
+		str = value.toFixed(1);
+		len = str.length;
+		for (i = 0; i < 8 - len; i++) {
+			str = ' ' + str;
+		}
+		return str;
+	});
+	return '(' + fix(this.x) + ',' + fix(this.y) + ',' + fix(this.z) + ',' + fix(this.w) + ')';
+};
+
+/**
+ * class Matrix extends Object
+ * @constructor
+ */
+function Matrix() {
+}
+
+Matrix.prototype = new Object;
+/**
+ * @constructor
+ */
+function Matrix$() {
+	this._m11 = 1;
+	this._m12 = 0;
+	this._m13 = 0;
+	this._m14 = 0;
+	this._m21 = 0;
+	this._m22 = 1;
+	this._m23 = 0;
+	this._m24 = 0;
+	this._m31 = 0;
+	this._m32 = 0;
+	this._m33 = 1;
+	this._m34 = 0;
+	this._m41 = 0;
+	this._m42 = 0;
+	this._m43 = 0;
+	this._m44 = 1;
+};
+
+Matrix$.prototype = new Matrix;
+
+/**
+ * @constructor
+ * @param {Array.<undefined|!number>} m
+ */
+function Matrix$AN(m) {
+	this._m11 = (function (v) {
+		if (! (v != null)) {
+			debugger;
+			throw new Error("[jsx/matrix.jsx:46] null access");
+		}
+		return v;
+	}(m[0]));
+	this._m12 = (function (v) {
+		if (! (v != null)) {
+			debugger;
+			throw new Error("[jsx/matrix.jsx:47] null access");
+		}
+		return v;
+	}(m[1]));
+	this._m13 = (function (v) {
+		if (! (v != null)) {
+			debugger;
+			throw new Error("[jsx/matrix.jsx:48] null access");
+		}
+		return v;
+	}(m[2]));
+	this._m14 = (function (v) {
+		if (! (v != null)) {
+			debugger;
+			throw new Error("[jsx/matrix.jsx:49] null access");
+		}
+		return v;
+	}(m[3]));
+	this._m21 = (function (v) {
+		if (! (v != null)) {
+			debugger;
+			throw new Error("[jsx/matrix.jsx:50] null access");
+		}
+		return v;
+	}(m[4]));
+	this._m22 = (function (v) {
+		if (! (v != null)) {
+			debugger;
+			throw new Error("[jsx/matrix.jsx:51] null access");
+		}
+		return v;
+	}(m[5]));
+	this._m23 = (function (v) {
+		if (! (v != null)) {
+			debugger;
+			throw new Error("[jsx/matrix.jsx:52] null access");
+		}
+		return v;
+	}(m[6]));
+	this._m24 = (function (v) {
+		if (! (v != null)) {
+			debugger;
+			throw new Error("[jsx/matrix.jsx:53] null access");
+		}
+		return v;
+	}(m[7]));
+	this._m31 = (function (v) {
+		if (! (v != null)) {
+			debugger;
+			throw new Error("[jsx/matrix.jsx:54] null access");
+		}
+		return v;
+	}(m[8]));
+	this._m32 = (function (v) {
+		if (! (v != null)) {
+			debugger;
+			throw new Error("[jsx/matrix.jsx:55] null access");
+		}
+		return v;
+	}(m[9]));
+	this._m33 = (function (v) {
+		if (! (v != null)) {
+			debugger;
+			throw new Error("[jsx/matrix.jsx:56] null access");
+		}
+		return v;
+	}(m[10]));
+	this._m34 = (function (v) {
+		if (! (v != null)) {
+			debugger;
+			throw new Error("[jsx/matrix.jsx:57] null access");
+		}
+		return v;
+	}(m[11]));
+	this._m41 = (function (v) {
+		if (! (v != null)) {
+			debugger;
+			throw new Error("[jsx/matrix.jsx:58] null access");
+		}
+		return v;
+	}(m[12]));
+	this._m42 = (function (v) {
+		if (! (v != null)) {
+			debugger;
+			throw new Error("[jsx/matrix.jsx:59] null access");
+		}
+		return v;
+	}(m[13]));
+	this._m43 = (function (v) {
+		if (! (v != null)) {
+			debugger;
+			throw new Error("[jsx/matrix.jsx:60] null access");
+		}
+		return v;
+	}(m[14]));
+	this._m44 = (function (v) {
+		if (! (v != null)) {
+			debugger;
+			throw new Error("[jsx/matrix.jsx:61] null access");
+		}
+		return v;
+	}(m[15]));
+};
+
+Matrix$AN.prototype = new Matrix;
+
+/**
+ * @return {Matrix}
+ */
+Matrix.prototype.copy$ = function () {
+	return new Matrix$AN([ this._m11, this._m12, this._m13, this._m14, this._m21, this._m22, this._m23, this._m24, this._m31, this._m32, this._m33, this._m34, this._m41, this._m42, this._m43, this._m44 ]);
+};
+
+/**
+ * @param {Vector} v
+ * @return {Matrix}
+ */
+Matrix.translating$LVector$ = function (v) {
+	return Matrix$translating$NNN(v.x, v.y, v.z);
+};
+
+var Matrix$translating$LVector$ = Matrix.translating$LVector$;
+
+/**
+ * @param {!number} x
+ * @param {!number} y
+ * @param {!number} z
+ * @return {Matrix}
+ */
+Matrix.translating$NNN = function (x, y, z) {
+	return new Matrix$AN([ 1, 0, 0, x, 0, 1, 0, y, 0, 0, 1, z, 0, 0, 0, 1 ]);
+};
+
+var Matrix$translating$NNN = Matrix.translating$NNN;
+
+/**
+ * @param {!number} rad
+ * @return {Matrix}
+ */
+Matrix.rotatingX$N = function (rad) {
+	/** @type {!number} */
+	var sin;
+	/** @type {!number} */
+	var cos;
+	sin = Math.sin(rad);
+	cos = Math.cos(rad);
+	return new Matrix$AN([ 1, 0, 0, 0, 0, cos, - sin, 0, 0, sin, cos, 0, 0, 0, 0, 1 ]);
+};
+
+var Matrix$rotatingX$N = Matrix.rotatingX$N;
+
+/**
+ * @param {!number} rad
+ * @return {Matrix}
+ */
+Matrix.rotatingY$N = function (rad) {
+	/** @type {!number} */
+	var sin;
+	/** @type {!number} */
+	var cos;
+	sin = Math.sin(rad);
+	cos = Math.cos(rad);
+	return new Matrix$AN([ cos, 0, sin, 0, 0, 1, 0, 0, - sin, 0, cos, 0, 0, 0, 0, 1 ]);
+};
+
+var Matrix$rotatingY$N = Matrix.rotatingY$N;
+
+/**
+ * @param {!number} rad
+ * @return {Matrix}
+ */
+Matrix.rotatingZ$N = function (rad) {
+	/** @type {!number} */
+	var sin;
+	/** @type {!number} */
+	var cos;
+	sin = Math.sin(rad);
+	cos = Math.cos(rad);
+	return new Matrix$AN([ cos, - sin, 0, 0, sin, cos, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1 ]);
+};
+
+var Matrix$rotatingZ$N = Matrix.rotatingZ$N;
+
+/**
+ * @param {!number} x
+ * @param {!number} y
+ * @param {!number} z
+ * @return {Matrix}
+ */
+Matrix.scaling$NNN = function (x, y, z) {
+	return new Matrix$AN([ x, 0, 0, 0, 0, y, 0, 0, 0, 0, z, 0, 0, 0, 0, 1 ]);
+};
+
+var Matrix$scaling$NNN = Matrix.scaling$NNN;
+
+/**
+ * @param {Vector} other
+ * @return {Vector}
+ */
+Matrix.prototype.mul$LVector$ = function (other) {
+	/** @type {!number} */
+	var x;
+	/** @type {!number} */
+	var y;
+	/** @type {!number} */
+	var z;
+	/** @type {!number} */
+	var w;
+	x = this._m11 * other.x + this._m12 * other.y + this._m13 * other.z + this._m14 * other.w;
+	y = this._m21 * other.x + this._m22 * other.y + this._m23 * other.z + this._m24 * other.w;
+	z = this._m31 * other.x + this._m32 * other.y + this._m33 * other.z + this._m34 * other.w;
+	w = this._m41 * other.x + this._m42 * other.y + this._m43 * other.z + this._m44 * other.w;
+	return new Vector$NNNN(x, y, z, w);
+};
+
+/**
+ * @param {Matrix} other
+ * @return {Matrix}
+ */
+Matrix.prototype.compose$LMatrix$ = function (other) {
+	/** @type {!number} */
+	var m11;
+	/** @type {!number} */
+	var m12;
+	/** @type {!number} */
+	var m13;
+	/** @type {!number} */
+	var m14;
+	/** @type {!number} */
+	var m21;
+	/** @type {!number} */
+	var m22;
+	/** @type {!number} */
+	var m23;
+	/** @type {!number} */
+	var m24;
+	/** @type {!number} */
+	var m31;
+	/** @type {!number} */
+	var m32;
+	/** @type {!number} */
+	var m33;
+	/** @type {!number} */
+	var m34;
+	/** @type {!number} */
+	var m41;
+	/** @type {!number} */
+	var m42;
+	/** @type {!number} */
+	var m43;
+	/** @type {!number} */
+	var m44;
+	m11 = this._m11 * other._m11 + this._m12 * other._m21 + this._m13 * other._m31 + this._m14 * other._m41;
+	m12 = this._m11 * other._m12 + this._m12 * other._m22 + this._m13 * other._m32 + this._m14 * other._m42;
+	m13 = this._m11 * other._m13 + this._m12 * other._m23 + this._m13 * other._m33 + this._m14 * other._m43;
+	m14 = this._m11 * other._m14 + this._m12 * other._m24 + this._m13 * other._m34 + this._m14 * other._m44;
+	m21 = this._m21 * other._m11 + this._m22 * other._m21 + this._m23 * other._m31 + this._m24 * other._m41;
+	m22 = this._m21 * other._m12 + this._m22 * other._m22 + this._m23 * other._m32 + this._m24 * other._m42;
+	m23 = this._m21 * other._m13 + this._m22 * other._m23 + this._m23 * other._m33 + this._m24 * other._m43;
+	m24 = this._m21 * other._m14 + this._m22 * other._m24 + this._m23 * other._m34 + this._m24 * other._m44;
+	m31 = this._m31 * other._m11 + this._m32 * other._m21 + this._m33 * other._m31 + this._m34 * other._m41;
+	m32 = this._m31 * other._m12 + this._m32 * other._m22 + this._m33 * other._m32 + this._m34 * other._m42;
+	m33 = this._m31 * other._m13 + this._m32 * other._m23 + this._m33 * other._m33 + this._m34 * other._m43;
+	m34 = this._m31 * other._m14 + this._m32 * other._m24 + this._m33 * other._m34 + this._m34 * other._m44;
+	m41 = this._m41 * other._m11 + this._m42 * other._m21 + this._m43 * other._m31 + this._m44 * other._m41;
+	m42 = this._m41 * other._m12 + this._m42 * other._m22 + this._m43 * other._m32 + this._m44 * other._m42;
+	m43 = this._m41 * other._m13 + this._m42 * other._m23 + this._m43 * other._m33 + this._m44 * other._m43;
+	m44 = this._m41 * other._m14 + this._m42 * other._m24 + this._m43 * other._m34 + this._m44 * other._m44;
+	return new Matrix$AN([ m11, m12, m13, m14, m21, m22, m23, m24, m31, m32, m33, m34, m41, m42, m43, m44 ]);
+};
+
+/**
+ * @param {Matrix} other
+ * @return {Matrix}
+ */
+Matrix.prototype.composeSelf$LMatrix$ = function (other) {
+	/** @type {!number} */
+	var m11;
+	/** @type {!number} */
+	var m12;
+	/** @type {!number} */
+	var m13;
+	/** @type {!number} */
+	var m14;
+	/** @type {!number} */
+	var m21;
+	/** @type {!number} */
+	var m22;
+	/** @type {!number} */
+	var m23;
+	/** @type {!number} */
+	var m24;
+	/** @type {!number} */
+	var m31;
+	/** @type {!number} */
+	var m32;
+	/** @type {!number} */
+	var m33;
+	/** @type {!number} */
+	var m34;
+	/** @type {!number} */
+	var m41;
+	/** @type {!number} */
+	var m42;
+	/** @type {!number} */
+	var m43;
+	/** @type {!number} */
+	var m44;
+	m11 = this._m11;
+	m12 = this._m12;
+	m13 = this._m13;
+	m14 = this._m14;
+	m21 = this._m21;
+	m22 = this._m22;
+	m23 = this._m23;
+	m24 = this._m24;
+	m31 = this._m31;
+	m32 = this._m32;
+	m33 = this._m33;
+	m34 = this._m34;
+	m41 = this._m41;
+	m42 = this._m42;
+	m43 = this._m43;
+	m44 = this._m44;
+	this._m11 = m11 * other._m11 + m12 * other._m21 + m13 * other._m31 + m14 * other._m41;
+	this._m12 = m11 * other._m12 + m12 * other._m22 + m13 * other._m32 + m14 * other._m42;
+	this._m13 = m11 * other._m13 + m12 * other._m23 + m13 * other._m33 + m14 * other._m43;
+	this._m14 = m11 * other._m14 + m12 * other._m24 + m13 * other._m34 + m14 * other._m44;
+	this._m21 = m21 * other._m11 + m22 * other._m21 + m23 * other._m31 + m24 * other._m41;
+	this._m22 = m21 * other._m12 + m22 * other._m22 + m23 * other._m32 + m24 * other._m42;
+	this._m23 = m21 * other._m13 + m22 * other._m23 + m23 * other._m33 + m24 * other._m43;
+	this._m24 = m21 * other._m14 + m22 * other._m24 + m23 * other._m34 + m24 * other._m44;
+	this._m31 = m31 * other._m11 + m32 * other._m21 + m33 * other._m31 + m34 * other._m41;
+	this._m32 = m31 * other._m12 + m32 * other._m22 + m33 * other._m32 + m34 * other._m42;
+	this._m33 = m31 * other._m13 + m32 * other._m23 + m33 * other._m33 + m34 * other._m43;
+	this._m34 = m31 * other._m14 + m32 * other._m24 + m33 * other._m34 + m34 * other._m44;
+	this._m41 = m41 * other._m11 + m42 * other._m21 + m43 * other._m31 + m44 * other._m41;
+	this._m42 = m41 * other._m12 + m42 * other._m22 + m43 * other._m32 + m44 * other._m42;
+	this._m43 = m41 * other._m13 + m42 * other._m23 + m43 * other._m33 + m44 * other._m43;
+	this._m44 = m41 * other._m14 + m42 * other._m24 + m43 * other._m34 + m44 * other._m44;
+	return this;
+};
+
+/**
+ * @return {!string}
+ */
+Matrix.prototype.toString = function () {
+	var $this = this;
+	var fix;
+	/** @type {!string} */
+	var str;
+	fix = (function (val) {
+		/** @type {!string} */
+		var str;
+		/** @type {!number} */
+		var len;
+		/** @type {!number} */
+		var i;
+		str = val.toFixed(1);
+		len = str.length;
+		for (i = 0; i < 8 - len; i++) {
+			str = ' ' + str;
+		}
+		return str;
+	});
+	str = '';
+	str += '|' + fix(this._m11) + ',' + fix(this._m12) + ',' + fix(this._m13) + ',' + fix(this._m14) + '|\n';
+	str += '|' + fix(this._m21) + ',' + fix(this._m22) + ',' + fix(this._m23) + ',' + fix(this._m24) + '|\n';
+	str += '|' + fix(this._m31) + ',' + fix(this._m32) + ',' + fix(this._m33) + ',' + fix(this._m34) + '|\n';
+	str += '|' + fix(this._m41) + ',' + fix(this._m42) + ',' + fix(this._m43) + ',' + fix(this._m44) + '|\n';
+	return str;
+};
+
+/**
+ * @return {Matrix}
+ */
+Matrix.prototype.invert$ = function () {
+	/** @type {!number} */
+	var i;
+	/** @type {!number} */
+	var j;
+	/** @type {!number} */
+	var k;
+	/** @type {Array.<undefined|!number>} */
+	var mat;
+	/** @type {Array.<undefined|!number>} */
+	var inv;
+	/** @type {undefined|!number} */
+	var e;
+	/** @type {undefined|!number} */
+	var s;
+	/** @type {undefined|!number} */
+	var t;
+	mat = [ this._m11, this._m12, this._m13, this._m14, this._m21, this._m22, this._m23, this._m24, this._m31, this._m32, this._m33, this._m34, this._m41, this._m42, this._m43, this._m44 ];
+	inv = [ 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1 ];
+	for (i = 0; i < 4 - 1; i++) {
+		e = mat[i * 4 + i];
+		for (j = 0; j < 4; j++) {
+			mat[i * 4 + j] = (function (v) {
+				if (! (v != null)) {
+					debugger;
+					throw new Error("[jsx/matrix.jsx:247] null access");
+				}
+				return v;
+			}(mat[i * 4 + j])) / (function (v) {
+				if (! (v != null)) {
+					debugger;
+					throw new Error("[jsx/matrix.jsx:247] null access");
+				}
+				return v;
+			}(e));
+			inv[i * 4 + j] = (function (v) {
+				if (! (v != null)) {
+					debugger;
+					throw new Error("[jsx/matrix.jsx:248] null access");
+				}
+				return v;
+			}(inv[i * 4 + j])) / (function (v) {
+				if (! (v != null)) {
+					debugger;
+					throw new Error("[jsx/matrix.jsx:248] null access");
+				}
+				return v;
+			}(e));
+		}
+		for (j = i + 1; j < 4; j++) {
+			s = mat[j * 4 + i];
+			for (k = 0; k < 4; k++) {
+				mat[j * 4 + k] -= (function (v) {
+					if (! (v != null)) {
+						debugger;
+						throw new Error("[jsx/matrix.jsx:253] null access");
+					}
+					return v;
+				}(mat[i * 4 + k])) * (function (v) {
+					if (! (v != null)) {
+						debugger;
+						throw new Error("[jsx/matrix.jsx:253] null access");
+					}
+					return v;
+				}(s));
+				inv[j * 4 + k] -= (function (v) {
+					if (! (v != null)) {
+						debugger;
+						throw new Error("[jsx/matrix.jsx:254] null access");
+					}
+					return v;
+				}(inv[i * 4 + k])) * (function (v) {
+					if (! (v != null)) {
+						debugger;
+						throw new Error("[jsx/matrix.jsx:254] null access");
+					}
+					return v;
+				}(s));
+			}
+		}
+	}
+	for (i = 3; i > 0; i--) {
+		for (j = i - 1; j >= 0; j--) {
+			t = mat[j * 4 + i];
+			for (k = 0; k < 4; k++) {
+				mat[j * 4 + k] -= (function (v) {
+					if (! (v != null)) {
+						debugger;
+						throw new Error("[jsx/matrix.jsx:264] null access");
+					}
+					return v;
+				}(mat[i * 4 + k])) * (function (v) {
+					if (! (v != null)) {
+						debugger;
+						throw new Error("[jsx/matrix.jsx:264] null access");
+					}
+					return v;
+				}(t));
+				inv[j * 4 + k] -= (function (v) {
+					if (! (v != null)) {
+						debugger;
+						throw new Error("[jsx/matrix.jsx:265] null access");
+					}
+					return v;
+				}(inv[i * 4 + k])) * (function (v) {
+					if (! (v != null)) {
+						debugger;
+						throw new Error("[jsx/matrix.jsx:265] null access");
+					}
+					return v;
+				}(t));
+			}
+		}
+	}
+	return new Matrix$AN(inv);
+};
+
+/**
+ * class Quaternion extends Object
+ * @constructor
+ */
+function Quaternion() {
+}
+
+Quaternion.prototype = new Object;
+/**
+ * @constructor
+ * @param {!number} t
+ * @param {Vector} v
+ */
+function Quaternion$NLVector$(t, v) {
+	this.t = t;
+	this.x = v.x;
+	this.y = v.y;
+	this.z = v.z;
+};
+
+Quaternion$NLVector$.prototype = new Quaternion;
+
+/**
+ * @constructor
+ * @param {Vector} v
+ */
+function Quaternion$LVector$(v) {
+	this.t = 0;
+	this.x = v.x;
+	this.y = v.y;
+	this.z = v.z;
+};
+
+Quaternion$LVector$.prototype = new Quaternion;
+
+/**
+ * @constructor
+ * @param {!number} t
+ * @param {!number} x
+ * @param {!number} y
+ * @param {!number} z
+ */
+function Quaternion$NNNN(t, x, y, z) {
+	this.t = t;
+	this.x = x;
+	this.y = y;
+	this.z = z;
+};
+
+Quaternion$NNNN.prototype = new Quaternion;
+
+/**
+ * @return {Quaternion}
+ */
+Quaternion.prototype.copy$ = function () {
+	return new Quaternion$NNNN(this.t, this.x, this.y, this.z);
+};
+
+/**
+ * @param {Quaternion} other
+ * @return {Quaternion}
+ */
+Quaternion.prototype.mul$LQuaternion$ = function (other) {
+	return this.copy$().mulSelf$LQuaternion$(other);
+};
+
+/**
+ * @param {Quaternion} other
+ * @return {Quaternion}
+ */
+Quaternion.prototype.mulSelf$LQuaternion$ = function (other) {
+	/** @type {Quaternion} */
+	var a;
+	/** @type {Quaternion} */
+	var b;
+	/** @type {!number} */
+	var t;
+	/** @type {!number} */
+	var x;
+	/** @type {!number} */
+	var y;
+	/** @type {!number} */
+	var z;
+	a = this;
+	b = other;
+	t = a.t * b.t - (a.x * b.x + a.y * b.y + a.z * b.z);
+	x = a.t * b.x + b.t * a.x + (a.y * b.z - a.z * b.y);
+	y = a.t * b.y + b.t * a.y + (a.z * b.x - a.x * b.z);
+	z = a.t * b.z + b.t * a.z + (a.x * b.y - a.y * b.x);
+	this.t = t;
+	this.x = x;
+	this.y = y;
+	this.z = z;
+	return this;
+};
+
+/**
+ * @return {Matrix}
+ */
+Quaternion.prototype.toMatrix$ = function () {
+	/** @type {!number} */
+	var x2;
+	/** @type {!number} */
+	var y2;
+	/** @type {!number} */
+	var z2;
+	/** @type {!number} */
+	var xy;
+	/** @type {!number} */
+	var zx;
+	/** @type {!number} */
+	var yz;
+	/** @type {!number} */
+	var xt;
+	/** @type {!number} */
+	var yt;
+	/** @type {!number} */
+	var zt;
+	x2 = 2 * this.x * this.x;
+	y2 = 2 * this.y * this.y;
+	z2 = 2 * this.z * this.z;
+	xy = 2 * this.x * this.y;
+	zx = 2 * this.x * this.z;
+	yz = 2 * this.y * this.z;
+	xt = 2 * this.x * this.t;
+	yt = 2 * this.y * this.t;
+	zt = 2 * this.z * this.t;
+	return new Matrix$AN([ 1 - y2 - z2, xy + zt, zx - yt, 0, xy - zt, 1 - x2 - z2, yz + xt, 0, zx + yt, yz - xt, 1 - x2 - y2, 0, 0, 0, 0, 1 ]);
+};
+
+/**
+ * @return {!string}
+ */
+Quaternion.prototype.toString = function () {
+	/** @type {!string} */
+	var x;
+	/** @type {!string} */
+	var y;
+	/** @type {!string} */
+	var z;
+	/** @type {!string} */
+	var t;
+	x = this.x.toFixed(3);
+	y = this.y.toFixed(3);
+	z = this.z.toFixed(3);
+	t = this.t.toFixed(3);
+	return t + ' : (' + x + ', ' + y + ', ' + z + ', ' + ')';
+};
+
+/**
+ * @param {!number} rad
+ * @param {!number} x
+ * @param {!number} y
+ * @param {!number} z
+ * @return {Quaternion}
+ */
+Quaternion.rotating$NNNN = function (rad, x, y, z) {
+	/** @type {!number} */
+	var cos;
+	/** @type {!number} */
+	var sin;
+	cos = Math.cos(rad / 2);
+	sin = Math.sin(rad / 2);
+	return new Quaternion$NNNN(cos, x * sin, y * sin, z * sin);
+};
+
+var Quaternion$rotating$NNNN = Quaternion.rotating$NNNN;
+
+/**
+ * @param {!number} rad
+ * @param {Vector} v
+ * @return {Quaternion}
+ */
+Quaternion.rotating$NLVector$ = function (rad, v) {
+	return Quaternion$rotating$NNNN(rad, v.x, v.y, v.z);
+};
+
+var Quaternion$rotating$NLVector$ = Quaternion.rotating$NLVector$;
+
+/**
+ * @param {Vector} src
+ * @param {Vector} axis
+ * @param {!number} rad
+ * @return {Vector}
+ */
+Quaternion.rotate$LVector$LVector$N = function (src, axis, rad) {
+	/** @type {!number} */
+	var cos;
+	/** @type {!number} */
+	var sin;
+	/** @type {Quaternion} */
+	var p;
+	/** @type {Quaternion} */
+	var q;
+	/** @type {Quaternion} */
+	var r;
+	/** @type {Quaternion} */
+	var s;
+	cos = Math.cos(rad / 2);
+	sin = Math.sin(rad / 2);
+	p = new Quaternion$LVector$(src);
+	q = new Quaternion$NNNN(cos, axis.x * sin, axis.y * sin, axis.z * sin);
+	r = new Quaternion$NNNN(cos, - axis.x * sin, - axis.y * sin, - axis.z * sin);
+	s = r.mulSelf$LQuaternion$(p).mulSelf$LQuaternion$(q);
+	return new Vector$NNN(s.x, s.y, s.z);
+};
+
+var Quaternion$rotate$LVector$LVector$N = Quaternion.rotate$LVector$LVector$N;
+
+/**
+ * class Engine extends Object
+ * @constructor
+ */
+function Engine() {
+}
+
+Engine.prototype = new Object;
+/**
+ * @constructor
+ * @param {!string} canvasId
+ */
+function Engine$S(canvasId) {
+	/** @type {HTMLCanvasElement} */
+	var canvas;
+	/** @type {Vector} */
+	var viewPosition;
+	/** @type {Vector} */
+	var targetPosition;
+	/** @type {Vector} */
+	var upperVector;
+	/** @type {!number} */
+	var fovyX;
+	/** @type {!number} */
+	var nearZ;
+	/** @type {!number} */
+	var farZ;
+	/** @type {!number} */
+	var aspectRatio;
+	this.camera = null;
+	this.screenMatrix = null;
+	this.onUpdate = null;
+	this.onRender = null;
+	this._skyImageSrc = null;
+	this._skyImage = null;
+	this._isMobile = /iPhone/.test(dom.window.navigator.userAgent);
+	canvas = (function (o) { return o instanceof HTMLCanvasElement ? o : null; })(dom$id$S(canvasId));
+	this.context = (function (o) { return o instanceof CanvasRenderingContext2D ? o : null; })(canvas.getContext('2d'));
+	this._width = canvas.width;
+	this._height = canvas.height;
+	this.setScreenMatrix$NN(this._width, this._height);
+	this._skyImageSrc = null;
+	this._skyImage = null;
+	viewPosition = new Vector$NNN(0, 0, - 90);
+	targetPosition = new Vector$NNN(0, 0, 0);
+	upperVector = new Vector$NNN(0, 1, 0);
+	fovyX = Math.PI / 3;
+	nearZ = 0;
+	farZ = 500;
+	aspectRatio = this._height / this._width;
+	this.camera = new Camera$LVector$LVector$LVector$NNNN(viewPosition, targetPosition, upperVector, fovyX, nearZ, farZ, aspectRatio);
+	this.updateMatrix$();
+};
+
+Engine$S.prototype = new Engine;
+
+/**
+ * @return {!boolean}
+ */
+Engine.prototype.isMobile$ = function () {
+	return this._isMobile;
+};
+
+/**
+ * @param {Array.<undefined|!string>} srcs
+ */
+Engine.loadImages$AS = function (srcs) {
+	/** @type {HTMLCanvasElement} */
+	var canvas;
+	/** @type {CanvasRenderingContext2D} */
+	var context;
+	var setOnload;
+	/** @type {!number} */
+	var i;
+	/** @type {undefined|!string} */
+	var src;
+	/** @type {HTMLImageElement} */
+	var image;
+	canvas = (function (o) { return o instanceof HTMLCanvasElement ? o : null; })(dom$id$S('tmp_canvas'));
+	context = (function (o) { return o instanceof CanvasRenderingContext2D ? o : null; })(canvas.getContext('2d'));
+	setOnload = (function (src) {
+		Engine.images[src].onload = (function (e) {
+			/** @type {HTMLImageElement} */
+			var image;
+			image = Engine.images[src];
+			Engine.isLoadedImage[src] = true;
+			context.drawImage(image, 0, 0);
+			Engine.imageDatas[src] = context.getImageData(0, 0, image.width, image.height);
+		});
+	});
+	for (i = 0; i < srcs.length; i++) {
+		src = srcs[i];
+		image = (function (o) { return o instanceof HTMLImageElement ? o : null; })(dom$createElement$S('img'));
+		image.src = (function (v) {
+			if (! (v != null)) {
+				debugger;
+				throw new Error("[jsx/engine.jsx:106] null access");
+			}
+			return v;
+		}(src));
+		Engine.isLoadedImage[src] = false;
+		Engine.images[src] = image;
+		setOnload((function (v) {
+			if (! (v != null)) {
+				debugger;
+				throw new Error("[jsx/engine.jsx:109] null access");
+			}
+			return v;
+		}(src)));
+	}
+};
+
+var Engine$loadImages$AS = Engine.loadImages$AS;
+
+/**
+ * @param {!string} src
+ */
+Engine.prototype.setSkyImage$S = function (src) {
+	this._skyImageSrc = src;
+	this._skyImage = Engine.images[src];
+};
+
+/**
+ */
+Engine.prototype.start$ = function () {
+	var $this = this;
+	/** @type {FpsManager} */
+	var fpsManager;
+	var update;
+	fpsManager = new FpsManager$S('fps');
+	fpsManager.start$();
+	update = (function () {
+		/** @type {!number} */
+		var lap;
+		/** @type {Context3D} */
+		var context;
+		fpsManager.update$();
+		lap = fpsManager.lastLap$();
+		$this.onUpdate(lap);
+		context = new Context3D$LCamera$($this.camera);
+		if ($this._skyImage && Engine.isLoadedImage[$this._skyImageSrc]) {
+			$this.context.fillStyle = '#' + context.backgroundColor.toHexString$();
+			$this.context.fillRect(0, 0, $this._width, $this._height);
+			$this.renderSkyImage$();
+		} else {
+			$this.context.fillStyle = '#' + context.backgroundColor.toHexString$();
+			$this.context.fillRect(0, 0, $this._width, $this._height);
+		}
+		$this.onRender(context, lap);
+		context.modelList5.forEach$F$LRenderable$V$((function (model) {
+			model.draw$LEngine$($this);
+		}));
+		context.modelList4.forEach$F$LRenderable$V$((function (model) {
+			model.draw$LEngine$($this);
+		}));
+		context.modelList3.forEach$F$LRenderable$V$((function (model) {
+			model.draw$LEngine$($this);
+		}));
+		context.modelList2.forEach$F$LRenderable$V$((function (model) {
+			model.draw$LEngine$($this);
+		}));
+		context.modelList1.forEach$F$LRenderable$V$((function (model) {
+			model.draw$LEngine$($this);
+		}));
+		Timer$setTimeout$F$V$N(update, 0);
+	});
+	Timer$setTimeout$F$V$N((function () {
+		dom.window.scrollTo(0, 1);
+	}), 500);
+	Timer$setTimeout$F$V$N(update, 0);
+};
+
+/**
+ */
+Engine.prototype.renderSkyImage$ = function () {
+	/** @type {Vector} */
+	var lookingVec;
+	/** @type {!number} */
+	var x;
+	/** @type {!number} */
+	var y;
+	/** @type {!number} */
+	var z;
+	/** @type {!number} */
+	var horRad;
+	/** @type {!number} */
+	var verRad;
+	/** @type {!number} */
+	var imgWidth;
+	/** @type {!number} */
+	var imgHeight;
+	/** @type {!number} */
+	var iCenterX;
+	/** @type {!number} */
+	var iCenterY;
+	/** @type {!number} */
+	var iWidth;
+	/** @type {!number} */
+	var iHeight;
+	/** @type {!number} */
+	var sx;
+	/** @type {!number} */
+	var sy;
+	/** @type {!number} */
+	var sw;
+	/** @type {!number} */
+	var sh;
+	/** @type {!boolean} */
+	var overflowingRight;
+	/** @type {!boolean} */
+	var overflowingBelow;
+	/** @type {!number} */
+	var perHor;
+	/** @type {!number} */
+	var perVer;
+	/** @type {!number} */
+	var per;
+	lookingVec = this.camera.target.sub$LVector$(this.camera.view);
+	x = lookingVec.x;
+	y = - lookingVec.y;
+	z = lookingVec.z;
+	horRad = Math.atan2(x, z);
+	verRad = Math.atan2(y, Math.sqrt(x * x + z * z));
+	imgWidth = this._skyImage.width;
+	imgHeight = this._skyImage.height;
+	iCenterX = (horRad / Math.PI / 2 + 0.5) * imgWidth;
+	iCenterY = (verRad / Math.PI + 0.5) * imgHeight;
+	iWidth = this.camera.fovyX / Math.PI / 2 * imgWidth;
+	iHeight = iWidth * this.camera.aspectRatio;
+	sx = iCenterX - iWidth / 2;
+	sy = iCenterY - iHeight / 2;
+	if (sx < 0) {
+		sx += imgWidth;
+	}
+	if (sy < 0) {
+		sy += imgHeight;
+	}
+	sw = iWidth;
+	sh = iHeight;
+	overflowingRight = sx + sw >= imgWidth;
+	overflowingBelow = sy + sh >= imgHeight;
+	if (overflowingRight && overflowingBelow) {
+		perHor = (imgWidth - sx) / sw;
+		perVer = (imgHeight - sy) / sh;
+		this.context.drawImage(this._skyImage, ~ ~ sx, ~ ~ sy, ~ ~ (imgWidth - sx), ~ ~ (imgHeight - sy), 0, 0, ~ ~ (this._width * perHor), ~ ~ (this._height * perVer));
+		if (~ ~ (sx + sw - imgWidth) !== 0) {
+			this.context.drawImage(this._skyImage, 0, ~ ~ sy, ~ ~ (sx + sw - imgWidth), ~ ~ (imgHeight - sy), ~ ~ (this._width * perHor), 0, ~ ~ (this._width * (1 - perHor)), ~ ~ (this._height * perVer));
+		}
+	} else {
+		if (overflowingRight) {
+			per = (imgWidth - sx) / sw;
+			if (~ ~ (imgWidth - sx) !== 0 && ~ ~ (this._width * per) !== 0) {
+				this.context.drawImage(this._skyImage, ~ ~ sx, ~ ~ sy, ~ ~ (imgWidth - sx), ~ ~ sh, 0, 0, ~ ~ (this._width * per), this._height);
+			}
+			if (~ ~ (sx + sw - imgWidth) !== 0 && ~ ~ (this._width * (1 - per)) !== 0) {
+				this.context.drawImage(this._skyImage, 0, ~ ~ sy, ~ ~ (sx + sw - imgWidth), ~ ~ sh, ~ ~ (this._width * per), 0, ~ ~ (this._width * (1 - per)), this._height);
+			}
+		} else {
+			if (overflowingBelow) {
+				per = (imgHeight - sy) / sh;
+				this.context.drawImage(this._skyImage, ~ ~ sx, ~ ~ sy, ~ ~ sw, ~ ~ (imgHeight - sy), 0, 0, this._width, ~ ~ (this._height * per));
+			} else {
+				this.context.drawImage(this._skyImage, ~ ~ sx, ~ ~ sy, ~ ~ sw, ~ ~ sh, 0, 0, this._width, this._height);
+			}
+		}
+	}
+};
+
+/**
+ * @param {!number} width
+ * @param {!number} height
+ */
+Engine.prototype.setScreenMatrix$NN = function (width, height) {
+	this.screenMatrix = Matrix$translating$NNN(width / 2, height / 2, 0).composeSelf$LMatrix$(Matrix$scaling$NNN(width / 2, - height / 2, 1));
+};
+
+/**
+ */
+Engine.prototype.updateMatrix$ = function () {
+	this.camera.updateMatrix$();
+};
+
+/**
+ * class Context3D extends Object
+ * @constructor
+ */
+function Context3D() {
+}
+
+Context3D.prototype = new Object;
+/**
+ * @constructor
+ * @param {Camera} camera
+ */
+function Context3D$LCamera$(camera) {
+	this._polygonList = null;
+	this._groupCenter = null;
+	this._ignoringZHidden = false;
+	this._worldMatrix = new Matrix$();
+	this._matrixStack = new List$Matrix$E$();
+	this.camera = camera;
+	this._depth = 3;
+	this.modelList1 = new List$Renderable$E$();
+	this.modelList2 = new List$Renderable$E$();
+	this.modelList3 = new List$Renderable$E$();
+	this.modelList4 = new List$Renderable$E$();
+	this.modelList5 = new List$Renderable$E$();
+	this.backgroundColor = new Color$III(90, 135, 158);
+};
+
+Context3D$LCamera$.prototype = new Context3D;
+
+/**
+ * @param {!number} depth
+ */
+Context3D.prototype.setDepth$I = function (depth) {
+	if (! (1 <= depth && depth <= 5)) {
+		debugger;
+		throw new Error("[jsx/engine.jsx:263] assertion failure");
+	}
+	this._depth = depth;
+};
+
+/**
+ * @return {!number}
+ */
+Context3D.prototype.getDepth$ = function () {
+	return this._depth;
+};
+
+/**
+ * @param {Color} color
+ */
+Context3D.prototype.setBackgroundColor$LColor$ = function (color) {
+	this.backgroundColor = color;
+};
+
+/**
+ */
+Context3D.prototype.pushMatrix$ = function () {
+	this._matrixStack.prepend$LMatrix$(this._worldMatrix.copy$());
+};
+
+/**
+ */
+Context3D.prototype.popMatrix$ = function () {
+	this._worldMatrix = this._matrixStack.removeFirst$();
+};
+
+/**
+ */
+Context3D.prototype.resetMatrix$ = function () {
+	this._worldMatrix = new Matrix$();
+};
+
+/**
+ * @param {!number} x
+ * @param {!number} y
+ * @param {!number} z
+ */
+Context3D.prototype.translate$NNN = function (x, y, z) {
+	this._worldMatrix.composeSelf$LMatrix$(Matrix$translating$NNN(x, y, z));
+};
+
+/**
+ * @param {!number} x
+ * @param {!number} y
+ * @param {!number} z
+ */
+Context3D.prototype.scale$NNN = function (x, y, z) {
+	this._worldMatrix.composeSelf$LMatrix$(Matrix$scaling$NNN(x, y, z));
+};
+
+/**
+ * @param {Quaternion} q
+ */
+Context3D.prototype.rotate$LQuaternion$ = function (q) {
+	this._worldMatrix.composeSelf$LMatrix$(q.toMatrix$());
+};
+
+/**
+ * @param {Vector} center
+ */
+Context3D.prototype.beginGroup$LVector$ = function (center) {
+	this.beginGroup$LVector$B(center, false);
+};
+
+/**
+ * @param {Vector} center
+ * @param {!boolean} ignoringZHidden
+ */
+Context3D.prototype.beginGroup$LVector$B = function (center, ignoringZHidden) {
+	this._polygonList = new List$Polygon$E$();
+	this._groupCenter = center;
+	this._ignoringZHidden = ignoringZHidden;
+};
+
+/**
+ * @param {Array.<undefined|Vector>} vertices
+ * @param {Color} color
+ */
+Context3D.prototype.renderPolygonGroup$ALVector$LColor$ = function (vertices, color) {
+	/** @type {Polygon} */
+	var polygon;
+	polygon = new Polygon$ALVector$LColor$(vertices, color);
+	polygon.applyWorldMatrix$LMatrix$(this._worldMatrix);
+	polygon.applyViewMatrix$LMatrix$(this.camera.viewMatrix);
+	if (polygon.isHidden$LCamera$(this.camera)) {
+		return;
+	}
+	this._polygonList.prepend$LPolygon$(polygon);
+};
+
+/**
+ */
+Context3D.prototype.endGroup$ = function () {
+	if (this._polygonList.length !== 0) {
+		this.renderModel$LRenderable$(new PolygonGroup$LList$Polygon$E$LVector$B(this._polygonList, this._groupCenter, this._ignoringZHidden));
+	}
+};
+
+/**
+ * @param {Array.<undefined|Vector>} vertices
+ * @param {Color} color
+ */
+Context3D.prototype.renderPolygon$ALVector$LColor$ = function (vertices, color) {
+	this.renderModel$LRenderable$(new Polygon$ALVector$LColor$(vertices, color));
+};
+
+/**
+ * @param {Vector} center
+ * @param {!number} width
+ * @param {!number} height
+ * @param {!string} src
+ */
+Context3D.prototype.renderBillboard$LVector$IIS = function (center, width, height, src) {
+	this.renderModel$LRenderable$(new Billboard$LVector$NNS(center, width, height, src));
+};
+
+/**
+ * @param {Array.<undefined|Vector>} vertices
+ * @param {!string} src
+ * @param {!number} maxHorDiv
+ * @param {!number} maxVerDiv
+ * @param {!number} maxDiv
+ * @param {!number} minDiv
+ */
+Context3D.prototype.renderTexture$ALVector$SIIII = function (vertices, src, maxHorDiv, maxVerDiv, maxDiv, minDiv) {
+	this.renderModel$LRenderable$(new SmoothTexture$ALVector$SIIII(vertices, src, maxHorDiv, maxVerDiv, maxDiv, minDiv));
+};
+
+/**
+ * @param {Array.<undefined|Vector>} vertices
+ * @param {!string} src
+ */
+Context3D.prototype.renderTexture$ALVector$S = function (vertices, src) {
+	this.renderModel$LRenderable$(new SmoothTexture$ALVector$S(vertices, src));
+};
+
+/**
+ * @param {Renderable} model
+ */
+Context3D.prototype.renderModel$LRenderable$ = function (model) {
+	model.applyWorldMatrix$LMatrix$(this._worldMatrix);
+	model.applyViewMatrix$LMatrix$(this.camera.viewMatrix);
+	if (model.isHidden$LCamera$(this.camera)) {
+		return;
+	}
+	switch (this._depth) {
+	case 1:
+		this.insertModelByZValue$LList$Renderable$E$LRenderable$(this.modelList1, model);
+		break;
+	case 2:
+		this.insertModelByZValue$LList$Renderable$E$LRenderable$(this.modelList2, model);
+		break;
+	case 3:
+		this.insertModelByZValue$LList$Renderable$E$LRenderable$(this.modelList3, model);
+		break;
+	case 4:
+		this.insertModelByZValue$LList$Renderable$E$LRenderable$(this.modelList4, model);
+		break;
+	case 5:
+		this.insertModelByZValue$LList$Renderable$E$LRenderable$(this.modelList5, model);
+		break;
+	}
+};
+
+/**
+ * @param {List$Renderable$E} list
+ * @param {Renderable} model
+ */
+Context3D.prototype.insertModelByZValue$LList$Renderable$E$LRenderable$ = function (list, model) {
+	/** @type {!boolean} */
+	var inserted;
+	/** @type {Node$Renderable$E} */
+	var n;
+	inserted = false;
+	for (n = list.head; n != null; n = n.next$()) {
+		if (n.value.vCenter.z < model.vCenter.z) {
+			list.insertBefore$LNode$Renderable$E$LRenderable$(n, model);
+			inserted = true;
+			break;
+		}
+	}
+	if (! inserted) {
+		list.append$LRenderable$(model);
+	}
+};
+
+/**
+ * class Camera extends Object
+ * @constructor
+ */
+function Camera() {
+}
+
+Camera.prototype = new Object;
+/**
+ * @constructor
+ * @param {Vector} view
+ * @param {Vector} target
+ * @param {Vector} upper
+ * @param {!number} fovyX
+ * @param {!number} nearZ
+ * @param {!number} farZ
+ * @param {!number} aspectRatio
+ */
+function Camera$LVector$LVector$LVector$NNNN(view, target, upper, fovyX, nearZ, farZ, aspectRatio) {
+	this.viewMatrix = null;
+	this.projectionMatrix = null;
+	this.matrix = null;
+	this.view = view;
+	this.target = target;
+	this.upper = upper;
+	this.fovyX = fovyX;
+	this.nearZ = nearZ;
+	this.farZ = farZ;
+	this.aspectRatio = aspectRatio;
+	this.rotatingMatrix = new Matrix$();
+	this.updateMatrix$();
+};
+
+Camera$LVector$LVector$LVector$NNNN.prototype = new Camera;
+
+/**
+ * @param {Vector} v
+ */
+Camera.prototype.move$LVector$ = function (v) {
+	/** @type {Vector} */
+	var vector;
+	vector = v.transform$LMatrix$(this.rotatingMatrix);
+	this.view.addSelf$LVector$(vector);
+	this.target.addSelf$LVector$(vector);
+};
+
+/**
+ * @param {!number} rad
+ */
+Camera.prototype.rotateY$N = function (rad) {
+	/** @type {Vector} */
+	var lookingVec;
+	lookingVec = this.target.sub$LVector$(this.view);
+	lookingVec.transformSelf$LMatrix$(Matrix$rotatingY$N(rad));
+	this.target = lookingVec.addSelf$LVector$(this.view);
+	this.rotatingMatrix = Matrix$rotatingY$N(rad).composeSelf$LMatrix$(this.rotatingMatrix);
+};
+
+/**
+ */
+Camera.prototype.updateMatrix$ = function () {
+	var $this = this;
+	/** @type {Vector} */
+	var view;
+	/** @type {Vector} */
+	var target;
+	/** @type {Vector} */
+	var upper;
+	/** @type {!number} */
+	var fovyX;
+	/** @type {!number} */
+	var nearZ;
+	/** @type {!number} */
+	var farZ;
+	/** @type {!number} */
+	var aspectRatio;
+	/** @type {Matrix} */
+	var viewMatrix;
+	/** @type {Matrix} */
+	var projectionMatrix;
+	view = this.view;
+	target = this.target;
+	upper = this.upper;
+	fovyX = this.fovyX;
+	nearZ = this.nearZ;
+	farZ = this.farZ;
+	aspectRatio = this.aspectRatio;
+	viewMatrix = (function () {
+		/** @type {Vector} */
+		var zaxis;
+		/** @type {Vector} */
+		var xaxis;
+		/** @type {Vector} */
+		var yaxis;
+		zaxis = target.sub$LVector$(view).unitSelf$();
+		xaxis = upper.cross$LVector$(zaxis).unitSelf$();
+		yaxis = zaxis.cross$LVector$(xaxis).unitSelf$();
+		return new Matrix$AN([ xaxis.x, xaxis.y, xaxis.z, - xaxis.dot$LVector$(view), yaxis.x, yaxis.y, yaxis.z, - yaxis.dot$LVector$(view), zaxis.x, zaxis.y, zaxis.z, - zaxis.dot$LVector$(view), 0, 0, 0, 1 ]);
+	})();
+	projectionMatrix = (function () {
+		/** @type {!number} */
+		var sx;
+		/** @type {!number} */
+		var sy;
+		/** @type {!number} */
+		var sz;
+		/** @type {!number} */
+		var mz;
+		sx = 1 / Math.tan(fovyX / 2);
+		sy = sx / aspectRatio;
+		sz = farZ / (farZ - nearZ);
+		mz = - sz * nearZ;
+		return new Matrix$AN([ sx, 0, 0, 0, 0, sy, 0, 0, 0, 0, sz, mz, 0, 0, 1, 0 ]);
+	})();
+	this.viewMatrix = viewMatrix;
+	this.projectionMatrix = projectionMatrix;
+	this.matrix = projectionMatrix.compose$LMatrix$(viewMatrix);
+};
+
+/**
+ * class Color extends Object
+ * @constructor
+ */
+function Color() {
+}
+
+Color.prototype = new Object;
+/**
+ * @constructor
+ * @param {!number} r
+ * @param {!number} g
+ * @param {!number} b
+ */
+function Color$III(r, g, b) {
+	this.r = r;
+	this.g = g;
+	this.b = b;
+};
+
+Color$III.prototype = new Color;
+
+/**
+ * @param {!number} value
+ * @return {!string}
+ */
+Color.prototype._to2DigitHex$I = function (value) {
+	/** @type {!string} */
+	var str;
+	str = Math.floor(value).toString(16);
+	if (str.length === 1) {
+		str = '0' + str;
+	}
+	return str;
+};
+
+/**
+ * @return {!string}
+ */
+Color.prototype.toHexString$ = function () {
+	return this._to2DigitHex$I(this.r) + this._to2DigitHex$I(this.g) + this._to2DigitHex$I(this.b);
+};
+
+/**
+ * @return {!string}
+ */
+Color.prototype.toString = function () {
+	return '#' + this._to2DigitHex$I(this.r) + this._to2DigitHex$I(this.g) + this._to2DigitHex$I(this.b);
+};
+
+/**
+ * class Renderable extends Object
+ * @constructor
+ */
+function Renderable() {
+}
+
+Renderable.prototype = new Object;
+/**
+ * @constructor
+ */
+function Renderable$() {
+	this.center = null;
+	this.vCenter = null;
+};
+
+Renderable$.prototype = new Renderable;
+
+/**
+ * @param {Array.<undefined|Vector>} vertices
+ * @param {Engine} engine
+ * @return {!boolean}
+ */
+Renderable.isHiddenXY$ALVector$LEngine$ = function (vertices, engine) {
+	/** @type {!number} */
+	var margin;
+	/** @type {!number} */
+	var i;
+	/** @type {Vector} */
+	var v;
+	margin = 0;
+	for (i = 0; i < vertices.length; i++) {
+		v = vertices[i];
+		if (- margin < v.x && v.x < engine._width + margin && - margin < v.y && v.y < engine._height + margin) {
+			return false;
+		}
+	}
+	return true;
+};
+
+var Renderable$isHiddenXY$ALVector$LEngine$ = Renderable.isHiddenXY$ALVector$LEngine$;
+
+/**
+ * class Polygon extends Renderable
+ * @constructor
+ */
+function Polygon() {
+}
+
+Polygon.prototype = new Renderable;
+/**
+ * @constructor
+ * @param {Array.<undefined|Vector>} vertices
+ * @param {Color} color
+ */
+function Polygon$ALVector$LColor$(vertices, color) {
+	Renderable$.call(this);
+	this.vVertices = null;
+	this.vertices = vertices;
+	this._color = color;
+	this._enabledLighting = true;
+	this.updateCenter$();
+};
+
+Polygon$ALVector$LColor$.prototype = new Polygon;
+
+/**
+ * @param {Matrix} worldMatrix
+ */
+Polygon.prototype.applyWorldMatrix$LMatrix$ = function (worldMatrix) {
+	/** @type {!number} */
+	var i;
+	for (i = 0; i < this.vertices.length; i++) {
+		this.vertices[i].transformSelf$LMatrix$(worldMatrix);
+	}
+	this.updateCenter$();
+};
+
+/**
+ * @param {Matrix} viewMatrix
+ */
+Polygon.prototype.applyViewMatrix$LMatrix$ = function (viewMatrix) {
+	/** @type {Array.<undefined|Vector>} */
+	var vVertices;
+	/** @type {Vector} */
+	var vSumPos;
+	/** @type {!number} */
+	var i;
+	/** @type {Vector} */
+	var vVertex;
+	vVertices = [  ];
+	vSumPos = new Vector$NNN(0, 0, 0);
+	for (i = 0; i < this.vertices.length; i++) {
+		vVertex = this.vertices[i].transform$LMatrix$(viewMatrix);
+		vVertices.push(vVertex);
+		vSumPos.addSelf$LVector$(vVertex);
+	}
+	this.vCenter = vSumPos.div$N(this.vertices.length);
+	this.vVertices = vVertices;
+};
+
+/**
+ * @param {Camera} camera
+ * @return {!boolean}
+ */
+Polygon.prototype.isHidden$LCamera$ = function (camera) {
+	if (camera.nearZ < this.vCenter.z && this.vCenter.z < camera.farZ) {
+		return false;
+	}
+	return true;
+};
+
+/**
+ * @param {Vector} v
+ */
+Polygon.prototype.move$LVector$ = function (v) {
+	/** @type {!number} */
+	var i;
+	for (i = 0; i < this.vertices.length; i++) {
+		this.vertices[i].addSelf$LVector$(v);
+	}
+	this.updateCenter$();
+};
+
+/**
+ */
+Polygon.prototype.updateCenter$ = function () {
+	/** @type {Vector} */
+	var sumVector;
+	/** @type {!number} */
+	var i;
+	sumVector = new Vector$NNN(0, 0, 0);
+	for (i = 0; i < this.vertices.length; i++) {
+		sumVector.addSelf$LVector$(this.vertices[i]);
+	}
+	this.center = sumVector.div$N(this.vertices.length);
+};
+
+/**
+ * @return {!string}
+ */
+Polygon.prototype.toString = function () {
+	/** @type {!string} */
+	var str;
+	/** @type {!number} */
+	var i;
+	str = '[';
+	for (i = 0; i < this.vertices.length; i++) {
+		str += this.vertices[i].toString() + ',';
+	}
+	str += ']';
+	return str;
+};
+
+/**
+ * @param {Engine} engine
+ * @return {!boolean}
+ */
+Polygon.prototype.draw$LEngine$ = function (engine) {
+	var $this = this;
+	/** @type {CanvasRenderingContext2D} */
+	var context;
+	/** @type {!number} */
+	var len;
+	/** @type {Array.<undefined|Vector>} */
+	var verts;
+	/** @type {Color} */
+	var color;
+	/** @type {!number} */
+	var i;
+	/** @type {!boolean} */
+	var isHiddenXY;
+	/** @type {!number} */
+	var i1;
+	/** @type {!number} */
+	var i2;
+	/** @type {!string} */
+	var colorStr;
+	/** @type {!number} */
+	var x;
+	/** @type {!number} */
+	var y;
+	context = engine.context;
+	len = this.vertices.length;
+	verts = this.vVertices;
+	color = this._color;
+	if (this._enabledLighting) {
+		color = (function () {
+			/** @type {Vector} */
+			var center;
+			/** @type {Vector} */
+			var v1;
+			/** @type {Vector} */
+			var v2;
+			/** @type {Vector} */
+			var norm;
+			/** @type {!number} */
+			var lightPower;
+			/** @type {!number} */
+			var diffusePower;
+			/** @type {!number} */
+			var diffuseCoefficient;
+			/** @type {!number} */
+			var ambientPower;
+			/** @type {!number} */
+			var r;
+			/** @type {!number} */
+			var g;
+			/** @type {!number} */
+			var b;
+			center = $this.vCenter;
+			v1 = verts[0].sub$LVector$(center);
+			v2 = verts[1].sub$LVector$(center);
+			norm = v2.cross$LVector$(v1).unit$();
+			lightPower = norm.dot$LVector$(center.unit$());
+			diffusePower = 0.7;
+			diffuseCoefficient = 0.8;
+			ambientPower = 0.5;
+			r = Math.min(255, (diffusePower * diffuseCoefficient * lightPower + ambientPower) * color.r);
+			g = Math.min(255, (diffusePower * diffuseCoefficient * lightPower + ambientPower) * color.g);
+			b = Math.min(255, (diffusePower * diffuseCoefficient * lightPower + ambientPower) * color.b);
+			return new Color$III(r, g, b);
+		})();
+	}
+	for (i = 0; i < len; i++) {
+		verts[i].transformSelf$LMatrix$(engine.camera.projectionMatrix);
+	}
+	for (i = 0; i < len; i++) {
+		verts[i].transformSelf$LMatrix$(engine.screenMatrix);
+	}
+	isHiddenXY = Renderable$isHiddenXY$ALVector$LEngine$(verts, engine);
+	if (isHiddenXY) {
+		return false;
+	}
+	for (i = 0; i < verts.length; i++) {
+		i1 = (i + 1) % verts.length;
+		i2 = (i + 2) % verts.length;
+		if (Math2D$cross$NNNN(verts[i1].x - verts[i].x, verts[i1].y - verts[i].y, verts[i2].x - verts[i].x, verts[i2].y - verts[i].y) < 0) {
+			return false;
+		}
+	}
+	colorStr = '#' + color.toHexString$();
+	context.strokeStyle = colorStr;
+	for (i = 0; i < len; i++) {
+		context.beginPath();
+		context.moveTo(verts[i].x, verts[i].y);
+		context.lineTo(verts[(i + 1) % len].x, verts[(i + 1) % len].y);
+		context.stroke();
+	}
+	context.fillStyle = colorStr;
+	context.beginPath();
+	for (i = 0; i < len; i++) {
+		x = verts[i].x;
+		y = verts[i].y;
+		context.lineTo(x, y);
+	}
+	context.closePath();
+	context.fill();
+	return true;
+};
+
+/**
+ * class PolygonGroup extends Renderable
+ * @constructor
+ */
+function PolygonGroup() {
+}
+
+PolygonGroup.prototype = new Renderable;
+/**
+ * @constructor
+ * @param {List$Polygon$E} polygons
+ * @param {Vector} center
+ */
+function PolygonGroup$LList$Polygon$E$LVector$(polygons, center) {
+	PolygonGroup$LList$Polygon$E$LVector$B.call(this, polygons, center, false);
+};
+
+PolygonGroup$LList$Polygon$E$LVector$.prototype = new PolygonGroup;
+
+/**
+ * @constructor
+ * @param {List$Polygon$E} polygons
+ * @param {Vector} center
+ * @param {!boolean} ignoringZHidden
+ */
+function PolygonGroup$LList$Polygon$E$LVector$B(polygons, center, ignoringZHidden) {
+	Renderable$.call(this);
+	this.polygons = polygons;
+	this.center = center;
+	this._ignoringZHidden = ignoringZHidden;
+};
+
+PolygonGroup$LList$Polygon$E$LVector$B.prototype = new PolygonGroup;
+
+/**
+ * @param {Matrix} worldMatrix
+ */
+PolygonGroup.prototype.applyWorldMatrix$LMatrix$ = function (worldMatrix) {
+	this.center.transformSelf$LMatrix$(worldMatrix);
+};
+
+/**
+ * @param {Matrix} viewMatrix
+ */
+PolygonGroup.prototype.applyViewMatrix$LMatrix$ = function (viewMatrix) {
+	this.vCenter = this.center.transform$LMatrix$(viewMatrix);
+};
+
+/**
+ * @param {Camera} camera
+ * @return {!boolean}
+ */
+PolygonGroup.prototype.isHidden$LCamera$ = function (camera) {
+	if (this._ignoringZHidden) {
+		return false;
+	}
+	if (camera.nearZ < this.vCenter.z && this.vCenter.z < camera.farZ) {
+		return false;
+	}
+	return true;
+};
+
+/**
+ * @param {Engine} engine
+ * @return {!boolean}
+ */
+PolygonGroup.prototype.draw$LEngine$ = function (engine) {
+	var $this = this;
+	/** @type {List$Polygon$E} */
+	var polygons;
+	polygons = this.polygons;
+	polygons.forEach$F$LPolygon$V$((function (polygon) {
+		if (polygon.isHidden$LCamera$(engine.camera)) {
+			return;
+		}
+		polygon.draw$LEngine$(engine);
+	}));
+	return true;
+};
+
+/**
+ * class SmoothTexture extends Polygon
+ * @constructor
+ */
+function SmoothTexture() {
+}
+
+SmoothTexture.prototype = new Polygon;
+/**
+ * @constructor
+ * @param {Array.<undefined|Vector>} vertices
+ * @param {!string} src
+ */
+function SmoothTexture$ALVector$S(vertices, src) {
+	SmoothTexture$ALVector$SIIII.call(this, vertices, src, 6, 6, 4, 2);
+};
+
+SmoothTexture$ALVector$S.prototype = new SmoothTexture;
+
+/**
+ * @constructor
+ * @param {Array.<undefined|Vector>} vertices
+ * @param {!string} src
+ * @param {!number} maxHorDiv
+ * @param {!number} maxVerDiv
+ * @param {!number} maxDiv
+ * @param {!number} minDiv
+ */
+function SmoothTexture$ALVector$SIIII(vertices, src, maxHorDiv, maxVerDiv, maxDiv, minDiv) {
+	var $math_abs_t;
+	Polygon$ALVector$LColor$.call(this, vertices, new Color$III(0, 0, 0));
+	this._src = src;
+	this._image = Engine.images[src];
+	this.vertices = vertices;
+	this._width = (($math_abs_t = vertices[1].sub$LVector$(vertices[0]).abs$()) >= 0 ? $math_abs_t : -$math_abs_t);
+	this._height = (($math_abs_t = vertices[2].sub$LVector$(vertices[1]).abs$()) >= 0 ? $math_abs_t : -$math_abs_t);
+	this._maxHorizontalDiv = maxHorDiv;
+	this._maxVerticalDiv = maxVerDiv;
+	this._maxDiv = maxDiv;
+	this._minDiv = minDiv;
+	this.updateCenter$();
+};
+
+SmoothTexture$ALVector$SIIII.prototype = new SmoothTexture;
+
+/**
+ * @param {Matrix} worldMatrix
+ */
+SmoothTexture.prototype.applyWorldMatrix$LMatrix$ = function (worldMatrix) {
+	/** @type {!number} */
+	var i;
+	for (i = 0; i < this.vertices.length; i++) {
+		this.vertices[i].transformSelf$LMatrix$(worldMatrix);
+	}
+	this.center.transformSelf$LMatrix$(worldMatrix);
+};
+
+/**
+ * @param {Matrix} viewMatrix
+ */
+SmoothTexture.prototype.applyViewMatrix$LMatrix$ = function (viewMatrix) {
+	/** @type {Array.<undefined|Vector>} */
+	var vVertices;
+	/** @type {!number} */
+	var i;
+	vVertices = [  ];
+	for (i = 0; i < this.vertices.length; i++) {
+		vVertices.push(this.vertices[i].transform$LMatrix$(viewMatrix));
+	}
+	this.vVertices = vVertices;
+	this.vCenter = this.center.transform$LMatrix$(viewMatrix);
+};
+
+/**
+ * @param {Camera} camera
+ * @return {!boolean}
+ */
+SmoothTexture.prototype.isHidden$LCamera$ = function (camera) {
+	if (camera.nearZ < this.vCenter.z && this.vCenter.z < camera.farZ) {
+		return false;
+	}
+	return true;
+};
+
+/**
+ * @param {Engine} engine
+ * @return {!boolean}
+ */
+SmoothTexture.prototype.draw$LEngine$ = function (engine) {
+	var $this = this;
+	/** @type {CanvasRenderingContext2D} */
+	var context;
+	/** @type {Vector} */
+	var wltImage;
+	/** @type {Vector} */
+	var wlbImage;
+	/** @type {Vector} */
+	var wrbImage;
+	/** @type {Vector} */
+	var wrtImage;
+	/** @type {Matrix} */
+	var matrix;
+	/** @type {Vector} */
+	var sltImage;
+	/** @type {Vector} */
+	var slbImage;
+	/** @type {Vector} */
+	var srbImage;
+	/** @type {Vector} */
+	var srtImage;
+	/** @type {!boolean} */
+	var isHiddenXY;
+	var divideAndDrawImage;
+	if (! Engine.isLoadedImage[this._src]) {
+		return false;
+	}
+	context = engine.context;
+	wltImage = this.vertices[3];
+	wlbImage = this.vertices[0];
+	wrbImage = this.vertices[1];
+	wrtImage = this.vertices[2];
+	matrix = engine.screenMatrix.compose$LMatrix$(engine.camera.projectionMatrix.compose$LMatrix$(engine.camera.viewMatrix));
+	sltImage = wltImage.transform$LMatrix$(matrix);
+	slbImage = wlbImage.transform$LMatrix$(matrix);
+	srbImage = wrbImage.transform$LMatrix$(matrix);
+	srtImage = wrtImage.transform$LMatrix$(matrix);
+	isHiddenXY = Renderable$isHiddenXY$ALVector$LEngine$([ sltImage, slbImage, srbImage, srtImage ], engine);
+	if (isHiddenXY) {
+		return false;
+	}
+	divideAndDrawImage = (function (image, wlt, wlb, wrb, wrt, slt, slb, srb, srt, depth, sx, sy, sw, sh) {
+		var hypotenuse;
+		/** @type {!number} */
+		var sBottomWidth;
+		/** @type {!number} */
+		var sTopWidth;
+		/** @type {!number} */
+		var sLeftHeight;
+		/** @type {!number} */
+		var sRightHeight;
+		/** @type {!number} */
+		var widthRatio;
+		/** @type {!number} */
+		var heightRatio;
+		/** @type {!boolean} */
+		var splittingHorizontal;
+		/** @type {!boolean} */
+		var splittingVertical;
+		/** @type {Vector} */
+		var wct;
+		/** @type {Vector} */
+		var wcb;
+		/** @type {Vector} */
+		var wlc;
+		/** @type {Vector} */
+		var wrc;
+		/** @type {Vector} */
+		var wcc;
+		/** @type {Vector} */
+		var sct;
+		/** @type {Vector} */
+		var scb;
+		/** @type {Vector} */
+		var slc;
+		/** @type {Vector} */
+		var src;
+		/** @type {Vector} */
+		var scc;
+		/** @type {!number} */
+		var scaleX;
+		/** @type {!number} */
+		var scaleY;
+		/** @type {!number} */
+		var skewingX;
+		/** @type {!number} */
+		var skewingY;
+		hypotenuse = (function (a, b) {
+			return Math.sqrt(a * a + b * b);
+		});
+		sBottomWidth = hypotenuse(srb.x - slb.x, srb.y - slb.y);
+		sTopWidth = hypotenuse(srt.x - slt.x, srt.y - slt.y);
+		sLeftHeight = hypotenuse(slt.x - slb.x, slt.y - slb.y);
+		sRightHeight = hypotenuse(srt.x - srb.x, srt.y - srb.y);
+		widthRatio = sBottomWidth / sTopWidth;
+		heightRatio = sRightHeight / sLeftHeight;
+		if (widthRatio < 1) {
+			widthRatio = 1 / widthRatio;
+		}
+		if (heightRatio < 1) {
+			heightRatio = 1 / heightRatio;
+		}
+		splittingHorizontal = widthRatio > 1.01;
+		splittingVertical = heightRatio > 1.01;
+		if (depth <= $this._minDiv || depth <= $this._maxDiv && splittingHorizontal && splittingVertical) {
+			wct = wlt.add$LVector$(wrt).divSelf$N(2);
+			wcb = wlb.add$LVector$(wrb).divSelf$N(2);
+			wlc = wlt.add$LVector$(wlb).divSelf$N(2);
+			wrc = wrt.add$LVector$(wrb).divSelf$N(2);
+			wcc = wlt.add$LVector$(wrb).divSelf$N(2);
+			sct = wct.transform$LMatrix$(matrix);
+			scb = wcb.transform$LMatrix$(matrix);
+			slc = wlc.transform$LMatrix$(matrix);
+			src = wrc.transform$LMatrix$(matrix);
+			scc = wcc.transform$LMatrix$(matrix);
+			divideAndDrawImage(image, wlt, wlc, wcc, wct, slt, slc, scc, sct, depth + 1, sx, sy, sw / 2, sh / 2);
+			divideAndDrawImage(image, wlc, wlb, wcb, wcc, slc, slb, scb, scc, depth + 1, sx, sy + sh / 2, sw / 2, sh / 2);
+			divideAndDrawImage(image, wct, wcc, wrc, wrt, sct, scc, src, srt, depth + 1, sx + sw / 2, sy, sw / 2, sh / 2);
+			divideAndDrawImage(image, wcc, wcb, wrb, wrc, scc, scb, srb, src, depth + 1, sx + sw / 2, sy + sh / 2, sw / 2, sh / 2);
+		} else {
+			if (depth <= $this._maxVerticalDiv && splittingVertical) {
+				wct = wlt.add$LVector$(wrt).divSelf$N(2);
+				wcb = wlb.add$LVector$(wrb).divSelf$N(2);
+				sct = wct.transform$LMatrix$(matrix);
+				scb = wcb.transform$LMatrix$(matrix);
+				divideAndDrawImage(image, wlt, wlb, wcb, wct, slt, slb, scb, sct, depth + 1, sx, sy, sw / 2, sh);
+				divideAndDrawImage(image, wct, wcb, wrb, wrt, sct, scb, srb, srt, depth + 1, sx + sw / 2, sy, sw / 2, sh);
+			} else {
+				if (depth <= $this._maxHorizontalDiv && splittingHorizontal) {
+					wlc = wlt.add$LVector$(wlb).divSelf$N(2);
+					wrc = wrt.add$LVector$(wrb).divSelf$N(2);
+					slc = wlc.transform$LMatrix$(matrix);
+					src = wrc.transform$LMatrix$(matrix);
+					divideAndDrawImage(image, wlt, wlc, wrc, wrt, slt, slc, src, srt, depth + 1, sx, sy, sw, sh / 2);
+					divideAndDrawImage(image, wlc, wlb, wrb, wrc, slc, slb, srb, src, depth + 1, sx, sy + sh / 2, sw, sh / 2);
+				} else {
+					scaleX = (srt.x - slt.x) / sw;
+					scaleY = (slb.y - slt.y) / sh;
+					skewingX = (srt.y - slt.y) / (srt.x - slt.x);
+					skewingY = (slb.x - slt.x) / (slb.y - slt.y);
+					context.transform(1, 0, 0, 1, slt.x, slt.y);
+					context.transform(1, skewingX, skewingY, 1, 0, 0);
+					context.transform(scaleX, 0, 0, scaleY, 0, 0);
+					context.drawImage(image, ~ ~ sx, ~ ~ sy, ~ ~ sw, ~ ~ sh, 0, 0, Math.ceil(sw), Math.ceil(sh));
+					context.setTransform(1, 0, 0, 1, 0, 0);
+				}
+			}
+		}
+	});
+	divideAndDrawImage(this._image, wltImage, wlbImage, wrbImage, wrtImage, sltImage, slbImage, srbImage, srtImage, 1, 0, 0, this._image.width, this._image.height);
+	return true;
+};
+
+/**
+ * class Billboard extends Renderable
+ * @constructor
+ */
+function Billboard() {
+}
+
+Billboard.prototype = new Renderable;
+/**
+ * @constructor
+ * @param {Vector} center
+ * @param {!number} width
+ * @param {!number} height
+ * @param {!string} src
+ */
+function Billboard$LVector$NNS(center, width, height, src) {
+	Renderable$.call(this);
+	this._width = width;
+	this._height = height;
+	this._src = src;
+	this._image = Engine.images[src];
+	this.center = center;
+};
+
+Billboard$LVector$NNS.prototype = new Billboard;
+
+/**
+ * @param {Matrix} worldMatrix
+ */
+Billboard.prototype.applyWorldMatrix$LMatrix$ = function (worldMatrix) {
+	this.center.transformSelf$LMatrix$(worldMatrix);
+};
+
+/**
+ * @param {Matrix} viewMatrix
+ */
+Billboard.prototype.applyViewMatrix$LMatrix$ = function (viewMatrix) {
+	this.vCenter = this.center.transform$LMatrix$(viewMatrix);
+};
+
+/**
+ * @param {Camera} camera
+ * @return {!boolean}
+ */
+Billboard.prototype.isHidden$LCamera$ = function (camera) {
+	if (camera.nearZ < this.vCenter.z && this.vCenter.z < camera.farZ) {
+		return false;
+	}
+	return true;
+};
+
+/**
+ * @param {Engine} engine
+ * @return {!boolean}
+ */
+Billboard.prototype.draw$LEngine$ = function (engine) {
+	/** @type {CanvasRenderingContext2D} */
+	var context;
+	/** @type {Matrix} */
+	var projectionAndScreenMatrix;
+	/** @type {Vector} */
+	var vLeftBottom;
+	/** @type {Vector} */
+	var sCenter;
+	/** @type {Vector} */
+	var sLeftBottom;
+	/** @type {!number} */
+	var sHalfWidth;
+	/** @type {!number} */
+	var sHalfHeight;
+	/** @type {!boolean} */
+	var isHiddenXY;
+	/** @type {!number} */
+	var scaleX;
+	/** @type {!number} */
+	var scaleY;
+	if (! Engine.isLoadedImage[this._src]) {
+		return false;
+	}
+	context = engine.context;
+	projectionAndScreenMatrix = engine.screenMatrix.compose$LMatrix$(engine.camera.projectionMatrix);
+	vLeftBottom = this.vCenter.sub$LVector$(new Vector$NNN(this._width / 2, this._height / 2, 0));
+	sCenter = this.vCenter.transform$LMatrix$(projectionAndScreenMatrix);
+	sLeftBottom = vLeftBottom.transform$LMatrix$(projectionAndScreenMatrix);
+	sHalfWidth = sLeftBottom.x - sCenter.x;
+	sHalfHeight = sLeftBottom.y - sCenter.y;
+	isHiddenXY = Renderable$isHiddenXY$ALVector$LEngine$([ sCenter ], engine);
+	if (isHiddenXY) {
+		return false;
+	}
+	scaleX = sHalfWidth / this._image.width * 2;
+	scaleY = sHalfHeight / this._image.height * 2;
+	context.setTransform(scaleX, 0, 0, scaleY, 0, 0);
+	context.drawImage(this._image, ~ ~ ((sCenter.x - sHalfWidth) / scaleX), ~ ~ ((sCenter.y - sHalfHeight) / scaleY));
+	context.setTransform(1, 0, 0, 1, 0, 0);
+	return true;
+};
+
+/**
+ * class List$Vector$E extends Object
+ * @constructor
+ */
+function List$Vector$E() {
+}
+
+List$Vector$E.prototype = new Object;
+/**
+ * @constructor
+ */
+function List$Vector$E$() {
+	this.head = null;
+	this.tail = null;
+	this.length = 0;
+};
+
+List$Vector$E$.prototype = new List$Vector$E;
+
+/**
+ * @constructor
+ * @param {Array.<undefined|Vector>} array
+ */
+function List$Vector$E$ALVector$(array) {
+	/** @type {!number} */
+	var len;
+	/** @type {!number} */
+	var i;
+	this.head = null;
+	this.tail = null;
+	this.length = 0;
+	len = array.length;
+	for (i = 0; i < len; i++) {
+		this.prepend$LVector$(array.pop());
+	}
+};
+
+List$Vector$E$ALVector$.prototype = new List$Vector$E;
+
+/**
+ * @param {Vector} value
+ * @return {List$Vector$E}
+ */
+List$Vector$E.prototype.prepend$LVector$ = function (value) {
+	/** @type {Node$Vector$E} */
+	var node;
+	node = new Node$Vector$E$LVector$(value);
+	if (this.length === 0) {
+		this.head = node;
+		this.tail = node;
+	} else {
+		node._next = this.head;
+		this.head._prev = node;
+		this.head = node;
+	}
+	this.length++;
+	return this;
+};
+
+/**
+ * @param {Vector} value
+ * @return {List$Vector$E}
+ */
+List$Vector$E.prototype.append$LVector$ = function (value) {
+	/** @type {Node$Vector$E} */
+	var node;
+	node = new Node$Vector$E$LVector$(value);
+	if (this.length === 0) {
+		this.head = node;
+		this.tail = node;
+	} else {
+		node._prev = this.tail;
+		this.tail._next = node;
+		this.tail = node;
+	}
+	this.length++;
+	return this;
+};
+
+/**
+ * @param {Node$Vector$E} node
+ * @return {Vector}
+ */
+List$Vector$E.prototype.remove$LNode$Vector$E$ = function (node) {
+	if (node._prev) {
+		node._prev._next = node._next;
+	} else {
+		this.head = node._next;
+	}
+	if (node._next) {
+		node._next._prev = node._prev;
+	} else {
+		this.tail = node._prev;
+	}
+	return node.value;
+};
+
+/**
+ * @return {Vector}
+ */
+List$Vector$E.prototype.removeFirst$ = function () {
+	/** @type {Node$Vector$E} */
+	var node;
+	node = this.head;
+	this.head = node._next;
+	if (node._next != null) {
+		node._next._prev = null;
+	}
+	this.length--;
+	return node.value;
+};
+
+/**
+ * @return {Vector}
+ */
+List$Vector$E.prototype.removeLast$ = function () {
+	/** @type {Node$Vector$E} */
+	var node;
+	node = this.tail;
+	this.tail = node._prev;
+	if (node._prev != null) {
+		node._prev._next = null;
+	}
+	this.length--;
+	return node.value;
+};
+
+/**
+ * @param {Node$Vector$E} node
+ * @param {Vector} value
+ * @return {List$Vector$E}
+ */
+List$Vector$E.prototype.insertAfter$LNode$Vector$E$LVector$ = function (node, value) {
+	/** @type {Node$Vector$E} */
+	var newNode;
+	newNode = new Node$Vector$E$LVector$(value);
+	if (node.next$() == null) {
+		newNode._prev = node;
+		node._next = newNode;
+		this.tail = newNode;
+	} else {
+		newNode._next = node._next;
+		newNode._prev = node;
+		node._next._prev = newNode;
+		node._next = newNode;
+	}
+	this.length++;
+	return this;
+};
+
+/**
+ * @param {Node$Vector$E} node
+ * @param {Vector} value
+ * @return {List$Vector$E}
+ */
+List$Vector$E.prototype.insertBefore$LNode$Vector$E$LVector$ = function (node, value) {
+	/** @type {Node$Vector$E} */
+	var newNode;
+	newNode = new Node$Vector$E$LVector$(value);
+	if (node.prev$() == null) {
+		newNode._next = node;
+		node._prev = newNode;
+		this.head = newNode;
+	} else {
+		newNode._next = node;
+		newNode._prev = node._prev;
+		node._prev._next = newNode;
+		node._prev = newNode;
+	}
+	this.length++;
+	return this;
+};
+
+/**
+ */
+List$Vector$E.prototype.forEach$F$LVector$V$ = function (f) {
+	/** @type {Node$Vector$E} */
+	var n;
+	for (n = this.head; n; n = n.next$()) {
+		f(n.value);
+	}
+};
+
+/**
+ * @return {!string}
+ */
+List$Vector$E.prototype.toString = function () {
+	/** @type {!string} */
+	var str;
+	/** @type {Node$Vector$E} */
+	var n;
+	str = 'list : [';
+	for (n = this.head; n != null; n = n.next$()) {
+		str += ' ' + n.value.toString() + ',';
+	}
+	str += ']';
+	return str;
+};
+
+/**
+ * class Node$Vector$E extends Object
+ * @constructor
+ */
+function Node$Vector$E() {
+}
+
+Node$Vector$E.prototype = new Object;
+/**
+ * @constructor
+ * @param {Vector} value
+ */
+function Node$Vector$E$LVector$(value) {
+	this.value = value;
+	this._prev = null;
+	this._next = null;
+};
+
+Node$Vector$E$LVector$.prototype = new Node$Vector$E;
+
+/**
+ * @return {Node$Vector$E}
+ */
+Node$Vector$E.prototype.prev$ = function () {
+	return this._prev;
+};
+
+/**
+ * @return {Node$Vector$E}
+ */
+Node$Vector$E.prototype.next$ = function () {
+	return this._next;
+};
+
+/**
+ * class List$Matrix$E extends Object
+ * @constructor
+ */
+function List$Matrix$E() {
+}
+
+List$Matrix$E.prototype = new Object;
+/**
+ * @constructor
+ */
+function List$Matrix$E$() {
+	this.head = null;
+	this.tail = null;
+	this.length = 0;
+};
+
+List$Matrix$E$.prototype = new List$Matrix$E;
+
+/**
+ * @constructor
+ * @param {Array.<undefined|Matrix>} array
+ */
+function List$Matrix$E$ALMatrix$(array) {
+	/** @type {!number} */
+	var len;
+	/** @type {!number} */
+	var i;
+	this.head = null;
+	this.tail = null;
+	this.length = 0;
+	len = array.length;
+	for (i = 0; i < len; i++) {
+		this.prepend$LMatrix$(array.pop());
+	}
+};
+
+List$Matrix$E$ALMatrix$.prototype = new List$Matrix$E;
+
+/**
+ * @param {Matrix} value
+ * @return {List$Matrix$E}
+ */
+List$Matrix$E.prototype.prepend$LMatrix$ = function (value) {
+	/** @type {Node$Matrix$E} */
+	var node;
+	node = new Node$Matrix$E$LMatrix$(value);
+	if (this.length === 0) {
+		this.head = node;
+		this.tail = node;
+	} else {
+		node._next = this.head;
+		this.head._prev = node;
+		this.head = node;
+	}
+	this.length++;
+	return this;
+};
+
+/**
+ * @param {Matrix} value
+ * @return {List$Matrix$E}
+ */
+List$Matrix$E.prototype.append$LMatrix$ = function (value) {
+	/** @type {Node$Matrix$E} */
+	var node;
+	node = new Node$Matrix$E$LMatrix$(value);
+	if (this.length === 0) {
+		this.head = node;
+		this.tail = node;
+	} else {
+		node._prev = this.tail;
+		this.tail._next = node;
+		this.tail = node;
+	}
+	this.length++;
+	return this;
+};
+
+/**
+ * @param {Node$Matrix$E} node
+ * @return {Matrix}
+ */
+List$Matrix$E.prototype.remove$LNode$Matrix$E$ = function (node) {
+	if (node._prev) {
+		node._prev._next = node._next;
+	} else {
+		this.head = node._next;
+	}
+	if (node._next) {
+		node._next._prev = node._prev;
+	} else {
+		this.tail = node._prev;
+	}
+	return node.value;
+};
+
+/**
+ * @return {Matrix}
+ */
+List$Matrix$E.prototype.removeFirst$ = function () {
+	/** @type {Node$Matrix$E} */
+	var node;
+	node = this.head;
+	this.head = node._next;
+	if (node._next != null) {
+		node._next._prev = null;
+	}
+	this.length--;
+	return node.value;
+};
+
+/**
+ * @return {Matrix}
+ */
+List$Matrix$E.prototype.removeLast$ = function () {
+	/** @type {Node$Matrix$E} */
+	var node;
+	node = this.tail;
+	this.tail = node._prev;
+	if (node._prev != null) {
+		node._prev._next = null;
+	}
+	this.length--;
+	return node.value;
+};
+
+/**
+ * @param {Node$Matrix$E} node
+ * @param {Matrix} value
+ * @return {List$Matrix$E}
+ */
+List$Matrix$E.prototype.insertAfter$LNode$Matrix$E$LMatrix$ = function (node, value) {
+	/** @type {Node$Matrix$E} */
+	var newNode;
+	newNode = new Node$Matrix$E$LMatrix$(value);
+	if (node.next$() == null) {
+		newNode._prev = node;
+		node._next = newNode;
+		this.tail = newNode;
+	} else {
+		newNode._next = node._next;
+		newNode._prev = node;
+		node._next._prev = newNode;
+		node._next = newNode;
+	}
+	this.length++;
+	return this;
+};
+
+/**
+ * @param {Node$Matrix$E} node
+ * @param {Matrix} value
+ * @return {List$Matrix$E}
+ */
+List$Matrix$E.prototype.insertBefore$LNode$Matrix$E$LMatrix$ = function (node, value) {
+	/** @type {Node$Matrix$E} */
+	var newNode;
+	newNode = new Node$Matrix$E$LMatrix$(value);
+	if (node.prev$() == null) {
+		newNode._next = node;
+		node._prev = newNode;
+		this.head = newNode;
+	} else {
+		newNode._next = node;
+		newNode._prev = node._prev;
+		node._prev._next = newNode;
+		node._prev = newNode;
+	}
+	this.length++;
+	return this;
+};
+
+/**
+ */
+List$Matrix$E.prototype.forEach$F$LMatrix$V$ = function (f) {
+	/** @type {Node$Matrix$E} */
+	var n;
+	for (n = this.head; n; n = n.next$()) {
+		f(n.value);
+	}
+};
+
+/**
+ * @return {!string}
+ */
+List$Matrix$E.prototype.toString = function () {
+	/** @type {!string} */
+	var str;
+	/** @type {Node$Matrix$E} */
+	var n;
+	str = 'list : [';
+	for (n = this.head; n != null; n = n.next$()) {
+		str += ' ' + n.value.toString() + ',';
+	}
+	str += ']';
+	return str;
+};
+
+/**
+ * class Node$Matrix$E extends Object
+ * @constructor
+ */
+function Node$Matrix$E() {
+}
+
+Node$Matrix$E.prototype = new Object;
+/**
+ * @constructor
+ * @param {Matrix} value
+ */
+function Node$Matrix$E$LMatrix$(value) {
+	this.value = value;
+	this._prev = null;
+	this._next = null;
+};
+
+Node$Matrix$E$LMatrix$.prototype = new Node$Matrix$E;
+
+/**
+ * @return {Node$Matrix$E}
+ */
+Node$Matrix$E.prototype.prev$ = function () {
+	return this._prev;
+};
+
+/**
+ * @return {Node$Matrix$E}
+ */
+Node$Matrix$E.prototype.next$ = function () {
+	return this._next;
+};
+
+/**
+ * class List$Renderable$E extends Object
+ * @constructor
+ */
+function List$Renderable$E() {
+}
+
+List$Renderable$E.prototype = new Object;
+/**
+ * @constructor
+ */
+function List$Renderable$E$() {
+	this.head = null;
+	this.tail = null;
+	this.length = 0;
+};
+
+List$Renderable$E$.prototype = new List$Renderable$E;
+
+/**
+ * @constructor
+ * @param {Array.<undefined|Renderable>} array
+ */
+function List$Renderable$E$ALRenderable$(array) {
+	/** @type {!number} */
+	var len;
+	/** @type {!number} */
+	var i;
+	this.head = null;
+	this.tail = null;
+	this.length = 0;
+	len = array.length;
+	for (i = 0; i < len; i++) {
+		this.prepend$LRenderable$(array.pop());
+	}
+};
+
+List$Renderable$E$ALRenderable$.prototype = new List$Renderable$E;
+
+/**
+ * @param {Renderable} value
+ * @return {List$Renderable$E}
+ */
+List$Renderable$E.prototype.prepend$LRenderable$ = function (value) {
+	/** @type {Node$Renderable$E} */
+	var node;
+	node = new Node$Renderable$E$LRenderable$(value);
+	if (this.length === 0) {
+		this.head = node;
+		this.tail = node;
+	} else {
+		node._next = this.head;
+		this.head._prev = node;
+		this.head = node;
+	}
+	this.length++;
+	return this;
+};
+
+/**
+ * @param {Renderable} value
+ * @return {List$Renderable$E}
+ */
+List$Renderable$E.prototype.append$LRenderable$ = function (value) {
+	/** @type {Node$Renderable$E} */
+	var node;
+	node = new Node$Renderable$E$LRenderable$(value);
+	if (this.length === 0) {
+		this.head = node;
+		this.tail = node;
+	} else {
+		node._prev = this.tail;
+		this.tail._next = node;
+		this.tail = node;
+	}
+	this.length++;
+	return this;
+};
+
+/**
+ * @param {Node$Renderable$E} node
+ * @return {Renderable}
+ */
+List$Renderable$E.prototype.remove$LNode$Renderable$E$ = function (node) {
+	if (node._prev) {
+		node._prev._next = node._next;
+	} else {
+		this.head = node._next;
+	}
+	if (node._next) {
+		node._next._prev = node._prev;
+	} else {
+		this.tail = node._prev;
+	}
+	return node.value;
+};
+
+/**
+ * @return {Renderable}
+ */
+List$Renderable$E.prototype.removeFirst$ = function () {
+	/** @type {Node$Renderable$E} */
+	var node;
+	node = this.head;
+	this.head = node._next;
+	if (node._next != null) {
+		node._next._prev = null;
+	}
+	this.length--;
+	return node.value;
+};
+
+/**
+ * @return {Renderable}
+ */
+List$Renderable$E.prototype.removeLast$ = function () {
+	/** @type {Node$Renderable$E} */
+	var node;
+	node = this.tail;
+	this.tail = node._prev;
+	if (node._prev != null) {
+		node._prev._next = null;
+	}
+	this.length--;
+	return node.value;
+};
+
+/**
+ * @param {Node$Renderable$E} node
+ * @param {Renderable} value
+ * @return {List$Renderable$E}
+ */
+List$Renderable$E.prototype.insertAfter$LNode$Renderable$E$LRenderable$ = function (node, value) {
+	/** @type {Node$Renderable$E} */
+	var newNode;
+	newNode = new Node$Renderable$E$LRenderable$(value);
+	if (node.next$() == null) {
+		newNode._prev = node;
+		node._next = newNode;
+		this.tail = newNode;
+	} else {
+		newNode._next = node._next;
+		newNode._prev = node;
+		node._next._prev = newNode;
+		node._next = newNode;
+	}
+	this.length++;
+	return this;
+};
+
+/**
+ * @param {Node$Renderable$E} node
+ * @param {Renderable} value
+ * @return {List$Renderable$E}
+ */
+List$Renderable$E.prototype.insertBefore$LNode$Renderable$E$LRenderable$ = function (node, value) {
+	/** @type {Node$Renderable$E} */
+	var newNode;
+	newNode = new Node$Renderable$E$LRenderable$(value);
+	if (node.prev$() == null) {
+		newNode._next = node;
+		node._prev = newNode;
+		this.head = newNode;
+	} else {
+		newNode._next = node;
+		newNode._prev = node._prev;
+		node._prev._next = newNode;
+		node._prev = newNode;
+	}
+	this.length++;
+	return this;
+};
+
+/**
+ */
+List$Renderable$E.prototype.forEach$F$LRenderable$V$ = function (f) {
+	/** @type {Node$Renderable$E} */
+	var n;
+	for (n = this.head; n; n = n.next$()) {
+		f(n.value);
+	}
+};
+
+/**
+ * @return {!string}
+ */
+List$Renderable$E.prototype.toString = function () {
+	/** @type {!string} */
+	var str;
+	/** @type {Node$Renderable$E} */
+	var n;
+	str = 'list : [';
+	for (n = this.head; n != null; n = n.next$()) {
+		str += ' ' + n.value.toString() + ',';
+	}
+	str += ']';
+	return str;
+};
+
+/**
+ * class Node$Renderable$E extends Object
+ * @constructor
+ */
+function Node$Renderable$E() {
+}
+
+Node$Renderable$E.prototype = new Object;
+/**
+ * @constructor
+ * @param {Renderable} value
+ */
+function Node$Renderable$E$LRenderable$(value) {
+	this.value = value;
+	this._prev = null;
+	this._next = null;
+};
+
+Node$Renderable$E$LRenderable$.prototype = new Node$Renderable$E;
+
+/**
+ * @return {Node$Renderable$E}
+ */
+Node$Renderable$E.prototype.prev$ = function () {
+	return this._prev;
+};
+
+/**
+ * @return {Node$Renderable$E}
+ */
+Node$Renderable$E.prototype.next$ = function () {
+	return this._next;
+};
+
+/**
+ * class List$Polygon$E extends Object
+ * @constructor
+ */
+function List$Polygon$E() {
+}
+
+List$Polygon$E.prototype = new Object;
+/**
+ * @constructor
+ */
+function List$Polygon$E$() {
+	this.head = null;
+	this.tail = null;
+	this.length = 0;
+};
+
+List$Polygon$E$.prototype = new List$Polygon$E;
+
+/**
+ * @constructor
+ * @param {Array.<undefined|Polygon>} array
+ */
+function List$Polygon$E$ALPolygon$(array) {
+	/** @type {!number} */
+	var len;
+	/** @type {!number} */
+	var i;
+	this.head = null;
+	this.tail = null;
+	this.length = 0;
+	len = array.length;
+	for (i = 0; i < len; i++) {
+		this.prepend$LPolygon$(array.pop());
+	}
+};
+
+List$Polygon$E$ALPolygon$.prototype = new List$Polygon$E;
+
+/**
+ * @param {Polygon} value
+ * @return {List$Polygon$E}
+ */
+List$Polygon$E.prototype.prepend$LPolygon$ = function (value) {
+	/** @type {Node$Polygon$E} */
+	var node;
+	node = new Node$Polygon$E$LPolygon$(value);
+	if (this.length === 0) {
+		this.head = node;
+		this.tail = node;
+	} else {
+		node._next = this.head;
+		this.head._prev = node;
+		this.head = node;
+	}
+	this.length++;
+	return this;
+};
+
+/**
+ * @param {Polygon} value
+ * @return {List$Polygon$E}
+ */
+List$Polygon$E.prototype.append$LPolygon$ = function (value) {
+	/** @type {Node$Polygon$E} */
+	var node;
+	node = new Node$Polygon$E$LPolygon$(value);
+	if (this.length === 0) {
+		this.head = node;
+		this.tail = node;
+	} else {
+		node._prev = this.tail;
+		this.tail._next = node;
+		this.tail = node;
+	}
+	this.length++;
+	return this;
+};
+
+/**
+ * @param {Node$Polygon$E} node
+ * @return {Polygon}
+ */
+List$Polygon$E.prototype.remove$LNode$Polygon$E$ = function (node) {
+	if (node._prev) {
+		node._prev._next = node._next;
+	} else {
+		this.head = node._next;
+	}
+	if (node._next) {
+		node._next._prev = node._prev;
+	} else {
+		this.tail = node._prev;
+	}
+	return node.value;
+};
+
+/**
+ * @return {Polygon}
+ */
+List$Polygon$E.prototype.removeFirst$ = function () {
+	/** @type {Node$Polygon$E} */
+	var node;
+	node = this.head;
+	this.head = node._next;
+	if (node._next != null) {
+		node._next._prev = null;
+	}
+	this.length--;
+	return node.value;
+};
+
+/**
+ * @return {Polygon}
+ */
+List$Polygon$E.prototype.removeLast$ = function () {
+	/** @type {Node$Polygon$E} */
+	var node;
+	node = this.tail;
+	this.tail = node._prev;
+	if (node._prev != null) {
+		node._prev._next = null;
+	}
+	this.length--;
+	return node.value;
+};
+
+/**
+ * @param {Node$Polygon$E} node
+ * @param {Polygon} value
+ * @return {List$Polygon$E}
+ */
+List$Polygon$E.prototype.insertAfter$LNode$Polygon$E$LPolygon$ = function (node, value) {
+	/** @type {Node$Polygon$E} */
+	var newNode;
+	newNode = new Node$Polygon$E$LPolygon$(value);
+	if (node.next$() == null) {
+		newNode._prev = node;
+		node._next = newNode;
+		this.tail = newNode;
+	} else {
+		newNode._next = node._next;
+		newNode._prev = node;
+		node._next._prev = newNode;
+		node._next = newNode;
+	}
+	this.length++;
+	return this;
+};
+
+/**
+ * @param {Node$Polygon$E} node
+ * @param {Polygon} value
+ * @return {List$Polygon$E}
+ */
+List$Polygon$E.prototype.insertBefore$LNode$Polygon$E$LPolygon$ = function (node, value) {
+	/** @type {Node$Polygon$E} */
+	var newNode;
+	newNode = new Node$Polygon$E$LPolygon$(value);
+	if (node.prev$() == null) {
+		newNode._next = node;
+		node._prev = newNode;
+		this.head = newNode;
+	} else {
+		newNode._next = node;
+		newNode._prev = node._prev;
+		node._prev._next = newNode;
+		node._prev = newNode;
+	}
+	this.length++;
+	return this;
+};
+
+/**
+ */
+List$Polygon$E.prototype.forEach$F$LPolygon$V$ = function (f) {
+	/** @type {Node$Polygon$E} */
+	var n;
+	for (n = this.head; n; n = n.next$()) {
+		f(n.value);
+	}
+};
+
+/**
+ * @return {!string}
+ */
+List$Polygon$E.prototype.toString = function () {
+	/** @type {!string} */
+	var str;
+	/** @type {Node$Polygon$E} */
+	var n;
+	str = 'list : [';
+	for (n = this.head; n != null; n = n.next$()) {
+		str += ' ' + n.value.toString() + ',';
+	}
+	str += ']';
+	return str;
+};
+
+/**
+ * class Node$Polygon$E extends Object
+ * @constructor
+ */
+function Node$Polygon$E() {
+}
+
+Node$Polygon$E.prototype = new Object;
+/**
+ * @constructor
+ * @param {Polygon} value
+ */
+function Node$Polygon$E$LPolygon$(value) {
+	this.value = value;
+	this._prev = null;
+	this._next = null;
+};
+
+Node$Polygon$E$LPolygon$.prototype = new Node$Polygon$E;
+
+/**
+ * @return {Node$Polygon$E}
+ */
+Node$Polygon$E.prototype.prev$ = function () {
+	return this._prev;
+};
+
+/**
+ * @return {Node$Polygon$E}
+ */
+Node$Polygon$E.prototype.next$ = function () {
+	return this._next;
+};
+
+/**
+ * class dom extends Object
+ * @constructor
+ */
+function dom() {
+}
+
+dom.prototype = new Object;
+/**
+ * @constructor
+ */
+function dom$() {
+};
+
+dom$.prototype = new dom;
+
+/**
+ * @param {!string} id
+ * @return {HTMLElement}
+ */
+dom.id$S = function (id) {
+	return (function (o) { return o instanceof HTMLElement ? o : null; })(dom.document.getElementById(id));
+};
+
+var dom$id$S = dom.id$S;
+
+/**
+ * @param {!string} id
+ * @return {HTMLElement}
+ */
+dom.getElementById$S = function (id) {
+	return (function (o) { return o instanceof HTMLElement ? o : null; })(dom.document.getElementById(id));
+};
+
+var dom$getElementById$S = dom.getElementById$S;
+
+/**
+ * @param {!string} tag
+ * @return {HTMLElement}
+ */
+dom.createElement$S = function (tag) {
+	return (function (v) {
+		if (! (v == null || v instanceof HTMLElement)) {
+			debugger;
+			throw new Error("[/Users/charlie/.jsx/lib/js/js/web.jsx:30] detected invalid cast, value is not an instance of the designated type or null");
+		}
+		return v;
+	}(dom.document.createElement(tag)));
+};
+
+var dom$createElement$S = dom.createElement$S;
+
+/**
+ * class Timer extends Object
+ * @constructor
+ */
+function Timer() {
+}
+
+Timer.prototype = new Object;
+/**
+ * @constructor
+ */
+function Timer$() {
+};
+
+Timer$.prototype = new Timer;
+
+/**
+ * @param {!number} intervalMS
+ * @return {TimerHandle}
+ */
+Timer.setTimeout$F$V$N = function (callback, intervalMS) {
+	return (function (v) {
+		if (! (v == null || typeof v === "function")) {
+			debugger;
+			throw new Error("[/Users/charlie/.jsx/lib/js/timer.jsx:27] detected invalid cast, value is not a function or null");
+		}
+		return v;
+	}(js.global.setTimeout))(callback, intervalMS);
+};
+
+var Timer$setTimeout$F$V$N = Timer.setTimeout$F$V$N;
+
+/**
+ * @param {TimerHandle} timer
+ */
+Timer.clearTimeout$LTimerHandle$ = function (timer) {
+	(function (v) {
+		if (! (v == null || typeof v === "function")) {
+			debugger;
+			throw new Error("[/Users/charlie/.jsx/lib/js/timer.jsx:31] detected invalid cast, value is not a function or null");
+		}
+		return v;
+	}(js.global.clearTimeout))(timer);
+};
+
+var Timer$clearTimeout$LTimerHandle$ = Timer.clearTimeout$LTimerHandle$;
+
+/**
+ * @param {!number} intervalMS
+ * @return {TimerHandle}
+ */
+Timer.setInterval$F$V$N = function (callback, intervalMS) {
+	return (function (v) {
+		if (! (v == null || typeof v === "function")) {
+			debugger;
+			throw new Error("[/Users/charlie/.jsx/lib/js/timer.jsx:35] detected invalid cast, value is not a function or null");
+		}
+		return v;
+	}(js.global.setInterval))(callback, intervalMS);
+};
+
+var Timer$setInterval$F$V$N = Timer.setInterval$F$V$N;
+
+/**
+ * @param {TimerHandle} timer
+ */
+Timer.clearInterval$LTimerHandle$ = function (timer) {
+	(function (v) {
+		if (! (v == null || typeof v === "function")) {
+			debugger;
+			throw new Error("[/Users/charlie/.jsx/lib/js/timer.jsx:39] detected invalid cast, value is not a function or null");
+		}
+		return v;
+	}(js.global.clearInterval))(timer);
+};
+
+var Timer$clearInterval$LTimerHandle$ = Timer.clearInterval$LTimerHandle$;
+
+/**
+ * @return {TimerHandle}
+ */
+Timer.requestAnimationFrame$F$NV$ = function (callback) {
+	return Timer._requestAnimationFrame(callback);
+};
+
+var Timer$requestAnimationFrame$F$NV$ = Timer.requestAnimationFrame$F$NV$;
+
+/**
+ * @param {TimerHandle} timer
+ */
+Timer.cancelAnimationFrame$LTimerHandle$ = function (timer) {
+	Timer._cancelAnimationFrame(timer);
+};
+
+var Timer$cancelAnimationFrame$LTimerHandle$ = Timer.cancelAnimationFrame$LTimerHandle$;
+
+/**
+ * @param {!boolean} enable
+ */
+Timer.useNativeRAF$B = function (enable) {
+	Timer._requestAnimationFrame = Timer$_getRequestAnimationFrameImpl$B(enable);
+	Timer._cancelAnimationFrame = Timer$_getCancelAnimationFrameImpl$B(enable);
+};
+
+var Timer$useNativeRAF$B = Timer.useNativeRAF$B;
+
+/**
+ * @param {!boolean} useNativeImpl
+ */
+Timer._getRequestAnimationFrameImpl$B = function (useNativeImpl) {
+	/** @type {!number} */
+	var lastTime;
+	if (useNativeImpl) {
+		if (js.global.requestAnimationFrame) {
+			return (function (callback) {
+				return (function (v) {
+					if (! (v == null || typeof v === "function")) {
+						debugger;
+						throw new Error("[/Users/charlie/.jsx/lib/js/timer.jsx:65] detected invalid cast, value is not a function or null");
+					}
+					return v;
+				}(js.global.requestAnimationFrame))(callback);
+			});
+		} else {
+			if (js.global.webkitRequestAnimationFrame) {
+				return (function (callback) {
+					return (function (v) {
+						if (! (v == null || typeof v === "function")) {
+							debugger;
+							throw new Error("[/Users/charlie/.jsx/lib/js/timer.jsx:71] detected invalid cast, value is not a function or null");
+						}
+						return v;
+					}(js.global.webkitRequestAnimationFrame))(callback);
+				});
+			} else {
+				if (js.global.mozRequestAnimationFrame) {
+					return (function (callback) {
+						return (function (v) {
+							if (! (v == null || typeof v === "function")) {
+								debugger;
+								throw new Error("[/Users/charlie/.jsx/lib/js/timer.jsx:77] detected invalid cast, value is not a function or null");
+							}
+							return v;
+						}(js.global.mozRequestAnimationFrame))(callback);
+					});
+				} else {
+					if (js.global.oRequestAnimationFrame) {
+						return (function (callback) {
+							return (function (v) {
+								if (! (v == null || typeof v === "function")) {
+									debugger;
+									throw new Error("[/Users/charlie/.jsx/lib/js/timer.jsx:83] detected invalid cast, value is not a function or null");
+								}
+								return v;
+							}(js.global.oRequestAnimationFrame))(callback);
+						});
+					} else {
+						if (js.global.msRequestAnimationFrame) {
+							return (function (callback) {
+								return (function (v) {
+									if (! (v == null || typeof v === "function")) {
+										debugger;
+										throw new Error("[/Users/charlie/.jsx/lib/js/timer.jsx:89] detected invalid cast, value is not a function or null");
+									}
+									return v;
+								}(js.global.msRequestAnimationFrame))(callback);
+							});
+						}
+					}
+				}
+			}
+		}
+	}
+	lastTime = 0;
+	return (function (callback) {
+		/** @type {!number} */
+		var now;
+		/** @type {!number} */
+		var timeToCall;
+		now = Date.now();
+		timeToCall = Math.max(0, 16 - (now - lastTime));
+		lastTime = now + timeToCall;
+		return Timer$setTimeout$F$V$N((function () {
+			callback(now + timeToCall);
+		}), timeToCall);
+	});
+};
+
+var Timer$_getRequestAnimationFrameImpl$B = Timer._getRequestAnimationFrameImpl$B;
+
+/**
+ * @param {!boolean} useNativeImpl
+ */
+Timer._getCancelAnimationFrameImpl$B = function (useNativeImpl) {
+	if (useNativeImpl) {
+		if (js.global.cancelAnimationFrame) {
+			return (function (timer) {
+				(function (v) {
+					if (! (v == null || typeof v === "function")) {
+						debugger;
+						throw new Error("[/Users/charlie/.jsx/lib/js/timer.jsx:112] detected invalid cast, value is not a function or null");
+					}
+					return v;
+				}(js.global.cancelAnimationFrame))(timer);
+			});
+		} else {
+			if (js.global.webkitCancelAnimationFrame) {
+				return (function (timer) {
+					(function (v) {
+						if (! (v == null || typeof v === "function")) {
+							debugger;
+							throw new Error("[/Users/charlie/.jsx/lib/js/timer.jsx:118] detected invalid cast, value is not a function or null");
+						}
+						return v;
+					}(js.global.webkitCancelAnimationFrame))(timer);
+				});
+			} else {
+				if (js.global.mozCancelAnimationFrame) {
+					return (function (timer) {
+						(function (v) {
+							if (! (v == null || typeof v === "function")) {
+								debugger;
+								throw new Error("[/Users/charlie/.jsx/lib/js/timer.jsx:124] detected invalid cast, value is not a function or null");
+							}
+							return v;
+						}(js.global.mozCancelAnimationFrame))(timer);
+					});
+				} else {
+					if (js.global.oCancelAnimationFrame) {
+						return (function (timer) {
+							(function (v) {
+								if (! (v == null || typeof v === "function")) {
+									debugger;
+									throw new Error("[/Users/charlie/.jsx/lib/js/timer.jsx:130] detected invalid cast, value is not a function or null");
+								}
+								return v;
+							}(js.global.oCancelAnimationFrame))(timer);
+						});
+					} else {
+						if (js.global.msCancelAnimationFrame) {
+							return (function (timer) {
+								(function (v) {
+									if (! (v == null || typeof v === "function")) {
+										debugger;
+										throw new Error("[/Users/charlie/.jsx/lib/js/timer.jsx:136] detected invalid cast, value is not a function or null");
+									}
+									return v;
+								}(js.global.msCancelAnimationFrame))(timer);
+							});
+						}
+					}
+				}
+			}
+		}
+	}
+	return Timer$clearTimeout$LTimerHandle$;
+};
+
+var Timer$_getCancelAnimationFrameImpl$B = Timer._getCancelAnimationFrameImpl$B;
+
+/**
+ * class TimerHandle extends Object
+ * @constructor
+ */
+function TimerHandle() {
+}
+
+TimerHandle.prototype = new Object;
+/**
+ * @constructor
+ */
+function TimerHandle$() {
+};
+
+TimerHandle$.prototype = new TimerHandle;
+
+/**
+ * class Math2D extends Object
+ * @constructor
+ */
+function Math2D() {
+}
+
+Math2D.prototype = new Object;
+/**
+ * @constructor
+ */
+function Math2D$() {
+};
+
+Math2D$.prototype = new Math2D;
+
+/**
+ * @param {!number} x1
+ * @param {!number} y1
+ * @param {!number} x2
+ * @param {!number} y2
+ * @return {!number}
+ */
+Math2D.cross$NNNN = function (x1, y1, x2, y2) {
+	return x1 * y2 - x2 * y1;
+};
+
+var Math2D$cross$NNNN = Math2D.cross$NNNN;
+
+/**
+ * class Stopwatch extends Object
+ * @constructor
+ */
+function Stopwatch() {
+}
+
+Stopwatch.prototype = new Object;
+/**
+ * @constructor
+ */
+function Stopwatch$() {
+	this._lastLapMsec = null;
+	this._elapsedMsec = 0;
+	this._startedMsec = null;
+};
+
+Stopwatch$.prototype = new Stopwatch;
+
+/**
+ * @return {!number}
+ */
+Stopwatch.prototype._currentMsec$ = function () {
+	return Date.now();
+};
+
+/**
+ */
+Stopwatch.prototype.start$ = function () {
+	if (! (this._startedMsec == null)) {
+		debugger;
+		throw new Error("[jsx/util.jsx:39] assertion failure");
+	}
+	this._startedMsec = this._lastLapMsec = this._currentMsec$();
+};
+
+/**
+ */
+Stopwatch.prototype.stop$ = function () {
+	if (! (this._startedMsec != null)) {
+		debugger;
+		throw new Error("[jsx/util.jsx:45] assertion failure");
+	}
+	this._elapsedMsec += this._currentMsec$() - (function (v) {
+		if (! (v != null)) {
+			debugger;
+			throw new Error("[jsx/util.jsx:47] null access");
+		}
+		return v;
+	}(this._startedMsec));
+	this._startedMsec = null;
+	this._lastLapMsec = null;
+};
+
+/**
+ * @return {!boolean}
+ */
+Stopwatch.prototype.isStarted$ = function () {
+	return this._startedMsec != null;
+};
+
+/**
+ * @return {!boolean}
+ */
+Stopwatch.prototype.isStopped$ = function () {
+	return this._startedMsec == null;
+};
+
+/**
+ * @return {!number}
+ */
+Stopwatch.prototype.lap$ = function () {
+	/** @type {!number} */
+	var currentMsec;
+	/** @type {!number} */
+	var lapMsec;
+	if (! (this._lastLapMsec != null)) {
+		debugger;
+		throw new Error("[jsx/util.jsx:65] assertion failure");
+	}
+	currentMsec = this._currentMsec$();
+	lapMsec = currentMsec - (function (v) {
+		if (! (v != null)) {
+			debugger;
+			throw new Error("[jsx/util.jsx:68] null access");
+		}
+		return v;
+	}(this._lastLapMsec));
+	this._lastLapMsec = currentMsec;
+	return lapMsec;
+};
+
+/**
+ * @return {!number}
+ */
+Stopwatch.prototype.getElapsedMsec$ = function () {
+	return this._elapsedMsec;
+};
+
+/**
+ * class FpsManager extends Object
+ * @constructor
+ */
+function FpsManager() {
+}
+
+FpsManager.prototype = new Object;
+/**
+ * @constructor
+ */
+function FpsManager$() {
+	this._fpsElement = null;
+	this._stopwatch = new Stopwatch$();
+	this._recentlyMsecLog = [  ];
+	this._lastMsec = 0;
+	this._enabledHtmlLog = false;
+	this._enabledConsoleLog = true;
+};
+
+FpsManager$.prototype = new FpsManager;
+
+/**
+ * @constructor
+ * @param {!string} spanId
+ */
+function FpsManager$S(spanId) {
+	this._fpsElement = dom$id$S(spanId);
+	this._stopwatch = new Stopwatch$();
+	this._recentlyMsecLog = [  ];
+	this._lastMsec = 0;
+	this._enabledHtmlLog = true;
+	this._enabledConsoleLog = false;
+};
+
+FpsManager$S.prototype = new FpsManager;
+
+/**
+ */
+FpsManager.prototype.start$ = function () {
+	this._stopwatch.start$();
+};
+
+/**
+ * @return {!number}
+ */
+FpsManager.prototype.lastLap$ = function () {
+	return this._lastMsec;
+};
+
+/**
+ */
+FpsManager.prototype.update$ = function () {
+	/** @type {!number} */
+	var lap;
+	/** @type {!number} */
+	var length;
+	/** @type {!number} */
+	var totalMsec;
+	/** @type {!number} */
+	var i;
+	/** @type {!number} */
+	var fps;
+	if (! (! this._stopwatch.isStopped$())) {
+		debugger;
+		throw new Error("[jsx/util.jsx:126] assertion failure");
+	}
+	lap = this._stopwatch.lap$();
+	this._lastMsec = lap;
+	if (this._recentlyMsecLog.length < 1) {
+		this._recentlyMsecLog.push(lap);
+	} else {
+		this._recentlyMsecLog.push(lap);
+		this._recentlyMsecLog.shift();
+	}
+	length = this._recentlyMsecLog.length;
+	totalMsec = 0;
+	for (i = 0; i < length; i++) {
+		totalMsec += (function (v) {
+			if (! (v != null)) {
+				debugger;
+				throw new Error("[jsx/util.jsx:141] null access");
+			}
+			return v;
+		}(this._recentlyMsecLog[i]));
+	}
+	fps = length / (totalMsec / 1000);
+	if (this._fpsElement != null && this._enabledHtmlLog) {
+		this._fpsElement.innerHTML = fps.toFixed(1) + "fps";
+	} else {
+		if (this._enabledConsoleLog) {
+			console.log(fps.toFixed(1) + "fps");
+		}
+	}
+};
+
+/**
+ * class js extends Object
+ * @constructor
+ */
+function js() {
+}
+
+js.prototype = new Object;
+/**
+ * @constructor
+ */
+function js$() {
+};
+
+js$.prototype = new js;
+
+$__jsx_lazy_init(Engine, "images", function () {
+	return {  };
+});
+$__jsx_lazy_init(Engine, "imageDatas", function () {
+	return {  };
+});
+$__jsx_lazy_init(Engine, "isLoadedImage", function () {
+	return {  };
+});
+$__jsx_lazy_init(dom, "window", function () {
+	return js.global.window;
+});
+$__jsx_lazy_init(dom, "document", function () {
+	return (function (v) {
+		if (! (v == null || v instanceof HTMLDocument)) {
+			debugger;
+			throw new Error("[/Users/charlie/.jsx/lib/js/js/web.jsx:16] detected invalid cast, value is not an instance of the designated type or null");
+		}
+		return v;
+	}(js.global.document));
+});
+$__jsx_lazy_init(Timer, "_requestAnimationFrame", function () {
+	return Timer$_getRequestAnimationFrameImpl$B(true);
+});
+$__jsx_lazy_init(Timer, "_cancelAnimationFrame", function () {
+	return Timer$_getCancelAnimationFrameImpl$B(true);
+});
+js.global = (function () { return this; })();
+
+var $__jsx_classMap = {
+	"jsx/ball.jsx": {
+		Util3D: Util3D,
+		Util3D$: Util3D$,
+		Player: Player,
+		Player$: Player$,
+		BlueBall: BlueBall,
+		BlueBall$: BlueBall$,
+		_Main: _Main,
+		_Main$: _Main$
+	},
+	"jsx/vector.jsx": {
+		Vector: Vector,
+		Vector$NNN: Vector$NNN,
+		Vector$NNNN: Vector$NNNN,
+		Vector$LVector$: Vector$LVector$
+	},
+	"jsx/matrix.jsx": {
+		Matrix: Matrix,
+		Matrix$: Matrix$,
+		Matrix$AN: Matrix$AN
+	},
+	"jsx/quaternion.jsx": {
+		Quaternion: Quaternion,
+		Quaternion$NLVector$: Quaternion$NLVector$,
+		Quaternion$LVector$: Quaternion$LVector$,
+		Quaternion$NNNN: Quaternion$NNNN
+	},
+	"jsx/engine.jsx": {
+		Engine: Engine,
+		Engine$S: Engine$S,
+		Context3D: Context3D,
+		Context3D$LCamera$: Context3D$LCamera$,
+		Camera: Camera,
+		Camera$LVector$LVector$LVector$NNNN: Camera$LVector$LVector$LVector$NNNN,
+		Color: Color,
+		Color$III: Color$III,
+		Renderable: Renderable,
+		Renderable$: Renderable$,
+		Polygon: Polygon,
+		Polygon$ALVector$LColor$: Polygon$ALVector$LColor$,
+		PolygonGroup: PolygonGroup,
+		PolygonGroup$LList$Polygon$E$LVector$: PolygonGroup$LList$Polygon$E$LVector$,
+		PolygonGroup$LList$Polygon$E$LVector$B: PolygonGroup$LList$Polygon$E$LVector$B,
+		SmoothTexture: SmoothTexture,
+		SmoothTexture$ALVector$S: SmoothTexture$ALVector$S,
+		SmoothTexture$ALVector$SIIII: SmoothTexture$ALVector$SIIII,
+		Billboard: Billboard,
+		Billboard$LVector$NNS: Billboard$LVector$NNS
+	},
+	"system:lib/js/js/web.jsx": {
+		dom: dom,
+		dom$: dom$
+	},
+	"system:lib/js/timer.jsx": {
+		Timer: Timer,
+		Timer$: Timer$,
+		TimerHandle: TimerHandle,
+		TimerHandle$: TimerHandle$
+	},
+	"jsx/util.jsx": {
+		Math2D: Math2D,
+		Math2D$: Math2D$,
+		Stopwatch: Stopwatch,
+		Stopwatch$: Stopwatch$,
+		FpsManager: FpsManager,
+		FpsManager$: FpsManager$,
+		FpsManager$S: FpsManager$S
+	},
+	"system:lib/js/js.jsx": {
+		js: js,
+		js$: js$
+	}
+};
+
+
+/**
+ * launches _Main.main(:string[]):void invoked by jsx --run|--executable
+ */
+JSX.runMain = function (sourceFile, args) {
+	var module = JSX.require(sourceFile);
+
+	if (! module._Main) {
+		throw new Error("entry point _Main not found in " + sourceFile);
+	}
+	if (! module._Main.main$AS) {
+		throw new Error("entry point _Main.main(:string[]):void not found in " + sourceFile);
+	}
+	module._Main.main$AS(args);
+};
+
+/**
+ * launches _Test#test*():void invoked by jsx --test
+ */
+JSX.runTests = function (sourceFile, tests) {
+	var module = JSX.require(sourceFile);
+	var testClass = module._Test$;
+
+	if (!testClass) return; // skip if there's no test class
+
+	if(tests.length === 0) {
+		var p = testClass.prototype;
+		for (var m in p) {
+			if (p[m] instanceof Function
+				&& /^test.*[$]$/.test(m)) {
+				tests.push(m);
+			}
+		}
+	}
+
+	var test = new testClass();
+
+	if (test.beforeClass$AS != null)
+		test.beforeClass$AS(tests);
+
+	for (var i = 0; i < tests.length; ++i) {
+		(function (m) {
+			test.run$SF$V$(m, function() { test[m](); });
+		}(tests[i]));
+	}
+
+	if (test.afterClass$ != null)
+		test.afterClass$();
+};
+/**
+ * call a function on load/DOMContentLoaded
+ */
+function $__jsx_onload (event) {
+	window.removeEventListener("load", $__jsx_onload);
+	document.removeEventListener("DOMContentLoaded", $__jsx_onload);
+	JSX.runMain("jsx/ball.jsx", [])
+}
+
+window.addEventListener("load", $__jsx_onload);
+document.addEventListener("DOMContentLoaded", $__jsx_onload);
+
+})();
+
+//@ sourceMappingURL=jsx/ball.jsx.js.mapping

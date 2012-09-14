@@ -38,7 +38,7 @@ class Engine {
 
     var onUpdate : function(:number):void;
     var onRender : function(:Context3D, :number):void;
-    
+
     var _skyImageSrc : Nullable.<string>;
     var _skyImage : Nullable.<HTMLImageElement>;
 
@@ -430,7 +430,7 @@ class Camera {
      * @param v 移動させる方向ベクトル
      */
     function move(v:Vector) : void {
-        var vector = this.rotatingMatrix.mul(v);
+        var vector = v.transform(this.rotatingMatrix);
         this.view.addSelf(vector);
         this.target.addSelf(vector);
     }
@@ -441,7 +441,7 @@ class Camera {
      */
     function rotateY(rad:number) : void {
         var lookingVec =  this.target.sub(this.view);
-        lookingVec = Matrix.rotatingY(rad).mul(lookingVec);
+        lookingVec.transformSelf(Matrix.rotatingY(rad));
         this.target = lookingVec.addSelf(this.view);
 
         this.rotatingMatrix = Matrix.rotatingY(rad).composeSelf(this.rotatingMatrix);
@@ -620,7 +620,7 @@ class Polygon extends Renderable {
 
     override function applyWorldMatrix(worldMatrix:Matrix) : void {
         for (var i=0; i<this.vertices.length; i++) {
-            this.vertices[i] = worldMatrix.mul(this.vertices[i]);
+            this.vertices[i].transformSelf(worldMatrix);
         }
         this.updateCenter();
     }
@@ -629,7 +629,7 @@ class Polygon extends Renderable {
         var vVertices = [] : Vector[];
         var vSumPos = new Vector(0, 0, 0);
         for (var i=0; i<this.vertices.length; i++) {
-            var vVertex = viewMatrix.mul(this.vertices[i]);
+            var vVertex = this.vertices[i].transform(viewMatrix);
             vVertices.push(vVertex);
             vSumPos.addSelf(vVertex);
         }
@@ -697,12 +697,12 @@ class Polygon extends Renderable {
 
         // 透視変換
         for (var i=0; i<len; i++) {
-            verts[i] = engine.camera.projectionMatrix.mul(verts[i]);
+            verts[i].transformSelf(engine.camera.projectionMatrix);
         }
 
         // スクリーン変換
         for (var i=0; i<len; i++) {
-            verts[i] = engine.screenMatrix.mul(verts[i]);
+            verts[i].transformSelf(engine.screenMatrix);
         }
 
         // canvasの外側に位置する場合は表示しない
@@ -778,11 +778,11 @@ class PolygonGroup extends Renderable {
     }
 
     override function applyWorldMatrix(worldMatrix:Matrix) : void {
-        this.center = worldMatrix.mul(this.center);
+        this.center.transformSelf(worldMatrix);
     }
 
     override function applyViewMatrix(viewMatrix:Matrix) : void {
-        this.vCenter = viewMatrix.mul(this.center);
+        this.vCenter = this.center.transform(viewMatrix);
     }
 
     override function isHidden(camera:Camera) : boolean {
@@ -856,18 +856,18 @@ class SmoothTexture extends Polygon {
 
     override function applyWorldMatrix(worldMatrix:Matrix) : void {
         for (var i=0; i<this.vertices.length; i++) {
-            this.vertices[i] = worldMatrix.mul(this.vertices[i]);
+            this.vertices[i].transformSelf(worldMatrix);
         }
-        this.center = worldMatrix.mul(this.center);
+        this.center.transformSelf(worldMatrix);
     }
 
     override function applyViewMatrix(viewMatrix:Matrix) : void {
         var vVertices = [] : Vector[];
         for (var i=0; i<this.vertices.length; i++) {
-            vVertices.push(viewMatrix.mul(this.vertices[i]));
+            vVertices.push(this.vertices[i].transform(viewMatrix));
         }
         this.vVertices = vVertices;
-        this.vCenter = viewMatrix.mul(this.center);
+        this.vCenter = this.center.transform(viewMatrix);
     }
 
     override function isHidden(camera:Camera) : boolean {
@@ -893,10 +893,10 @@ class SmoothTexture extends Polygon {
                     engine.camera.viewMatrix));
 
         // screen + left or right + top or bottom
-        var sltImage = matrix.mul(wltImage);
-        var slbImage = matrix.mul(wlbImage);
-        var srbImage = matrix.mul(wrbImage);
-        var srtImage = matrix.mul(wrtImage);
+        var sltImage = wltImage.transform(matrix);
+        var slbImage = wlbImage.transform(matrix);
+        var srbImage = wrbImage.transform(matrix);
+        var srtImage = wrtImage.transform(matrix);
 
         var isHiddenXY = Renderable.isHiddenXY([sltImage, slbImage, srbImage, srtImage], engine);
         if (isHiddenXY) return false;
@@ -958,11 +958,11 @@ class SmoothTexture extends Polygon {
                 var wrc = wrt.add(wrb).divSelf(2);
                 var wcc = wlt.add(wrb).divSelf(2);
 
-                var sct = matrix.mul(wct);
-                var scb = matrix.mul(wcb);
-                var slc = matrix.mul(wlc);
-                var src = matrix.mul(wrc);
-                var scc = matrix.mul(wcc);
+                var sct = wct.transform(matrix);
+                var scb = wcb.transform(matrix);
+                var slc = wlc.transform(matrix);
+                var src = wrc.transform(matrix);
+                var scc = wcc.transform(matrix);
 
                 divideAndDrawImage(image, wlt, wlc, wcc, wct, slt, slc, scc, sct, depth+1,      sx, sy     , sw/2, sh/2); // 左上部分
                 divideAndDrawImage(image, wlc, wlb, wcb, wcc, slc, slb, scb, scc, depth+1,      sx, sy+sh/2, sw/2, sh/2); // 左下部分
@@ -972,8 +972,8 @@ class SmoothTexture extends Polygon {
                 var wct = wlt.add(wrt).divSelf(2);
                 var wcb = wlb.add(wrb).divSelf(2);
 
-                var sct = matrix.mul(wct);
-                var scb = matrix.mul(wcb);
+                var sct = wct.transform(matrix);
+                var scb = wcb.transform(matrix);
 
                 divideAndDrawImage(image, wlt, wlb, wcb, wct, slt, slb, scb, sct, depth+1,      sx, sy, sw/2, sh); // 左側部分
                 divideAndDrawImage(image, wct, wcb, wrb, wrt, sct, scb, srb, srt, depth+1, sx+sw/2, sy, sw/2, sh); // 右側部分
@@ -981,8 +981,8 @@ class SmoothTexture extends Polygon {
                 var wlc = wlt.add(wlb).divSelf(2);
                 var wrc = wrt.add(wrb).divSelf(2);
 
-                var slc = matrix.mul(wlc);
-                var src = matrix.mul(wrc);
+                var slc = wlc.transform(matrix);
+                var src = wrc.transform(matrix);
 
                 divideAndDrawImage(image, wlt, wlc, wrc, wrt, slt, slc, src, srt, depth+1, sx,      sy, sw, sh/2); // 上側部分
                 divideAndDrawImage(image, wlc, wlb, wrb, wrc, slc, slb, srb, src, depth+1, sx, sy+sh/2, sw, sh/2); // 下側部分
@@ -1036,11 +1036,11 @@ class Billboard extends Renderable {
         this.center = center;
     }
     override function applyWorldMatrix(worldMatrix:Matrix) : void {
-        this.center = worldMatrix.mul(this.center);
+        this.center.transformSelf(worldMatrix);
     }
 
     override function applyViewMatrix(viewMatrix:Matrix) : void {
-        this.vCenter = viewMatrix.mul(this.center);
+        this.vCenter = this.center.transform(viewMatrix);
     }
 
     override function isHidden(camera:Camera) : boolean {
@@ -1059,8 +1059,8 @@ class Billboard extends Renderable {
         // TODO: 座標系のチェック
         var vLeftBottom = this.vCenter.sub(new Vector(this._width/2, this._height/2, 0));
 
-        var sCenter = projectionAndScreenMatrix.mul(this.vCenter);
-        var sLeftBottom = projectionAndScreenMatrix.mul(vLeftBottom);
+        var sCenter = this.vCenter.transform(projectionAndScreenMatrix);
+        var sLeftBottom = vLeftBottom.transform(projectionAndScreenMatrix);
         var sHalfWidth  = sLeftBottom.x - sCenter.x;
         var sHalfHeight = sLeftBottom.y - sCenter.y;
 

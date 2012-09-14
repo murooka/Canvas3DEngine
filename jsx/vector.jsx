@@ -1,3 +1,4 @@
+import "./matrix.jsx";
 
 class Vector {
     
@@ -194,6 +195,29 @@ class Vector {
         var y = this.y*cos + this.z*sin;
         this.x = x;
         this.y = y;
+        return this;
+    }
+
+    function transform(m:Matrix) : Vector {
+        var x = m._m11 * this.x + m._m12 * this.y + m._m13 * this.z + m._m14 * this.w;
+        var y = m._m21 * this.x + m._m22 * this.y + m._m23 * this.z + m._m24 * this.w;
+        var z = m._m31 * this.x + m._m32 * this.y + m._m33 * this.z + m._m34 * this.w;
+        var w = m._m41 * this.x + m._m42 * this.y + m._m43 * this.z + m._m44 * this.w;
+
+        return new Vector(x, y, z, w);
+    }
+
+    function transformSelf(m:Matrix) : Vector {
+        var x = m._m11 * this.x + m._m12 * this.y + m._m13 * this.z + m._m14 * this.w;
+        var y = m._m21 * this.x + m._m22 * this.y + m._m23 * this.z + m._m24 * this.w;
+        var z = m._m31 * this.x + m._m32 * this.y + m._m33 * this.z + m._m34 * this.w;
+        var w = m._m41 * this.x + m._m42 * this.y + m._m43 * this.z + m._m44 * this.w;
+
+        this.x = x / w;
+        this.y = y / w;
+        this.z = z / w;
+        this.w = 1;
+
         return this;
     }
 
