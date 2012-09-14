@@ -1330,7 +1330,7 @@ BlueBall.prototype._checkCollisionWithFloor$N = function (elapsedMsec) {
 	x = player.x;
 	y = player.y;
 	z = player.z;
-	if (-30 <= x && x <= 30 && -30 <= z && z <= 150 || -300 <= x && x <= 300 && 150 <= z && z <= 750 || -30 <= x && x <= 30 && 750 <= z && z <= 810 || -30 <= x && x <= 570 && 810 <= z && z <= 870 || 510 <= x && x <= 1110 && 150 <= z && z <= 210) {
+	if (-30 <= x && x <= 30 && -30 <= z && z <= 150 || -300 <= x && x <= 300 && 150 <= z && z <= 750 || -30 <= x && x <= 30 && 750 <= z && z <= 810 || -30 <= x && x <= 570 && 810 <= z && z <= 870 || 510 <= x && x <= 1110 && 150 <= z && z <= 210 || 1050 <= x && x <= 1110 && 750 <= z && z <= 1350) {
 		if (- player.radius * 2 < y && y < 0) {
 			normal$0$x$0 = 0;
 			normal$0$y$0 = 1;
@@ -1371,7 +1371,7 @@ BlueBall.prototype._checkCollisionWithFloor$N = function (elapsedMsec) {
 			player.y = height;
 		}
 	}
-	if (1110 <= x && x <= 1270 && 150 <= z && z <= 750) {
+	if (1110 <= x && x <= 1270 && 150 <= z && z <= 810) {
 		height = (x - 1110) / 160 * 80;
 		if (height - player.radius * 2 < y && y < height) {
 			this$2 = new Vector$NNN(-1, 2, 0);
@@ -3028,13 +3028,15 @@ BlueBall.prototype._renderField$LContext3D$ = function (context) {
 	this$0$1._m43 = m41$0$1 * _m13$1 + m42$0$1 * _m23$1 + m43$0$1 * _m33$1 + m44$0$1 * _m43$1;
 	this$0$1._m44 = m41$0$1 * _m14$1 + m42$0$1 * _m24$1 + m43$0$1 * _m34$1 + m44$0$1 * _m44$1;
 	for (i = 0; i < 4; i++) {
-		for (j = 0; j < 10; j++) {
+		for (j = 0; j < 22; j++) {
 			color = ((i + j) % 2 === 0 ? lightGreen : green);
 			Context3D$renderPolygonGroup$LContext3D$ALVector$LColor$(context, [ new Vector$NNN(i * 40, -20 + i * 20, j * size), new Vector$NNN(i * 40, -20 + i * 20, (j + 1) * size), new Vector$NNN((i + 1) * 40, -20 + (i + 1) * 20, (j + 1) * size), new Vector$NNN((i + 1) * 40, -20 + (i + 1) * 20, j * size) ], color);
 		}
 	}
 	Context3D$endGroup$LContext3D$(context);
 	context._worldMatrix = context._matrixStack.removeFirst$();
+	Util3D$tileRectXZ$LContext3D$IIIIIILColor$LColor$(context, 1050, 1050, 60, 600, -20, size, green, lightGreen);
+	Util3D$tileRectXZ$LContext3D$IIIIIILColor$LColor$(context, 1080, 1380, 60, 60, -20, size / 2, new Color$III(0xff, 0xd7, 0x00), new Color$III(0xff, 0xff, 255));
 	Context3D$setDepth$LContext3D$I(context, 3);
 };
 
@@ -3064,6 +3066,7 @@ BlueBall.prototype._setMobileOperation$ = function () {
 		de = (function (o) { return o instanceof DeviceMotionEvent ? o : null; })(e);
 		az = de.accelerationIncludingGravity.y * 30;
 		ax = de.accelerationIncludingGravity.x * 30 / 2;
+		az = (az <= 120 ? az : 120);
 		if (az < -60) {
 			$this$0 = player$0 = $this.player;
 			$this$0.isBraking = true;

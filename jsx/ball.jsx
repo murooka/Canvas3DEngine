@@ -335,7 +335,8 @@ class BlueBall {
                 (-300 <= x && x <= 300 && 150 <= z && z <= 750) || // stage 1
                 ( -30 <= x && x <=  30 && 750 <= z && z <= 810) ||
                 ( -30 <= x && x <= 570 && 810 <= z && z <= 870) || // passage from stage 1 to stage 2
-                ( 510 <= x && x <=1110 && 150 <= z && z <= 210)    // passage from stage 2 to stage 3
+                ( 510 <= x && x <=1110 && 150 <= z && z <= 210) || // passage from stage 2 to stage 3
+                (1050 <= x && x <=1110 && 750 <= z && z <=1350)    // passage from stage 3 to goal
            ) {
             if (-player.radius*2 < y && y < 0) {
                 player.bounce(new Vector(0, 1, 0));
@@ -358,7 +359,7 @@ class BlueBall {
                 player.y = height;
             }
         }
-        if (1110<= x && x <=1270 && 150 <= z && z <= 750) {
+        if (1110<= x && x <=1270 && 150 <= z && z <= 810) {
             var height = (x - 1110) / 160 * 80;
             if (height-player.radius*2 < y && y < height) {
                 player.bounce(new Vector(-1, 2, 0).unitSelf());
@@ -533,7 +534,7 @@ class BlueBall {
         context.beginGroup(new Vector(0, 0, 0), true);
         context.translate(1110, 0, 150);
         for (var i=0; i<4; i++) {
-            for (var j=0; j<10; j++) {
+            for (var j=0; j<22; j++) {
                 var color = (i+j)%2==0 ? lightGreen : green;
                 context.renderPolygonGroup([
                     new Vector(    i*40,     -20+i*20,     j*size),
@@ -546,6 +547,9 @@ class BlueBall {
         context.endGroup();
         context.popMatrix();
 
+        Util3D.tileRectXZ(context,1080,1050,  60, 600, -20, size, green, lightGreen);
+
+        Util3D.tileRectXZ(context,1080,1380,  60,  60, -20, size/2, new Color(0xff, 0xd7, 0x00), new Color(0xff, 0xff, 255));
 
         context.setDepth(3);
     }
