@@ -202,6 +202,47 @@ Util3D.tileOnGroup$LContext3D$IIIILColor$ = function (context, x, y, z, size, co
 var Util3D$tileOnGroup$LContext3D$IIIILColor$ = Util3D.tileOnGroup$LContext3D$IIIILColor$;
 
 /**
+ * @param {Context3D} context
+ * @param {!number} cx
+ * @param {!number} cz
+ * @param {!number} width
+ * @param {!number} height
+ * @param {!number} y
+ * @param {!number} size
+ * @param {Color} color1
+ * @param {Color} color2
+ */
+Util3D.tileRectXZ$LContext3D$IIIIIILColor$LColor$ = function (context, cx, cz, width, height, y, size, color1, color2) {
+	/** @type {!number} */
+	var row;
+	/** @type {!number} */
+	var col;
+	/** @type {!number} */
+	var i;
+	/** @type {!number} */
+	var j;
+	/** @type {Color} */
+	var color;
+	/** @type {Vector} */
+	var center$0;
+	row = height / size;
+	col = width / size;
+	center$0 = new Vector$NNN(0, 0, 0);
+	context._polygonList = new List$Polygon$E$();
+	context._groupCenter = center$0;
+	context._ignoringZHidden = true;
+	for (i = 0; i < row; i++) {
+		for (j = 0; j < col; j++) {
+			color = ((i + j) % 2 === 0 ? color1 : color2);
+			Util3D$tileOnGroup$LContext3D$IIIILColor$(context, cx - width / 2 + (j + 0.5) * size, y, cz - height / 2 + (i + 0.5) * size, size, color);
+		}
+	}
+	Context3D$endGroup$LContext3D$(context);
+};
+
+var Util3D$tileRectXZ$LContext3D$IIIIIILColor$LColor$ = Util3D.tileRectXZ$LContext3D$IIIIIILColor$LColor$;
+
+/**
  * class Player extends Object
  * @constructor
  */
@@ -263,7 +304,6 @@ Player.move$LPlayer$NN = function ($this, dz, dx) {
 	var sin;
 	/** @type {!number} */
 	var cos;
-	$this.isBraking = false;
 	x = $this.vx;
 	z = $this.vz;
 	len = Math.sqrt(x * x + z * z);
@@ -290,6 +330,15 @@ Player.brake$LPlayer$ = function ($this) {
 };
 
 var Player$brake$LPlayer$ = Player.brake$LPlayer$;
+
+/**
+ * @param {Player} $this
+ */
+Player.unbrake$LPlayer$ = function ($this) {
+	$this.isBraking = false;
+};
+
+var Player$unbrake$LPlayer$ = Player.unbrake$LPlayer$;
 
 /**
  * @param {Player} $this
@@ -438,7 +487,7 @@ Player.update$LPlayer$N = function ($this, elapsedMsec) {
 	$this.x += dx;
 	$this.y += dy;
 	$this.z += dz;
-	velocityDecl = ($this.isBraking ? 0.1 : 0.01);
+	velocityDecl = ($this.isBraking ? 0.05 : 0.001);
 	$this.vx -= (dx >= 0 ? dx : - dx) * $this.vx * velocityDecl;
 	$this.vz -= (dz >= 0 ? dz : - dz) * $this.vz * velocityDecl;
 	if ($this.isBraking) {
@@ -479,6 +528,27 @@ Player.update$LPlayer$N = function ($this, elapsedMsec) {
 };
 
 var Player$update$LPlayer$N = Player.update$LPlayer$N;
+
+/**
+ * @param {Player} $this
+ * @param {Vector} normal
+ */
+Player.bounce$LPlayer$LVector$ = function ($this, normal) {
+	/** @type {!number} */
+	var vdot;
+	/** @type {!number} */
+	var x$0;
+	/** @type {!number} */
+	var y$0;
+	/** @type {!number} */
+	var z$0;
+	vdot = $this.vx * (x$0 = normal.x) + $this.vy * (y$0 = normal.y) + $this.vz * (z$0 = normal.z);
+	$this.vx -= 1.5 * vdot * x$0;
+	$this.vy -= 1.5 * vdot * y$0;
+	$this.vz -= 1.5 * vdot * z$0;
+};
+
+var Player$bounce$LPlayer$LVector$ = Player.bounce$LPlayer$LVector$;
 
 /**
  * class BlueBall extends Object
@@ -1179,25 +1249,105 @@ BlueBall.prototype._checkCollisionWithFloor$N = function (elapsedMsec) {
 	var z;
 	/** @type {!number} */
 	var height;
+	/** @type {!number} */
+	var vdot$0;
+	/** @type {Vector} */
+	var normal$1;
+	/** @type {!number} */
+	var vdot$1;
+	/** @type {Vector} */
+	var normal$2;
+	/** @type {!number} */
+	var vdot$2;
+	/** @type {Vector} */
+	var this$0;
+	/** @type {!number} */
+	var length$0;
+	/** @type {Vector} */
+	var this$1;
+	/** @type {!number} */
+	var length$1;
+	/** @type {!number} */
+	var x$0;
+	/** @type {!number} */
+	var y$0;
+	/** @type {!number} */
+	var z$0;
+	/** @type {!number} */
+	var x$1;
+	/** @type {!number} */
+	var y$1;
+	/** @type {!number} */
+	var z$1;
+	/** @type {!number} */
+	var x$2;
+	/** @type {!number} */
+	var y$2;
+	/** @type {!number} */
+	var z$2;
+	/** @type {!number} */
+	var x$3;
+	/** @type {!number} */
+	var y$3;
+	/** @type {!number} */
+	var z$3;
+	/** @type {!number} */
+	var x$4;
+	/** @type {!number} */
+	var y$4;
+	/** @type {!number} */
+	var z$4;
+	/** @type {!number} */
+	var normal$0$x$0;
+	/** @type {!number} */
+	var normal$0$y$0;
+	/** @type {!number} */
+	var normal$0$z$0;
+	/** @type {!number} */
+	var normal$0$w$0;
 	player = this.player;
 	Player$update$LPlayer$N(player, elapsedMsec);
 	x = player.x;
 	y = player.y;
 	z = player.z;
-	if (-30 <= x && x <= 30 && -30 <= z && z <= 150 || -300 <= x && x <= 300 && 150 <= z && z <= 750 || -30 <= x && x <= 30 && 750 <= z && z <= 810 || -30 <= x && x <= 570 && 810 <= z && z <= 870) {
+	if (-30 <= x && x <= 30 && -30 <= z && z <= 150 || -300 <= x && x <= 300 && 150 <= z && z <= 750 || -30 <= x && x <= 30 && 750 <= z && z <= 810 || -30 <= x && x <= 570 && 810 <= z && z <= 870 || 510 <= x && x <= 1110 && 150 <= z && z <= 210) {
 		if (- player.radius * 2 < y && y < 0) {
-			player.vy = - player.vy * 0.5;
+			normal$0$x$0 = 0;
+			normal$0$y$0 = 1;
+			normal$0$z$0 = 0;
+			normal$0$w$0 = 1;
+			vdot$0 = player.vx * (x$0 = normal$0$x$0) + player.vy * (y$0 = normal$0$y$0) + player.vz * (z$0 = normal$0$z$0);
+			player.vx -= 1.5 * vdot$0 * x$0;
+			player.vy -= 1.5 * vdot$0 * y$0;
+			player.vz -= 1.5 * vdot$0 * z$0;
 			player.y = 0;
 		}
 	}
-	if (510 <= x && x <= 570 && 210 <= z && z <= 810) {
+	if (510 <= x && x <= 570 && 510 <= z && z <= 810) {
 		height = Math.floor((810 - z) / 30);
-		if (height > 9) {
-			height = 19 - height;
-		}
 		height *= 5;
 		if (height - player.radius * 2 < y && y < height) {
-			player.vy = - player.vy * 0.5;
+			this$0 = new Vector$NNN(0, 30, 5);
+			length$0 = Math.sqrt((x$1 = this$0.x) * x$1 + (y$1 = this$0.y) * y$1 + (z$1 = this$0.z) * z$1);
+			normal$1 = (length$0 < 1e-9 ? new Vector$NNN(0, 0, 0) : this$0.divSelf$N(length$0));
+			vdot$1 = player.vx * (x$2 = normal$1.x) + player.vy * (y$2 = normal$1.y) + player.vz * (z$2 = normal$1.z);
+			player.vx -= 1.5 * vdot$1 * x$2;
+			player.vy -= 1.5 * vdot$1 * y$2;
+			player.vz -= 1.5 * vdot$1 * z$2;
+			player.y = height;
+		}
+	}
+	if (510 <= x && x <= 570 && 210 <= z && z < 510) {
+		height = Math.floor((z - 210) / 30);
+		height *= 5;
+		if (height - player.radius * 2 < y && y < height) {
+			this$1 = new Vector$NNN(0, 30, -5);
+			length$1 = Math.sqrt((x$3 = this$1.x) * x$3 + (y$3 = this$1.y) * y$3 + (z$3 = this$1.z) * z$3);
+			normal$2 = (length$1 < 1e-9 ? new Vector$NNN(0, 0, 0) : this$1.divSelf$N(length$1));
+			vdot$2 = player.vx * (x$4 = normal$2.x) + player.vy * (y$4 = normal$2.y) + player.vz * (z$4 = normal$2.z);
+			player.vx -= 1.5 * vdot$2 * x$4;
+			player.vy -= 1.5 * vdot$2 * y$4;
+			player.vz -= 1.5 * vdot$2 * z$4;
 			player.y = height;
 		}
 	}
@@ -2512,8 +2662,6 @@ BlueBall.prototype._renderField$LContext3D$ = function (context) {
 	var j;
 	/** @type {Color} */
 	var color;
-	/** @type {!number} */
-	var y;
 	/** @type {Vector} */
 	var center$0;
 	/** @type {Matrix} */
@@ -2550,76 +2698,6 @@ BlueBall.prototype._renderField$LContext3D$ = function (context) {
 	var m43$0$0;
 	/** @type {!number} */
 	var m44$0$0;
-	/** @type {Vector} */
-	var center$1;
-	/** @type {Matrix} */
-	var this$0$1;
-	/** @type {!number} */
-	var m11$0$1;
-	/** @type {!number} */
-	var m12$0$1;
-	/** @type {!number} */
-	var m13$0$1;
-	/** @type {!number} */
-	var m14$0$1;
-	/** @type {!number} */
-	var m21$0$1;
-	/** @type {!number} */
-	var m22$0$1;
-	/** @type {!number} */
-	var m23$0$1;
-	/** @type {!number} */
-	var m24$0$1;
-	/** @type {!number} */
-	var m31$0$1;
-	/** @type {!number} */
-	var m32$0$1;
-	/** @type {!number} */
-	var m33$0$1;
-	/** @type {!number} */
-	var m34$0$1;
-	/** @type {!number} */
-	var m41$0$1;
-	/** @type {!number} */
-	var m42$0$1;
-	/** @type {!number} */
-	var m43$0$1;
-	/** @type {!number} */
-	var m44$0$1;
-	/** @type {Matrix} */
-	var this$0$2;
-	/** @type {!number} */
-	var m11$0$2;
-	/** @type {!number} */
-	var m12$0$2;
-	/** @type {!number} */
-	var m13$0$2;
-	/** @type {!number} */
-	var m14$0$2;
-	/** @type {!number} */
-	var m21$0$2;
-	/** @type {!number} */
-	var m22$0$2;
-	/** @type {!number} */
-	var m23$0$2;
-	/** @type {!number} */
-	var m24$0$2;
-	/** @type {!number} */
-	var m31$0$2;
-	/** @type {!number} */
-	var m32$0$2;
-	/** @type {!number} */
-	var m33$0$2;
-	/** @type {!number} */
-	var m34$0$2;
-	/** @type {!number} */
-	var m41$0$2;
-	/** @type {!number} */
-	var m42$0$2;
-	/** @type {!number} */
-	var m43$0$2;
-	/** @type {!number} */
-	var m44$0$2;
 	/** @type {!number} */
 	var _m11$0;
 	/** @type {!number} */
@@ -2653,70 +2731,6 @@ BlueBall.prototype._renderField$LContext3D$ = function (context) {
 	/** @type {!number} */
 	var _m44$0;
 	/** @type {!number} */
-	var _m11$1;
-	/** @type {!number} */
-	var _m21$1;
-	/** @type {!number} */
-	var _m31$1;
-	/** @type {!number} */
-	var _m41$1;
-	/** @type {!number} */
-	var _m12$1;
-	/** @type {!number} */
-	var _m22$1;
-	/** @type {!number} */
-	var _m32$1;
-	/** @type {!number} */
-	var _m42$1;
-	/** @type {!number} */
-	var _m13$1;
-	/** @type {!number} */
-	var _m23$1;
-	/** @type {!number} */
-	var _m33$1;
-	/** @type {!number} */
-	var _m43$1;
-	/** @type {!number} */
-	var _m14$1;
-	/** @type {!number} */
-	var _m24$1;
-	/** @type {!number} */
-	var _m34$1;
-	/** @type {!number} */
-	var _m44$1;
-	/** @type {!number} */
-	var _m11$2;
-	/** @type {!number} */
-	var _m21$2;
-	/** @type {!number} */
-	var _m31$2;
-	/** @type {!number} */
-	var _m41$2;
-	/** @type {!number} */
-	var _m12$2;
-	/** @type {!number} */
-	var _m22$2;
-	/** @type {!number} */
-	var _m32$2;
-	/** @type {!number} */
-	var _m42$2;
-	/** @type {!number} */
-	var _m13$2;
-	/** @type {!number} */
-	var _m23$2;
-	/** @type {!number} */
-	var _m33$2;
-	/** @type {!number} */
-	var _m43$2;
-	/** @type {!number} */
-	var _m14$2;
-	/** @type {!number} */
-	var _m24$2;
-	/** @type {!number} */
-	var _m34$2;
-	/** @type {!number} */
-	var _m44$2;
-	/** @type {!number} */
 	var other$0$0$_m11$0;
 	/** @type {!number} */
 	var other$0$0$_m12$0;
@@ -2748,101 +2762,37 @@ BlueBall.prototype._renderField$LContext3D$ = function (context) {
 	var other$0$0$_m43$0;
 	/** @type {!number} */
 	var other$0$0$_m44$0;
-	/** @type {!number} */
-	var other$0$1$_m11$0;
-	/** @type {!number} */
-	var other$0$1$_m12$0;
-	/** @type {!number} */
-	var other$0$1$_m13$0;
-	/** @type {!number} */
-	var other$0$1$_m14$0;
-	/** @type {!number} */
-	var other$0$1$_m21$0;
-	/** @type {!number} */
-	var other$0$1$_m22$0;
-	/** @type {!number} */
-	var other$0$1$_m23$0;
-	/** @type {!number} */
-	var other$0$1$_m24$0;
-	/** @type {!number} */
-	var other$0$1$_m31$0;
-	/** @type {!number} */
-	var other$0$1$_m32$0;
-	/** @type {!number} */
-	var other$0$1$_m33$0;
-	/** @type {!number} */
-	var other$0$1$_m34$0;
-	/** @type {!number} */
-	var other$0$1$_m41$0;
-	/** @type {!number} */
-	var other$0$1$_m42$0;
-	/** @type {!number} */
-	var other$0$1$_m43$0;
-	/** @type {!number} */
-	var other$0$1$_m44$0;
-	/** @type {!number} */
-	var other$0$2$_m11$0;
-	/** @type {!number} */
-	var other$0$2$_m12$0;
-	/** @type {!number} */
-	var other$0$2$_m13$0;
-	/** @type {!number} */
-	var other$0$2$_m14$0;
-	/** @type {!number} */
-	var other$0$2$_m21$0;
-	/** @type {!number} */
-	var other$0$2$_m22$0;
-	/** @type {!number} */
-	var other$0$2$_m23$0;
-	/** @type {!number} */
-	var other$0$2$_m24$0;
-	/** @type {!number} */
-	var other$0$2$_m31$0;
-	/** @type {!number} */
-	var other$0$2$_m32$0;
-	/** @type {!number} */
-	var other$0$2$_m33$0;
-	/** @type {!number} */
-	var other$0$2$_m34$0;
-	/** @type {!number} */
-	var other$0$2$_m41$0;
-	/** @type {!number} */
-	var other$0$2$_m42$0;
-	/** @type {!number} */
-	var other$0$2$_m43$0;
-	/** @type {!number} */
-	var other$0$2$_m44$0;
 	gray = new Color$III(192, 192, 192);
 	lightGreen = new Color$III(160, 255, 160);
 	green = new Color$III(96, 255, 96);
 	size = 30;
 	Context3D$setDepth$LContext3D$I(context, 5);
+	Util3D$tileRectXZ$LContext3D$IIIIIILColor$LColor$(context, 0, 60, 60, 180, -20, 30, gray, gray);
+	Util3D$tileRectXZ$LContext3D$IIIIIILColor$LColor$(context, 0, 450, 600, 600, -20, 30, lightGreen, green);
+	Util3D$tileRectXZ$LContext3D$IIIIIILColor$LColor$(context, 0, 780, 60, 60, -20, 30, green, lightGreen);
+	Util3D$tileRectXZ$LContext3D$IIIIIILColor$LColor$(context, 270, 840, 600, 60, -20, 30, green, lightGreen);
+	context._matrixStack.prepend$LMatrix$(context._worldMatrix.copy$());
 	center$0 = new Vector$NNN(0, 0, 0);
 	context._polygonList = new List$Polygon$E$();
 	context._groupCenter = center$0;
 	context._ignoringZHidden = true;
-	for (i = 0; i < 6; i++) {
-		Util3D$tileOnGroup$LContext3D$IIIILColor$(context, -15, -20, -15 + i * size, size, gray);
-		Util3D$tileOnGroup$LContext3D$IIIILColor$(context, 15, -20, -15 + i * size, size, gray);
-	}
-	context._matrixStack.prepend$LMatrix$(context._worldMatrix.copy$());
 	this$0$0 = context._worldMatrix;
-	other$0$0$_m11$0 = [ 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 450, 0, 0, 0, 1 ][0];
-	other$0$0$_m12$0 = [ 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 450, 0, 0, 0, 1 ][1];
-	other$0$0$_m13$0 = [ 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 450, 0, 0, 0, 1 ][2];
-	other$0$0$_m14$0 = [ 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 450, 0, 0, 0, 1 ][3];
-	other$0$0$_m21$0 = [ 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 450, 0, 0, 0, 1 ][4];
-	other$0$0$_m22$0 = [ 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 450, 0, 0, 0, 1 ][5];
-	other$0$0$_m23$0 = [ 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 450, 0, 0, 0, 1 ][6];
-	other$0$0$_m24$0 = [ 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 450, 0, 0, 0, 1 ][7];
-	other$0$0$_m31$0 = [ 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 450, 0, 0, 0, 1 ][8];
-	other$0$0$_m32$0 = [ 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 450, 0, 0, 0, 1 ][9];
-	other$0$0$_m33$0 = [ 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 450, 0, 0, 0, 1 ][10];
-	other$0$0$_m34$0 = [ 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 450, 0, 0, 0, 1 ][11];
-	other$0$0$_m41$0 = [ 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 450, 0, 0, 0, 1 ][12];
-	other$0$0$_m42$0 = [ 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 450, 0, 0, 0, 1 ][13];
-	other$0$0$_m43$0 = [ 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 450, 0, 0, 0, 1 ][14];
-	other$0$0$_m44$0 = [ 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 450, 0, 0, 0, 1 ][15];
+	other$0$0$_m11$0 = [ 1, 0, 0, 510, 0, 1, 0, 0, 0, 0, 1, 510, 0, 0, 0, 1 ][0];
+	other$0$0$_m12$0 = [ 1, 0, 0, 510, 0, 1, 0, 0, 0, 0, 1, 510, 0, 0, 0, 1 ][1];
+	other$0$0$_m13$0 = [ 1, 0, 0, 510, 0, 1, 0, 0, 0, 0, 1, 510, 0, 0, 0, 1 ][2];
+	other$0$0$_m14$0 = [ 1, 0, 0, 510, 0, 1, 0, 0, 0, 0, 1, 510, 0, 0, 0, 1 ][3];
+	other$0$0$_m21$0 = [ 1, 0, 0, 510, 0, 1, 0, 0, 0, 0, 1, 510, 0, 0, 0, 1 ][4];
+	other$0$0$_m22$0 = [ 1, 0, 0, 510, 0, 1, 0, 0, 0, 0, 1, 510, 0, 0, 0, 1 ][5];
+	other$0$0$_m23$0 = [ 1, 0, 0, 510, 0, 1, 0, 0, 0, 0, 1, 510, 0, 0, 0, 1 ][6];
+	other$0$0$_m24$0 = [ 1, 0, 0, 510, 0, 1, 0, 0, 0, 0, 1, 510, 0, 0, 0, 1 ][7];
+	other$0$0$_m31$0 = [ 1, 0, 0, 510, 0, 1, 0, 0, 0, 0, 1, 510, 0, 0, 0, 1 ][8];
+	other$0$0$_m32$0 = [ 1, 0, 0, 510, 0, 1, 0, 0, 0, 0, 1, 510, 0, 0, 0, 1 ][9];
+	other$0$0$_m33$0 = [ 1, 0, 0, 510, 0, 1, 0, 0, 0, 0, 1, 510, 0, 0, 0, 1 ][10];
+	other$0$0$_m34$0 = [ 1, 0, 0, 510, 0, 1, 0, 0, 0, 0, 1, 510, 0, 0, 0, 1 ][11];
+	other$0$0$_m41$0 = [ 1, 0, 0, 510, 0, 1, 0, 0, 0, 0, 1, 510, 0, 0, 0, 1 ][12];
+	other$0$0$_m42$0 = [ 1, 0, 0, 510, 0, 1, 0, 0, 0, 0, 1, 510, 0, 0, 0, 1 ][13];
+	other$0$0$_m43$0 = [ 1, 0, 0, 510, 0, 1, 0, 0, 0, 0, 1, 510, 0, 0, 0, 1 ][14];
+	other$0$0$_m44$0 = [ 1, 0, 0, 510, 0, 1, 0, 0, 0, 0, 1, 510, 0, 0, 0, 1 ][15];
 	m11$0$0 = this$0$0._m11;
 	m12$0$0 = this$0$0._m12;
 	m13$0$0 = this$0$0._m13;
@@ -2875,141 +2825,21 @@ BlueBall.prototype._renderField$LContext3D$ = function (context) {
 	this$0$0._m42 = m41$0$0 * _m12$0 + m42$0$0 * _m22$0 + m43$0$0 * _m32$0 + m44$0$0 * _m42$0;
 	this$0$0._m43 = m41$0$0 * _m13$0 + m42$0$0 * _m23$0 + m43$0$0 * _m33$0 + m44$0$0 * _m43$0;
 	this$0$0._m44 = m41$0$0 * _m14$0 + m42$0$0 * _m24$0 + m43$0$0 * _m34$0 + m44$0$0 * _m44$0;
-	for (i = 0; i < 20; i++) {
-		for (j = 0; j < 20; j++) {
+	for (i = 0; i < 10; i++) {
+		for (j = 0; j < 2; j++) {
 			color = ((i + j) % 2 === 0 ? lightGreen : green);
-			Util3D$tileOnGroup$LContext3D$IIIILColor$(context, i * 30 - 285, -20, j * 30 - 285, 30, color);
+			Util3D$tileOnGroup$LContext3D$IIIILColor$(context, j * size + size / 2, -20 + (9 - i) * 5, i * size + size / 2, size, color);
 		}
 	}
-	context._worldMatrix = context._matrixStack.removeFirst$();
-	Context3D$endGroup$LContext3D$(context);
-	center$1 = new Vector$NNN(0, 0, 0);
-	context._polygonList = new List$Polygon$E$();
-	context._groupCenter = center$1;
-	context._ignoringZHidden = true;
-	Util3D$tileOnGroup$LContext3D$IIIILColor$(context, -15, -20, 765, 30, green);
-	Util3D$tileOnGroup$LContext3D$IIIILColor$(context, -15, -20, 795, 30, lightGreen);
-	Util3D$tileOnGroup$LContext3D$IIIILColor$(context, 15, -20, 795, 30, green);
-	Util3D$tileOnGroup$LContext3D$IIIILColor$(context, 15, -20, 765, 30, lightGreen);
-	context._matrixStack.prepend$LMatrix$(context._worldMatrix.copy$());
-	this$0$1 = context._worldMatrix;
-	other$0$1$_m11$0 = [ 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 840, 0, 0, 0, 1 ][0];
-	other$0$1$_m12$0 = [ 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 840, 0, 0, 0, 1 ][1];
-	other$0$1$_m13$0 = [ 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 840, 0, 0, 0, 1 ][2];
-	other$0$1$_m14$0 = [ 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 840, 0, 0, 0, 1 ][3];
-	other$0$1$_m21$0 = [ 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 840, 0, 0, 0, 1 ][4];
-	other$0$1$_m22$0 = [ 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 840, 0, 0, 0, 1 ][5];
-	other$0$1$_m23$0 = [ 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 840, 0, 0, 0, 1 ][6];
-	other$0$1$_m24$0 = [ 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 840, 0, 0, 0, 1 ][7];
-	other$0$1$_m31$0 = [ 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 840, 0, 0, 0, 1 ][8];
-	other$0$1$_m32$0 = [ 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 840, 0, 0, 0, 1 ][9];
-	other$0$1$_m33$0 = [ 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 840, 0, 0, 0, 1 ][10];
-	other$0$1$_m34$0 = [ 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 840, 0, 0, 0, 1 ][11];
-	other$0$1$_m41$0 = [ 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 840, 0, 0, 0, 1 ][12];
-	other$0$1$_m42$0 = [ 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 840, 0, 0, 0, 1 ][13];
-	other$0$1$_m43$0 = [ 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 840, 0, 0, 0, 1 ][14];
-	other$0$1$_m44$0 = [ 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 840, 0, 0, 0, 1 ][15];
-	m11$0$1 = this$0$1._m11;
-	m12$0$1 = this$0$1._m12;
-	m13$0$1 = this$0$1._m13;
-	m14$0$1 = this$0$1._m14;
-	m21$0$1 = this$0$1._m21;
-	m22$0$1 = this$0$1._m22;
-	m23$0$1 = this$0$1._m23;
-	m24$0$1 = this$0$1._m24;
-	m31$0$1 = this$0$1._m31;
-	m32$0$1 = this$0$1._m32;
-	m33$0$1 = this$0$1._m33;
-	m34$0$1 = this$0$1._m34;
-	m41$0$1 = this$0$1._m41;
-	m42$0$1 = this$0$1._m42;
-	m43$0$1 = this$0$1._m43;
-	m44$0$1 = this$0$1._m44;
-	this$0$1._m11 = m11$0$1 * (_m11$1 = other$0$1$_m11$0) + m12$0$1 * (_m21$1 = other$0$1$_m21$0) + m13$0$1 * (_m31$1 = other$0$1$_m31$0) + m14$0$1 * (_m41$1 = other$0$1$_m41$0);
-	this$0$1._m12 = m11$0$1 * (_m12$1 = other$0$1$_m12$0) + m12$0$1 * (_m22$1 = other$0$1$_m22$0) + m13$0$1 * (_m32$1 = other$0$1$_m32$0) + m14$0$1 * (_m42$1 = other$0$1$_m42$0);
-	this$0$1._m13 = m11$0$1 * (_m13$1 = other$0$1$_m13$0) + m12$0$1 * (_m23$1 = other$0$1$_m23$0) + m13$0$1 * (_m33$1 = other$0$1$_m33$0) + m14$0$1 * (_m43$1 = other$0$1$_m43$0);
-	this$0$1._m14 = m11$0$1 * (_m14$1 = other$0$1$_m14$0) + m12$0$1 * (_m24$1 = other$0$1$_m24$0) + m13$0$1 * (_m34$1 = other$0$1$_m34$0) + m14$0$1 * (_m44$1 = other$0$1$_m44$0);
-	this$0$1._m21 = m21$0$1 * _m11$1 + m22$0$1 * _m21$1 + m23$0$1 * _m31$1 + m24$0$1 * _m41$1;
-	this$0$1._m22 = m21$0$1 * _m12$1 + m22$0$1 * _m22$1 + m23$0$1 * _m32$1 + m24$0$1 * _m42$1;
-	this$0$1._m23 = m21$0$1 * _m13$1 + m22$0$1 * _m23$1 + m23$0$1 * _m33$1 + m24$0$1 * _m43$1;
-	this$0$1._m24 = m21$0$1 * _m14$1 + m22$0$1 * _m24$1 + m23$0$1 * _m34$1 + m24$0$1 * _m44$1;
-	this$0$1._m31 = m31$0$1 * _m11$1 + m32$0$1 * _m21$1 + m33$0$1 * _m31$1 + m34$0$1 * _m41$1;
-	this$0$1._m32 = m31$0$1 * _m12$1 + m32$0$1 * _m22$1 + m33$0$1 * _m32$1 + m34$0$1 * _m42$1;
-	this$0$1._m33 = m31$0$1 * _m13$1 + m32$0$1 * _m23$1 + m33$0$1 * _m33$1 + m34$0$1 * _m43$1;
-	this$0$1._m34 = m31$0$1 * _m14$1 + m32$0$1 * _m24$1 + m33$0$1 * _m34$1 + m34$0$1 * _m44$1;
-	this$0$1._m41 = m41$0$1 * _m11$1 + m42$0$1 * _m21$1 + m43$0$1 * _m31$1 + m44$0$1 * _m41$1;
-	this$0$1._m42 = m41$0$1 * _m12$1 + m42$0$1 * _m22$1 + m43$0$1 * _m32$1 + m44$0$1 * _m42$1;
-	this$0$1._m43 = m41$0$1 * _m13$1 + m42$0$1 * _m23$1 + m43$0$1 * _m33$1 + m44$0$1 * _m43$1;
-	this$0$1._m44 = m41$0$1 * _m14$1 + m42$0$1 * _m24$1 + m43$0$1 * _m34$1 + m44$0$1 * _m44$1;
-	for (i = 0; i < 2; i++) {
-		for (j = 0; j < 20; j++) {
-			color = ((i + j) % 2 === 1 ? lightGreen : green);
-			Util3D$tileOnGroup$LContext3D$IIIILColor$(context, j * 30 - 15, -20, i * 30 - 15, 30, color);
-		}
-	}
-	context._worldMatrix = context._matrixStack.removeFirst$();
-	Context3D$endGroup$LContext3D$(context);
-	context._matrixStack.prepend$LMatrix$(context._worldMatrix.copy$());
-	this$0$2 = context._worldMatrix;
-	other$0$2$_m11$0 = [ 1, 0, 0, 540, 0, 1, 0, 0, 0, 0, 1, 510, 0, 0, 0, 1 ][0];
-	other$0$2$_m12$0 = [ 1, 0, 0, 540, 0, 1, 0, 0, 0, 0, 1, 510, 0, 0, 0, 1 ][1];
-	other$0$2$_m13$0 = [ 1, 0, 0, 540, 0, 1, 0, 0, 0, 0, 1, 510, 0, 0, 0, 1 ][2];
-	other$0$2$_m14$0 = [ 1, 0, 0, 540, 0, 1, 0, 0, 0, 0, 1, 510, 0, 0, 0, 1 ][3];
-	other$0$2$_m21$0 = [ 1, 0, 0, 540, 0, 1, 0, 0, 0, 0, 1, 510, 0, 0, 0, 1 ][4];
-	other$0$2$_m22$0 = [ 1, 0, 0, 540, 0, 1, 0, 0, 0, 0, 1, 510, 0, 0, 0, 1 ][5];
-	other$0$2$_m23$0 = [ 1, 0, 0, 540, 0, 1, 0, 0, 0, 0, 1, 510, 0, 0, 0, 1 ][6];
-	other$0$2$_m24$0 = [ 1, 0, 0, 540, 0, 1, 0, 0, 0, 0, 1, 510, 0, 0, 0, 1 ][7];
-	other$0$2$_m31$0 = [ 1, 0, 0, 540, 0, 1, 0, 0, 0, 0, 1, 510, 0, 0, 0, 1 ][8];
-	other$0$2$_m32$0 = [ 1, 0, 0, 540, 0, 1, 0, 0, 0, 0, 1, 510, 0, 0, 0, 1 ][9];
-	other$0$2$_m33$0 = [ 1, 0, 0, 540, 0, 1, 0, 0, 0, 0, 1, 510, 0, 0, 0, 1 ][10];
-	other$0$2$_m34$0 = [ 1, 0, 0, 540, 0, 1, 0, 0, 0, 0, 1, 510, 0, 0, 0, 1 ][11];
-	other$0$2$_m41$0 = [ 1, 0, 0, 540, 0, 1, 0, 0, 0, 0, 1, 510, 0, 0, 0, 1 ][12];
-	other$0$2$_m42$0 = [ 1, 0, 0, 540, 0, 1, 0, 0, 0, 0, 1, 510, 0, 0, 0, 1 ][13];
-	other$0$2$_m43$0 = [ 1, 0, 0, 540, 0, 1, 0, 0, 0, 0, 1, 510, 0, 0, 0, 1 ][14];
-	other$0$2$_m44$0 = [ 1, 0, 0, 540, 0, 1, 0, 0, 0, 0, 1, 510, 0, 0, 0, 1 ][15];
-	m11$0$2 = this$0$2._m11;
-	m12$0$2 = this$0$2._m12;
-	m13$0$2 = this$0$2._m13;
-	m14$0$2 = this$0$2._m14;
-	m21$0$2 = this$0$2._m21;
-	m22$0$2 = this$0$2._m22;
-	m23$0$2 = this$0$2._m23;
-	m24$0$2 = this$0$2._m24;
-	m31$0$2 = this$0$2._m31;
-	m32$0$2 = this$0$2._m32;
-	m33$0$2 = this$0$2._m33;
-	m34$0$2 = this$0$2._m34;
-	m41$0$2 = this$0$2._m41;
-	m42$0$2 = this$0$2._m42;
-	m43$0$2 = this$0$2._m43;
-	m44$0$2 = this$0$2._m44;
-	this$0$2._m11 = m11$0$2 * (_m11$2 = other$0$2$_m11$0) + m12$0$2 * (_m21$2 = other$0$2$_m21$0) + m13$0$2 * (_m31$2 = other$0$2$_m31$0) + m14$0$2 * (_m41$2 = other$0$2$_m41$0);
-	this$0$2._m12 = m11$0$2 * (_m12$2 = other$0$2$_m12$0) + m12$0$2 * (_m22$2 = other$0$2$_m22$0) + m13$0$2 * (_m32$2 = other$0$2$_m32$0) + m14$0$2 * (_m42$2 = other$0$2$_m42$0);
-	this$0$2._m13 = m11$0$2 * (_m13$2 = other$0$2$_m13$0) + m12$0$2 * (_m23$2 = other$0$2$_m23$0) + m13$0$2 * (_m33$2 = other$0$2$_m33$0) + m14$0$2 * (_m43$2 = other$0$2$_m43$0);
-	this$0$2._m14 = m11$0$2 * (_m14$2 = other$0$2$_m14$0) + m12$0$2 * (_m24$2 = other$0$2$_m24$0) + m13$0$2 * (_m34$2 = other$0$2$_m34$0) + m14$0$2 * (_m44$2 = other$0$2$_m44$0);
-	this$0$2._m21 = m21$0$2 * _m11$2 + m22$0$2 * _m21$2 + m23$0$2 * _m31$2 + m24$0$2 * _m41$2;
-	this$0$2._m22 = m21$0$2 * _m12$2 + m22$0$2 * _m22$2 + m23$0$2 * _m32$2 + m24$0$2 * _m42$2;
-	this$0$2._m23 = m21$0$2 * _m13$2 + m22$0$2 * _m23$2 + m23$0$2 * _m33$2 + m24$0$2 * _m43$2;
-	this$0$2._m24 = m21$0$2 * _m14$2 + m22$0$2 * _m24$2 + m23$0$2 * _m34$2 + m24$0$2 * _m44$2;
-	this$0$2._m31 = m31$0$2 * _m11$2 + m32$0$2 * _m21$2 + m33$0$2 * _m31$2 + m34$0$2 * _m41$2;
-	this$0$2._m32 = m31$0$2 * _m12$2 + m32$0$2 * _m22$2 + m33$0$2 * _m32$2 + m34$0$2 * _m42$2;
-	this$0$2._m33 = m31$0$2 * _m13$2 + m32$0$2 * _m23$2 + m33$0$2 * _m33$2 + m34$0$2 * _m43$2;
-	this$0$2._m34 = m31$0$2 * _m14$2 + m32$0$2 * _m24$2 + m33$0$2 * _m34$2 + m34$0$2 * _m44$2;
-	this$0$2._m41 = m41$0$2 * _m11$2 + m42$0$2 * _m21$2 + m43$0$2 * _m31$2 + m44$0$2 * _m41$2;
-	this$0$2._m42 = m41$0$2 * _m12$2 + m42$0$2 * _m22$2 + m43$0$2 * _m32$2 + m44$0$2 * _m42$2;
-	this$0$2._m43 = m41$0$2 * _m13$2 + m42$0$2 * _m23$2 + m43$0$2 * _m33$2 + m44$0$2 * _m43$2;
-	this$0$2._m44 = m41$0$2 * _m14$2 + m42$0$2 * _m24$2 + m43$0$2 * _m34$2 + m44$0$2 * _m44$2;
-	for (i = 0; i < 2; i++) {
-		for (j = 0; j < 20; j++) {
-			y = j;
-			if (j > 9) {
-				y = 19 - y;
-			}
+	for (i = 0; i < 10; i++) {
+		for (j = 0; j < 2; j++) {
 			color = ((i + j) % 2 === 0 ? lightGreen : green);
-			Util3D$tile$LContext3D$IIIILColor$(context, i * 30 - 15, -20 + y * 5, 285 - j * 30, 30, color);
+			Util3D$tileOnGroup$LContext3D$IIIILColor$(context, j * size + size / 2, -20 + (9 - i) * 5, - i * size - size / 2, size, color);
 		}
 	}
+	Context3D$endGroup$LContext3D$(context);
 	context._worldMatrix = context._matrixStack.removeFirst$();
+	Util3D$tileRectXZ$LContext3D$IIIIIILColor$LColor$(context, 810, 180, 600, 60, -20, size, green, lightGreen);
 	Context3D$setDepth$LContext3D$I(context, 3);
 };
 
@@ -3026,15 +2856,34 @@ BlueBall.prototype._setMobileOperation$ = function () {
 		var ax;
 		/** @type {Player} */
 		var $this$0;
+		/** @type {Player} */
+		var $this$1;
+		/** @type {Player} */
+		var $this$2;
+		/** @type {Player} */
+		var player$0;
+		/** @type {Player} */
+		var player$1;
+		/** @type {Player} */
+		var player$2;
 		de = (function (o) { return o instanceof DeviceMotionEvent ? o : null; })(e);
 		az = de.accelerationIncludingGravity.y * 30;
 		ax = de.accelerationIncludingGravity.x * 30 / 2;
-		if (az < 0) {
-			$this$0 = $this.player;
+		if (az < -80) {
+			$this$0 = player$0 = $this.player;
 			$this$0.isBraking = true;
-			az = 0;
+			Player$move$LPlayer$NN(player$0, 0, ax / 4);
+		} else {
+			if (az < 0) {
+				$this$1 = player$1 = $this.player;
+				$this$1.isBraking = false;
+				Player$move$LPlayer$NN(player$1, 0, ax / 2);
+			} else {
+				$this$2 = player$2 = $this.player;
+				$this$2.isBraking = false;
+				Player$move$LPlayer$NN(player$2, az, ax);
+			}
 		}
-		Player$move$LPlayer$NN($this.player, az, ax);
 	}));
 	dom.window.addEventListener('touchstart', (function (e) {
 		if (! $this.isStarted) {
@@ -3059,6 +2908,30 @@ BlueBall.prototype._setPCOperation$ = function () {
 		var $this$0;
 		/** @type {Player} */
 		var $this$1;
+		/** @type {Player} */
+		var $this$2;
+		/** @type {Player} */
+		var $this$3;
+		/** @type {Player} */
+		var $this$4;
+		/** @type {Player} */
+		var $this$5;
+		/** @type {Player} */
+		var $this$6;
+		/** @type {Player} */
+		var $this$7;
+		/** @type {Player} */
+		var player$0;
+		/** @type {Player} */
+		var player$1;
+		/** @type {Player} */
+		var player$2;
+		/** @type {Player} */
+		var player$3;
+		/** @type {Player} */
+		var player$4;
+		/** @type {Player} */
+		var player$5;
 		if (! $this.isStarted) {
 			$this.isStarted = true;
 			$this.player.vz = 100;
@@ -3068,30 +2941,42 @@ BlueBall.prototype._setPCOperation$ = function () {
 		accel = 100;
 		switch (ke.keyCode) {
 		case 119:
-			Player$move$LPlayer$NN($this.player, accel, 0);
+			$this$0 = player$0 = $this.player;
+			$this$0.isBraking = false;
+			Player$move$LPlayer$NN(player$0, accel, 0);
 			break;
 		case 115:
-			$this$0 = $this.player;
-			$this$0.isBraking = true;
-			break;
-		case 97:
-			Player$move$LPlayer$NN($this.player, 0, - accel / 2);
-			break;
-		case 100:
-			Player$move$LPlayer$NN($this.player, 0, accel / 2);
-			break;
-		case 104:
-			Player$move$LPlayer$NN($this.player, 0, - accel / 2);
-			break;
-		case 106:
 			$this$1 = $this.player;
 			$this$1.isBraking = true;
 			break;
+		case 97:
+			$this$2 = player$1 = $this.player;
+			$this$2.isBraking = false;
+			Player$move$LPlayer$NN(player$1, 0, - accel / 2);
+			break;
+		case 100:
+			$this$3 = player$2 = $this.player;
+			$this$3.isBraking = false;
+			Player$move$LPlayer$NN(player$2, 0, accel / 2);
+			break;
+		case 104:
+			$this$4 = player$3 = $this.player;
+			$this$4.isBraking = false;
+			Player$move$LPlayer$NN(player$3, 0, - accel / 2);
+			break;
+		case 106:
+			$this$5 = $this.player;
+			$this$5.isBraking = true;
+			break;
 		case 107:
-			Player$move$LPlayer$NN($this.player, accel, 0);
+			$this$6 = player$4 = $this.player;
+			$this$6.isBraking = false;
+			Player$move$LPlayer$NN(player$4, accel, 0);
 			break;
 		case 108:
-			Player$move$LPlayer$NN($this.player, 0, accel / 2);
+			$this$7 = player$5 = $this.player;
+			$this$7.isBraking = false;
+			Player$move$LPlayer$NN(player$5, 0, accel / 2);
 			break;
 		case 32:
 			$this.player.vy = 80;

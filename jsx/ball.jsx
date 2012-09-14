@@ -79,6 +79,20 @@ class Util3D {
         ], color);
     }
 
+    static function tileRectXZ(context:Context3D, cx:int, cz:int, width:int, height:int, y:int, size:int, color1:Color, color2:Color) : void {
+        var row = height / size;
+        var col = width / size;
+
+        context.beginGroup(new Vector(0, 0, 0), true);
+        for (var i=0; i<row; i++) {
+            for (var j=0; j<col; j++) {
+                var color = (i+j)%2==0 ? color1 : color2;
+                Util3D.tileOnGroup(context, cx-width/2+(j+0.5)*size, y, cz-height/2+(i+0.5)*size, size, color);
+            }
+        }
+        context.endGroup();
+    }
+
 }
 
 
@@ -120,8 +134,6 @@ class Player {
     }
 
     function move(dz:number, dx:number) : void {
-        this.isBraking = false;
-
         var x = this.vx;
         var z = this.vz;
         var len = Math.sqrt(x*x+z*z);
@@ -141,6 +153,10 @@ class Player {
 
     function brake() : void {
         this.isBraking = true;
+    }
+
+    function unbrake() : void {
+        this.isBraking = false;
     }
 
     function update(elapsedMsec:number) : void {
@@ -163,7 +179,7 @@ class Player {
         this.y += dy;
         this.z += dz;
 
-        var velocityDecl = (this.isBraking) ? 0.1 : 0.01;
+        var velocityDecl = (this.isBraking) ? 0.05 : 0.001;
 
         this.vx -= Math.abs(dx) * this.vx * velocityDecl;
         this.vz -= Math.abs(dz) * this.vz * velocityDecl;
@@ -179,6 +195,16 @@ class Player {
         var q = Quaternion.rotating(v.abs()/this.r, c);
 
         this.rot.mulSelf(q);
+
+
+    }
+
+    function bounce(normal:Vector) : void {
+        var vdot = this.vx*normal.x + this.vy*normal.y + this.vz*normal.z;
+
+        this.vx -= 1.5 * vdot * normal.x;
+        this.vy -= 1.5 * vdot * normal.y;
+        this.vz -= 1.5 * vdot * normal.z;
     }
 
 
@@ -190,7 +216,7 @@ class BlueBall {
 
     var isStarted : boolean;
     var engine : Engine;
-    
+
 
     var player : Player;
 
@@ -200,7 +226,7 @@ class BlueBall {
     var itemRadius : int;
 
     var totalElapsedMsec : number;
-    
+
     function constructor() {
         Engine.loadImages(['./image/tree.png', './image/so-nya.png', './image/redbull_free.png', './image/sky1.jpg']);
 
@@ -227,7 +253,7 @@ class BlueBall {
         // update
         this.engine.onUpdate = (elapsedMsec:number):void -> {
             if (!this.isStarted) return;
-            
+
             this._checkCollisionWithFloor(elapsedMsec);
 
             this._checkCollisionWithTrees();
@@ -308,20 +334,27 @@ class BlueBall {
                 ( -30 <= x && x <=  30 && -30 <= z && z <= 150) || // starting floor
                 (-300 <= x && x <= 300 && 150 <= z && z <= 750) || // stage 1
                 ( -30 <= x && x <=  30 && 750 <= z && z <= 810) ||
-                ( -30 <= x && x <= 570 && 810 <= z && z <= 870)    // passage from stage 1 to stage 2
+                ( -30 <= x && x <= 570 && 810 <= z && z <= 870) || // passage from stage 1 to stage 2
+                ( 510 <= x && x <=1110 && 150 <= z && z <= 210)    // passage from stage 2 to stage 3
            ) {
             if (-player.radius*2 < y && y < 0) {
-                player.vy = - player.vy * 0.5;
+                player.bounce(new Vector(0, 1, 0));
                 player.y = 0;
             }
         }
-        if (510 <= x && x <= 570 && 210 <= z && z <= 810) {    // stage 2
+        if (510 <= x && x <= 570 && 510 <= z && z <= 810) {    // stage 2 first
             var height = Math.floor((810 - z) / 30);
-            if (height > 9) height = 19 - height;
             height *= 5;
-
             if (height-player.radius*2 < y && y < height) {
-                player.vy = - player.vy * 0.5;
+                player.bounce(new Vector(0, 30, 5).unitSelf());
+                player.y = height;
+            }
+        }
+        if (510 <= x && x <= 570 && 210 <= z && z < 510) {    // stage 2 first
+            var height = Math.floor((z - 210) / 30);
+            height *= 5;
+            if (height-player.radius*2 < y && y < height) {
+                player.bounce(new Vector(0, 30, -5).unitSelf());
                 player.y = height;
             }
         }
@@ -457,50 +490,38 @@ class BlueBall {
 
         context.setDepth(5);
 
+        // starting floor
+        Util3D.tileRectXZ(context,   0,  60,  60, 180, -20, size, gray, gray);
+        // stage 1
+        Util3D.tileRectXZ(context,   0, 450, 600, 600, -20, size, lightGreen, green);
+        // passage from stage 1 to stage 2
+        Util3D.tileRectXZ(context,   0, 780,  60,  60, -20, size, green, lightGreen);
+        // passage from stage 1 to stage 2
+        Util3D.tileRectXZ(context, 270, 840, 600,  60, -20, size, green, lightGreen);
+
+        // stage 2
+        context.pushMatrix();
         context.beginGroup(new Vector(0, 0, 0), true);
-        for (var i=0; i<6; i++) {
-            Util3D.tileOnGroup(context, -15, -20, -15+i*size, size, gray);
-            Util3D.tileOnGroup(context, +15, -20, -15+i*size, size, gray);
-        }
-        context.pushMatrix();
-        context.translate(0, 0, 450);
-        for (var i=0; i<20; i++) {
-            for (var j=0; j<20; j++) {
+        context.translate(510, 0, 510);
+        for (var i=0; i<10; i++) {
+            for (var j=0; j<2; j++) {
                 var color = (i+j)%2==0 ? lightGreen : green;
-                Util3D.tileOnGroup(context, i*30-285, -20, j*30-285, 30, color);
+                Util3D.tileOnGroup(context, j*size+size/2, -20+(9-i)*5, i*size+size/2, size, color);
             }
         }
-        context.popMatrix();
-        context.endGroup();
-
-        context.beginGroup(new Vector(0, 0, 0), true);
-        Util3D.tileOnGroup(context,-15, -20, 765, 30, green);
-        Util3D.tileOnGroup(context,-15, -20, 795, 30, lightGreen);
-        Util3D.tileOnGroup(context, 15, -20, 795, 30, green);
-        Util3D.tileOnGroup(context, 15, -20, 765, 30, lightGreen);
-        context.pushMatrix();
-        context.translate(0, 0, 840);
-        for (var i=0; i<2; i++) {
-            for (var j=0; j<20; j++) {
-                var color = (i+j)%2==1 ? lightGreen : green;
-                Util3D.tileOnGroup(context, j*30-15, -20, i*30-15, 30, color);
-            }
-        }
-        context.popMatrix();
-        context.endGroup();
-
-
-        context.pushMatrix();
-        context.translate(540, 0, 510);
-        for (var i=0; i<2; i++) {
-            for (var j=0; j<20; j++) {
-                var y = j;
-                if (y > 9) y = 19 - y;
+        for (var i=0; i<10; i++) {
+            for (var j=0; j<2; j++) {
                 var color = (i+j)%2==0 ? lightGreen : green;
-                Util3D.tile(context, i*30-15, -20+y*5, 285-j*30, 30, color);
+                Util3D.tileOnGroup(context, j*size+size/2, -20+(9-i)*5, -i*size-size/2, size, color);
             }
         }
+        context.endGroup();
         context.popMatrix();
+
+        // passage from stage 2 to stage 3
+        Util3D.tileRectXZ(context, 810, 180, 600,  60, -20, size, green, lightGreen);
+
+
 
         context.setDepth(3);
     }
@@ -511,11 +532,16 @@ class BlueBall {
 
             var az = de.accelerationIncludingGravity.y * 30;
             var ax = de.accelerationIncludingGravity.x * 30 / 2;
-            if (az < 0) {
+            if (az < -60) {
                 this.player.brake();
-                az = 0;
+                this.player.move(0, ax/4);
+             }else if (az < 0) {
+                this.player.unbrake();
+                this.player.move(0, ax/2);
+            } else {
+                this.player.unbrake();
+                this.player.move(az, ax);
             }
-            this.player.move(az, ax);
         });
 
         dom.window.addEventListener('touchstart', (e:Event):void -> {
@@ -540,29 +566,35 @@ class BlueBall {
             var accel = 100;
             switch (ke.keyCode) {
                 case 119: // 'w'
+                    this.player.unbrake();
                     this.player.move(accel, 0);
                     break;
                 case 115: // 's'
                     this.player.brake();
                     break;
                 case 97:  // 'a'
+                    this.player.unbrake();
                     this.player.move(0,-accel/2);
                     break;
                 case 100: // 'd'
+                    this.player.unbrake();
                     this.player.move(0, accel/2);
                     break;
 
                 // vim like key mapping :-)
                 case 104: // 'h'
+                    this.player.unbrake();
                     this.player.move(0,-accel/2);
                     break;
                 case 106: // 'j'
                     this.player.brake();
                     break;
                 case 107: // 'k'
+                    this.player.unbrake();
                     this.player.move(accel, 0);
                     break;
                 case 108: // 'l'
+                    this.player.unbrake();
                     this.player.move(0, accel/2);
                     break;
 
