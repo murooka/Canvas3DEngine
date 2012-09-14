@@ -249,6 +249,31 @@ class BlueBall {
         this._initTrees();
         this._initItems();
 
+        var gameUpdate = (elapsedMsec:number):void -> {
+            this._checkCollisionWithFloor(elapsedMsec);
+            this._checkCollisionWithTrees();
+            this._checkCollisionWithItems();
+            this._updateViewpoint();
+        };
+        var clearedUpdate = (elapsedMsec:number):void -> {
+            this._updateClearedPlayer(elapsedMsec);
+            this._updateClearedViewpoint();
+        };
+        var update = gameUpdate;
+
+        var gameRender = (context:Context3D):void -> {
+            this._renderPlayer(context);
+            this._renderTrees(context);
+            this._renderItems(context);
+            this._renderField(context);
+        };
+        var clearedRender = (context:Context3D):void -> {
+            this._renderPlayer(context);
+            this._renderField(context);
+        };
+        var render = gameRender;
+
+        var isCleared = false;
 
         // update
         this.engine.onUpdate = (elapsedMsec:number):void -> {
@@ -259,30 +284,24 @@ class BlueBall {
                 this.isStarted = false;
             }
 
-            this._checkCollisionWithFloor(elapsedMsec);
-
-            this._checkCollisionWithTrees();
-
-            this._checkCollisionWithItems();
-
-            this._updateViewpoint();
+            // game clear
+            if (!isCleared &&
+                (1050 <= this.player.x && this.player.x <= 1110) &&
+                (1350 <= this.player.z && this.player.z <= 1410))
+            {
+                update = clearedUpdate;
+                render = clearedRender;
+                isCleared = true;
+            }
+            update(elapsedMsec);
         };
-
 
         // render
         var backgroundColor = new Color( 90, 135, 150);
         this.engine.onRender = (context:Context3D, elapsedMsec:number):void -> {
             this.totalElapsedMsec += elapsedMsec;
-
             context.setBackgroundColor(backgroundColor);
-
-            this._renderPlayer(context);
-
-            this._renderTrees(context);
-
-            this._renderItems(context);
-
-            this._renderField(context);
+            render(context);
         };
 
 
@@ -457,6 +476,37 @@ class BlueBall {
         this.engine.camera.updateMatrix();
     }
 
+    function _updateClearedPlayer(elapsedMsec:number) : void {
+        var player = this.player;
+        var dx = player.x - 1080;
+        var dy = player.y - 20;
+        var dz = player.z - 1380;
+        if (Math.abs(dx) < 1 && Math.abs(dz) < 1) {
+            player.y -= Math.sin(this.totalElapsedMsec/1000) * 10 * elapsedMsec / 1000;
+        } else {
+            player.x -= dx * elapsedMsec / 1000;
+            player.y -= dy * elapsedMsec / 1000;
+            player.z -= dz * elapsedMsec / 1000;
+        }
+    }
+
+    function _updateClearedViewpoint() : void {
+        var player = this.player;
+        var view =  new Vector(
+            player.x + Math.sin(this.totalElapsedMsec/5000)*50,
+            player.y + 20,
+            player.z + Math.cos(this.totalElapsedMsec/5000)*50
+        );
+        var target = new Vector(
+            player.x,
+            player.y,
+            player.z
+        );
+
+        this.engine.camera.target = target;
+        this.engine.camera.view = view;
+        this.engine.camera.updateMatrix();
+    }
 
     function _renderPlayer(context:Context3D) : void {
         if (this.player.y < -this.player.radius) context.setDepth(5);

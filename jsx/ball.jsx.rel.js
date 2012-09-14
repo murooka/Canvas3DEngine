@@ -563,6 +563,14 @@ BlueBall.prototype = new Object;
  */
 function BlueBall$() {
 	var $this = this;
+	var gameUpdate;
+	var clearedUpdate;
+	var update;
+	var gameRender;
+	var clearedRender;
+	var render;
+	/** @type {!boolean} */
+	var isCleared;
 	/** @type {Color} */
 	var backgroundColor;
 	/** @type {Engine} */
@@ -849,25 +857,65 @@ function BlueBall$() {
 	this.treeRadius = 24;
 	this.items = new List$Vector$E$ALVector$([ new Vector$NNN(149, -10, 724), new Vector$NNN(107, -10, 483), new Vector$NNN(279, -10, 551), new Vector$NNN(-295, -10, 261), new Vector$NNN(-16, -10, 225), new Vector$NNN(95, -10, 165), new Vector$NNN(264, -10, 161), new Vector$NNN(-50, -10, 325), new Vector$NNN(-169, -10, 254), new Vector$NNN(271, -10, 401) ]);
 	this.itemRadius = 8;
-	this.engine.onUpdate = (function (elapsedMsec) {
-		if (! $this.isStarted) {
-			return;
-		}
+	gameUpdate = (function (elapsedMsec) {
 		$this._checkCollisionWithFloor$N(elapsedMsec);
 		$this._checkCollisionWithTrees$();
 		$this._checkCollisionWithItems$();
 		$this._updateViewpoint$();
 	});
-	backgroundColor = new Color$III(90, 135, 150);
-	this.engine.onRender = (function (context, elapsedMsec) {
+	clearedUpdate = (function (elapsedMsec) {
+		/** @type {Player} */
+		var player$0;
+		/** @type {Vector} */
+		var view$0;
+		/** @type {Vector} */
+		var target$0;
+		/** @type {Camera} */
+		var this$0$0;
+		/** @type {Vector} */
+		var view$0$0;
+		/** @type {Vector} */
+		var target$0$0;
+		/** @type {Vector} */
+		var upper$0$0;
 		/** @type {!number} */
-		var x$0$0;
+		var fovyX$0$0;
 		/** @type {!number} */
-		var y$0$0;
+		var nearZ$0$0;
 		/** @type {!number} */
-		var z$0$0;
+		var farZ$0$0;
+		/** @type {!number} */
+		var aspectRatio$0$0;
 		/** @type {Matrix} */
-		var this$0$0$0;
+		var viewMatrix$0$0;
+		/** @type {Matrix} */
+		var projectionMatrix$0$0;
+		/** @type {Vector} */
+		var zaxis$0$0$0;
+		/** @type {Vector} */
+		var xaxis$0$0$0;
+		/** @type {Vector} */
+		var yaxis$0$0$0;
+		/** @type {Vector} */
+		var this$0$0$0$0;
+		/** @type {!number} */
+		var length$0$0$0$0;
+		/** @type {Vector} */
+		var this$1$0$0$0;
+		/** @type {!number} */
+		var length$1$0$0$0;
+		/** @type {Vector} */
+		var this$2$0$0$0;
+		/** @type {!number} */
+		var length$2$0$0$0;
+		/** @type {!number} */
+		var sx$0$0$0;
+		/** @type {!number} */
+		var sy$0$0$0;
+		/** @type {!number} */
+		var sz$0$0$0;
+		/** @type {!number} */
+		var mz$0$0$0;
 		/** @type {!number} */
 		var m11$0$0$0;
 		/** @type {!number} */
@@ -900,94 +948,10 @@ function BlueBall$() {
 		var m43$0$0$0;
 		/** @type {!number} */
 		var m44$0$0$0;
-		/** @type {Quaternion} */
-		var q$0$0;
-		/** @type {Matrix} */
-		var this$0$1$0;
-		/** @type {!number} */
-		var m11$0$1$0;
-		/** @type {!number} */
-		var m12$0$1$0;
-		/** @type {!number} */
-		var m13$0$1$0;
-		/** @type {!number} */
-		var m14$0$1$0;
-		/** @type {!number} */
-		var m21$0$1$0;
-		/** @type {!number} */
-		var m22$0$1$0;
-		/** @type {!number} */
-		var m23$0$1$0;
-		/** @type {!number} */
-		var m24$0$1$0;
-		/** @type {!number} */
-		var m31$0$1$0;
-		/** @type {!number} */
-		var m32$0$1$0;
-		/** @type {!number} */
-		var m33$0$1$0;
-		/** @type {!number} */
-		var m34$0$1$0;
-		/** @type {!number} */
-		var m41$0$1$0;
-		/** @type {!number} */
-		var m42$0$1$0;
-		/** @type {!number} */
-		var m43$0$1$0;
-		/** @type {!number} */
-		var m44$0$1$0;
-		/** @type {!number} */
-		var x2$0$0$0;
-		/** @type {!number} */
-		var y2$0$0$0;
-		/** @type {!number} */
-		var z2$0$0$0;
-		/** @type {!number} */
-		var xy$0$0$0;
-		/** @type {!number} */
-		var zx$0$0$0;
-		/** @type {!number} */
-		var yz$0$0$0;
-		/** @type {!number} */
-		var xt$0$0$0;
-		/** @type {!number} */
-		var yt$0$0$0;
-		/** @type {!number} */
-		var zt$0$0$0;
-		/** @type {Player} */
-		var player$0;
-		/** @type {!number} */
-		var _m11$0;
-		/** @type {!number} */
-		var _m21$0;
-		/** @type {!number} */
-		var _m31$0;
-		/** @type {!number} */
-		var _m41$0;
-		/** @type {!number} */
-		var _m12$0;
-		/** @type {!number} */
-		var _m22$0;
-		/** @type {!number} */
-		var _m32$0;
-		/** @type {!number} */
-		var _m42$0;
-		/** @type {!number} */
-		var _m13$0;
-		/** @type {!number} */
-		var _m23$0;
-		/** @type {!number} */
-		var _m33$0;
-		/** @type {!number} */
-		var _m43$0;
-		/** @type {!number} */
-		var _m14$0;
-		/** @type {!number} */
-		var _m24$0;
-		/** @type {!number} */
-		var _m34$0;
-		/** @type {!number} */
-		var _m44$0;
+		/** @type {Camera} */
+		var camera$0;
+		/** @type {Engine} */
+		var engine$0;
 		/** @type {!number} */
 		var x$0;
 		/** @type {!number} */
@@ -995,221 +959,217 @@ function BlueBall$() {
 		/** @type {!number} */
 		var z$0;
 		/** @type {!number} */
-		var t$0;
+		var z$1;
+		/** @type {!number} */
+		var z$2;
+		/** @type {!number} */
+		var x$1;
+		/** @type {!number} */
+		var y$1;
+		/** @type {!number} */
+		var y$2;
+		/** @type {!number} */
+		var x$2;
+		/** @type {!number} */
+		var x$3;
+		/** @type {!number} */
+		var y$3;
+		/** @type {!number} */
+		var z$3;
+		/** @type {!number} */
+		var z$4;
+		/** @type {!number} */
+		var z$5;
+		/** @type {!number} */
+		var x$4;
+		/** @type {!number} */
+		var y$4;
+		/** @type {!number} */
+		var y$5;
+		/** @type {!number} */
+		var x$5;
+		/** @type {!number} */
+		var x$6;
+		/** @type {!number} */
+		var y$6;
+		/** @type {!number} */
+		var z$6;
+		/** @type {!number} */
+		var x$7;
+		/** @type {!number} */
+		var y$7;
+		/** @type {!number} */
+		var z$7;
+		/** @type {!number} */
+		var x$8;
+		/** @type {!number} */
+		var x$9;
+		/** @type {!number} */
+		var y$8;
+		/** @type {!number} */
+		var y$9;
+		/** @type {!number} */
+		var z$8;
+		/** @type {!number} */
+		var z$9;
+		/** @type {!number} */
+		var x$10;
+		/** @type {!number} */
+		var y$10;
+		/** @type {!number} */
+		var z$10;
+		/** @type {!number} */
+		var _m11$0;
+		/** @type {!number} */
+		var _m12$0;
+		/** @type {!number} */
+		var _m13$0;
+		/** @type {!number} */
+		var _m14$0;
 		/** @type {!number} */
 		var _m11$1;
 		/** @type {!number} */
+		var _m21$0;
+		/** @type {!number} */
+		var _m31$0;
+		/** @type {!number} */
+		var _m41$0;
+		/** @type {!number} */
 		var _m21$1;
-		/** @type {!number} */
-		var _m31$1;
-		/** @type {!number} */
-		var _m41$1;
 		/** @type {!number} */
 		var _m12$1;
 		/** @type {!number} */
+		var _m22$0;
+		/** @type {!number} */
 		var _m22$1;
 		/** @type {!number} */
-		var _m32$1;
+		var _m23$0;
 		/** @type {!number} */
-		var _m42$1;
+		var _m32$0;
+		/** @type {!number} */
+		var _m24$0;
+		/** @type {!number} */
+		var _m42$0;
 		/** @type {!number} */
 		var _m13$1;
 		/** @type {!number} */
 		var _m23$1;
 		/** @type {!number} */
-		var _m33$1;
+		var _m33$0;
 		/** @type {!number} */
-		var _m43$1;
+		var _m43$0;
 		/** @type {!number} */
 		var _m14$1;
 		/** @type {!number} */
 		var _m24$1;
 		/** @type {!number} */
+		var _m34$0;
+		/** @type {!number} */
+		var _m44$0;
+		/** @type {!number} */
+		var _m31$1;
+		/** @type {!number} */
+		var _m32$1;
+		/** @type {!number} */
+		var _m33$1;
+		/** @type {!number} */
 		var _m34$1;
 		/** @type {!number} */
+		var _m41$1;
+		/** @type {!number} */
+		var _m42$1;
+		/** @type {!number} */
+		var _m43$1;
+		/** @type {!number} */
 		var _m44$1;
-		/** @type {!number} */
-		var other$0$0$0$_m11$0;
-		/** @type {!number} */
-		var other$0$0$0$_m12$0;
-		/** @type {!number} */
-		var other$0$0$0$_m13$0;
-		/** @type {!number} */
-		var other$0$0$0$_m14$0;
-		/** @type {!number} */
-		var other$0$0$0$_m21$0;
-		/** @type {!number} */
-		var other$0$0$0$_m22$0;
-		/** @type {!number} */
-		var other$0$0$0$_m23$0;
-		/** @type {!number} */
-		var other$0$0$0$_m24$0;
-		/** @type {!number} */
-		var other$0$0$0$_m31$0;
-		/** @type {!number} */
-		var other$0$0$0$_m32$0;
-		/** @type {!number} */
-		var other$0$0$0$_m33$0;
-		/** @type {!number} */
-		var other$0$0$0$_m34$0;
-		/** @type {!number} */
-		var other$0$0$0$_m41$0;
-		/** @type {!number} */
-		var other$0$0$0$_m42$0;
-		/** @type {!number} */
-		var other$0$0$0$_m43$0;
-		/** @type {!number} */
-		var other$0$0$0$_m44$0;
-		/** @type {!number} */
-		var other$0$1$0$_m11$0;
-		/** @type {!number} */
-		var other$0$1$0$_m12$0;
-		/** @type {!number} */
-		var other$0$1$0$_m13$0;
-		/** @type {!number} */
-		var other$0$1$0$_m14$0;
-		/** @type {!number} */
-		var other$0$1$0$_m21$0;
-		/** @type {!number} */
-		var other$0$1$0$_m22$0;
-		/** @type {!number} */
-		var other$0$1$0$_m23$0;
-		/** @type {!number} */
-		var other$0$1$0$_m24$0;
-		/** @type {!number} */
-		var other$0$1$0$_m31$0;
-		/** @type {!number} */
-		var other$0$1$0$_m32$0;
-		/** @type {!number} */
-		var other$0$1$0$_m33$0;
-		/** @type {!number} */
-		var other$0$1$0$_m34$0;
-		/** @type {!number} */
-		var other$0$1$0$_m41$0;
-		/** @type {!number} */
-		var other$0$1$0$_m42$0;
-		/** @type {!number} */
-		var other$0$1$0$_m43$0;
-		/** @type {!number} */
-		var other$0$1$0$_m44$0;
-		$this.totalElapsedMsec += elapsedMsec;
-		context.backgroundColor = backgroundColor;
-		x$0$0 = (player$0 = $this.player).x;
-		y$0$0 = player$0.y - 12;
-		z$0$0 = player$0.z;
-		this$0$0$0 = context._worldMatrix;
-		other$0$0$0$_m11$0 = [ 1, 0, 0, x$0$0, 0, 1, 0, y$0$0, 0, 0, 1, z$0$0, 0, 0, 0, 1 ][0];
-		other$0$0$0$_m12$0 = [ 1, 0, 0, x$0$0, 0, 1, 0, y$0$0, 0, 0, 1, z$0$0, 0, 0, 0, 1 ][1];
-		other$0$0$0$_m13$0 = [ 1, 0, 0, x$0$0, 0, 1, 0, y$0$0, 0, 0, 1, z$0$0, 0, 0, 0, 1 ][2];
-		other$0$0$0$_m14$0 = [ 1, 0, 0, x$0$0, 0, 1, 0, y$0$0, 0, 0, 1, z$0$0, 0, 0, 0, 1 ][3];
-		other$0$0$0$_m21$0 = [ 1, 0, 0, x$0$0, 0, 1, 0, y$0$0, 0, 0, 1, z$0$0, 0, 0, 0, 1 ][4];
-		other$0$0$0$_m22$0 = [ 1, 0, 0, x$0$0, 0, 1, 0, y$0$0, 0, 0, 1, z$0$0, 0, 0, 0, 1 ][5];
-		other$0$0$0$_m23$0 = [ 1, 0, 0, x$0$0, 0, 1, 0, y$0$0, 0, 0, 1, z$0$0, 0, 0, 0, 1 ][6];
-		other$0$0$0$_m24$0 = [ 1, 0, 0, x$0$0, 0, 1, 0, y$0$0, 0, 0, 1, z$0$0, 0, 0, 0, 1 ][7];
-		other$0$0$0$_m31$0 = [ 1, 0, 0, x$0$0, 0, 1, 0, y$0$0, 0, 0, 1, z$0$0, 0, 0, 0, 1 ][8];
-		other$0$0$0$_m32$0 = [ 1, 0, 0, x$0$0, 0, 1, 0, y$0$0, 0, 0, 1, z$0$0, 0, 0, 0, 1 ][9];
-		other$0$0$0$_m33$0 = [ 1, 0, 0, x$0$0, 0, 1, 0, y$0$0, 0, 0, 1, z$0$0, 0, 0, 0, 1 ][10];
-		other$0$0$0$_m34$0 = [ 1, 0, 0, x$0$0, 0, 1, 0, y$0$0, 0, 0, 1, z$0$0, 0, 0, 0, 1 ][11];
-		other$0$0$0$_m41$0 = [ 1, 0, 0, x$0$0, 0, 1, 0, y$0$0, 0, 0, 1, z$0$0, 0, 0, 0, 1 ][12];
-		other$0$0$0$_m42$0 = [ 1, 0, 0, x$0$0, 0, 1, 0, y$0$0, 0, 0, 1, z$0$0, 0, 0, 0, 1 ][13];
-		other$0$0$0$_m43$0 = [ 1, 0, 0, x$0$0, 0, 1, 0, y$0$0, 0, 0, 1, z$0$0, 0, 0, 0, 1 ][14];
-		other$0$0$0$_m44$0 = [ 1, 0, 0, x$0$0, 0, 1, 0, y$0$0, 0, 0, 1, z$0$0, 0, 0, 0, 1 ][15];
-		m11$0$0$0 = this$0$0$0._m11;
-		m12$0$0$0 = this$0$0$0._m12;
-		m13$0$0$0 = this$0$0$0._m13;
-		m14$0$0$0 = this$0$0$0._m14;
-		m21$0$0$0 = this$0$0$0._m21;
-		m22$0$0$0 = this$0$0$0._m22;
-		m23$0$0$0 = this$0$0$0._m23;
-		m24$0$0$0 = this$0$0$0._m24;
-		m31$0$0$0 = this$0$0$0._m31;
-		m32$0$0$0 = this$0$0$0._m32;
-		m33$0$0$0 = this$0$0$0._m33;
-		m34$0$0$0 = this$0$0$0._m34;
-		m41$0$0$0 = this$0$0$0._m41;
-		m42$0$0$0 = this$0$0$0._m42;
-		m43$0$0$0 = this$0$0$0._m43;
-		m44$0$0$0 = this$0$0$0._m44;
-		this$0$0$0._m11 = m11$0$0$0 * (_m11$0 = other$0$0$0$_m11$0) + m12$0$0$0 * (_m21$0 = other$0$0$0$_m21$0) + m13$0$0$0 * (_m31$0 = other$0$0$0$_m31$0) + m14$0$0$0 * (_m41$0 = other$0$0$0$_m41$0);
-		this$0$0$0._m12 = m11$0$0$0 * (_m12$0 = other$0$0$0$_m12$0) + m12$0$0$0 * (_m22$0 = other$0$0$0$_m22$0) + m13$0$0$0 * (_m32$0 = other$0$0$0$_m32$0) + m14$0$0$0 * (_m42$0 = other$0$0$0$_m42$0);
-		this$0$0$0._m13 = m11$0$0$0 * (_m13$0 = other$0$0$0$_m13$0) + m12$0$0$0 * (_m23$0 = other$0$0$0$_m23$0) + m13$0$0$0 * (_m33$0 = other$0$0$0$_m33$0) + m14$0$0$0 * (_m43$0 = other$0$0$0$_m43$0);
-		this$0$0$0._m14 = m11$0$0$0 * (_m14$0 = other$0$0$0$_m14$0) + m12$0$0$0 * (_m24$0 = other$0$0$0$_m24$0) + m13$0$0$0 * (_m34$0 = other$0$0$0$_m34$0) + m14$0$0$0 * (_m44$0 = other$0$0$0$_m44$0);
-		this$0$0$0._m21 = m21$0$0$0 * _m11$0 + m22$0$0$0 * _m21$0 + m23$0$0$0 * _m31$0 + m24$0$0$0 * _m41$0;
-		this$0$0$0._m22 = m21$0$0$0 * _m12$0 + m22$0$0$0 * _m22$0 + m23$0$0$0 * _m32$0 + m24$0$0$0 * _m42$0;
-		this$0$0$0._m23 = m21$0$0$0 * _m13$0 + m22$0$0$0 * _m23$0 + m23$0$0$0 * _m33$0 + m24$0$0$0 * _m43$0;
-		this$0$0$0._m24 = m21$0$0$0 * _m14$0 + m22$0$0$0 * _m24$0 + m23$0$0$0 * _m34$0 + m24$0$0$0 * _m44$0;
-		this$0$0$0._m31 = m31$0$0$0 * _m11$0 + m32$0$0$0 * _m21$0 + m33$0$0$0 * _m31$0 + m34$0$0$0 * _m41$0;
-		this$0$0$0._m32 = m31$0$0$0 * _m12$0 + m32$0$0$0 * _m22$0 + m33$0$0$0 * _m32$0 + m34$0$0$0 * _m42$0;
-		this$0$0$0._m33 = m31$0$0$0 * _m13$0 + m32$0$0$0 * _m23$0 + m33$0$0$0 * _m33$0 + m34$0$0$0 * _m43$0;
-		this$0$0$0._m34 = m31$0$0$0 * _m14$0 + m32$0$0$0 * _m24$0 + m33$0$0$0 * _m34$0 + m34$0$0$0 * _m44$0;
-		this$0$0$0._m41 = m41$0$0$0 * _m11$0 + m42$0$0$0 * _m21$0 + m43$0$0$0 * _m31$0 + m44$0$0$0 * _m41$0;
-		this$0$0$0._m42 = m41$0$0$0 * _m12$0 + m42$0$0$0 * _m22$0 + m43$0$0$0 * _m32$0 + m44$0$0$0 * _m42$0;
-		this$0$0$0._m43 = m41$0$0$0 * _m13$0 + m42$0$0$0 * _m23$0 + m43$0$0$0 * _m33$0 + m44$0$0$0 * _m43$0;
-		this$0$0$0._m44 = m41$0$0$0 * _m14$0 + m42$0$0$0 * _m24$0 + m43$0$0$0 * _m34$0 + m44$0$0$0 * _m44$0;
-		q$0$0 = $this.player.rot;
-		this$0$1$0 = context._worldMatrix;
-		x2$0$0$0 = 2 * (x$0 = q$0$0.x) * x$0;
-		y2$0$0$0 = 2 * (y$0 = q$0$0.y) * y$0;
-		z2$0$0$0 = 2 * (z$0 = q$0$0.z) * z$0;
-		xy$0$0$0 = 2 * x$0 * y$0;
-		zx$0$0$0 = 2 * x$0 * z$0;
-		yz$0$0$0 = 2 * y$0 * z$0;
-		xt$0$0$0 = 2 * x$0 * (t$0 = q$0$0.t);
-		yt$0$0$0 = 2 * y$0 * t$0;
-		zt$0$0$0 = 2 * z$0 * t$0;
-		other$0$1$0$_m11$0 = [ 1 - y2$0$0$0 - z2$0$0$0, xy$0$0$0 + zt$0$0$0, zx$0$0$0 - yt$0$0$0, 0, xy$0$0$0 - zt$0$0$0, 1 - x2$0$0$0 - z2$0$0$0, yz$0$0$0 + xt$0$0$0, 0, zx$0$0$0 + yt$0$0$0, yz$0$0$0 - xt$0$0$0, 1 - x2$0$0$0 - y2$0$0$0, 0, 0, 0, 0, 1 ][0];
-		other$0$1$0$_m12$0 = [ 1 - y2$0$0$0 - z2$0$0$0, xy$0$0$0 + zt$0$0$0, zx$0$0$0 - yt$0$0$0, 0, xy$0$0$0 - zt$0$0$0, 1 - x2$0$0$0 - z2$0$0$0, yz$0$0$0 + xt$0$0$0, 0, zx$0$0$0 + yt$0$0$0, yz$0$0$0 - xt$0$0$0, 1 - x2$0$0$0 - y2$0$0$0, 0, 0, 0, 0, 1 ][1];
-		other$0$1$0$_m13$0 = [ 1 - y2$0$0$0 - z2$0$0$0, xy$0$0$0 + zt$0$0$0, zx$0$0$0 - yt$0$0$0, 0, xy$0$0$0 - zt$0$0$0, 1 - x2$0$0$0 - z2$0$0$0, yz$0$0$0 + xt$0$0$0, 0, zx$0$0$0 + yt$0$0$0, yz$0$0$0 - xt$0$0$0, 1 - x2$0$0$0 - y2$0$0$0, 0, 0, 0, 0, 1 ][2];
-		other$0$1$0$_m14$0 = [ 1 - y2$0$0$0 - z2$0$0$0, xy$0$0$0 + zt$0$0$0, zx$0$0$0 - yt$0$0$0, 0, xy$0$0$0 - zt$0$0$0, 1 - x2$0$0$0 - z2$0$0$0, yz$0$0$0 + xt$0$0$0, 0, zx$0$0$0 + yt$0$0$0, yz$0$0$0 - xt$0$0$0, 1 - x2$0$0$0 - y2$0$0$0, 0, 0, 0, 0, 1 ][3];
-		other$0$1$0$_m21$0 = [ 1 - y2$0$0$0 - z2$0$0$0, xy$0$0$0 + zt$0$0$0, zx$0$0$0 - yt$0$0$0, 0, xy$0$0$0 - zt$0$0$0, 1 - x2$0$0$0 - z2$0$0$0, yz$0$0$0 + xt$0$0$0, 0, zx$0$0$0 + yt$0$0$0, yz$0$0$0 - xt$0$0$0, 1 - x2$0$0$0 - y2$0$0$0, 0, 0, 0, 0, 1 ][4];
-		other$0$1$0$_m22$0 = [ 1 - y2$0$0$0 - z2$0$0$0, xy$0$0$0 + zt$0$0$0, zx$0$0$0 - yt$0$0$0, 0, xy$0$0$0 - zt$0$0$0, 1 - x2$0$0$0 - z2$0$0$0, yz$0$0$0 + xt$0$0$0, 0, zx$0$0$0 + yt$0$0$0, yz$0$0$0 - xt$0$0$0, 1 - x2$0$0$0 - y2$0$0$0, 0, 0, 0, 0, 1 ][5];
-		other$0$1$0$_m23$0 = [ 1 - y2$0$0$0 - z2$0$0$0, xy$0$0$0 + zt$0$0$0, zx$0$0$0 - yt$0$0$0, 0, xy$0$0$0 - zt$0$0$0, 1 - x2$0$0$0 - z2$0$0$0, yz$0$0$0 + xt$0$0$0, 0, zx$0$0$0 + yt$0$0$0, yz$0$0$0 - xt$0$0$0, 1 - x2$0$0$0 - y2$0$0$0, 0, 0, 0, 0, 1 ][6];
-		other$0$1$0$_m24$0 = [ 1 - y2$0$0$0 - z2$0$0$0, xy$0$0$0 + zt$0$0$0, zx$0$0$0 - yt$0$0$0, 0, xy$0$0$0 - zt$0$0$0, 1 - x2$0$0$0 - z2$0$0$0, yz$0$0$0 + xt$0$0$0, 0, zx$0$0$0 + yt$0$0$0, yz$0$0$0 - xt$0$0$0, 1 - x2$0$0$0 - y2$0$0$0, 0, 0, 0, 0, 1 ][7];
-		other$0$1$0$_m31$0 = [ 1 - y2$0$0$0 - z2$0$0$0, xy$0$0$0 + zt$0$0$0, zx$0$0$0 - yt$0$0$0, 0, xy$0$0$0 - zt$0$0$0, 1 - x2$0$0$0 - z2$0$0$0, yz$0$0$0 + xt$0$0$0, 0, zx$0$0$0 + yt$0$0$0, yz$0$0$0 - xt$0$0$0, 1 - x2$0$0$0 - y2$0$0$0, 0, 0, 0, 0, 1 ][8];
-		other$0$1$0$_m32$0 = [ 1 - y2$0$0$0 - z2$0$0$0, xy$0$0$0 + zt$0$0$0, zx$0$0$0 - yt$0$0$0, 0, xy$0$0$0 - zt$0$0$0, 1 - x2$0$0$0 - z2$0$0$0, yz$0$0$0 + xt$0$0$0, 0, zx$0$0$0 + yt$0$0$0, yz$0$0$0 - xt$0$0$0, 1 - x2$0$0$0 - y2$0$0$0, 0, 0, 0, 0, 1 ][9];
-		other$0$1$0$_m33$0 = [ 1 - y2$0$0$0 - z2$0$0$0, xy$0$0$0 + zt$0$0$0, zx$0$0$0 - yt$0$0$0, 0, xy$0$0$0 - zt$0$0$0, 1 - x2$0$0$0 - z2$0$0$0, yz$0$0$0 + xt$0$0$0, 0, zx$0$0$0 + yt$0$0$0, yz$0$0$0 - xt$0$0$0, 1 - x2$0$0$0 - y2$0$0$0, 0, 0, 0, 0, 1 ][10];
-		other$0$1$0$_m34$0 = [ 1 - y2$0$0$0 - z2$0$0$0, xy$0$0$0 + zt$0$0$0, zx$0$0$0 - yt$0$0$0, 0, xy$0$0$0 - zt$0$0$0, 1 - x2$0$0$0 - z2$0$0$0, yz$0$0$0 + xt$0$0$0, 0, zx$0$0$0 + yt$0$0$0, yz$0$0$0 - xt$0$0$0, 1 - x2$0$0$0 - y2$0$0$0, 0, 0, 0, 0, 1 ][11];
-		other$0$1$0$_m41$0 = [ 1 - y2$0$0$0 - z2$0$0$0, xy$0$0$0 + zt$0$0$0, zx$0$0$0 - yt$0$0$0, 0, xy$0$0$0 - zt$0$0$0, 1 - x2$0$0$0 - z2$0$0$0, yz$0$0$0 + xt$0$0$0, 0, zx$0$0$0 + yt$0$0$0, yz$0$0$0 - xt$0$0$0, 1 - x2$0$0$0 - y2$0$0$0, 0, 0, 0, 0, 1 ][12];
-		other$0$1$0$_m42$0 = [ 1 - y2$0$0$0 - z2$0$0$0, xy$0$0$0 + zt$0$0$0, zx$0$0$0 - yt$0$0$0, 0, xy$0$0$0 - zt$0$0$0, 1 - x2$0$0$0 - z2$0$0$0, yz$0$0$0 + xt$0$0$0, 0, zx$0$0$0 + yt$0$0$0, yz$0$0$0 - xt$0$0$0, 1 - x2$0$0$0 - y2$0$0$0, 0, 0, 0, 0, 1 ][13];
-		other$0$1$0$_m43$0 = [ 1 - y2$0$0$0 - z2$0$0$0, xy$0$0$0 + zt$0$0$0, zx$0$0$0 - yt$0$0$0, 0, xy$0$0$0 - zt$0$0$0, 1 - x2$0$0$0 - z2$0$0$0, yz$0$0$0 + xt$0$0$0, 0, zx$0$0$0 + yt$0$0$0, yz$0$0$0 - xt$0$0$0, 1 - x2$0$0$0 - y2$0$0$0, 0, 0, 0, 0, 1 ][14];
-		other$0$1$0$_m44$0 = [ 1 - y2$0$0$0 - z2$0$0$0, xy$0$0$0 + zt$0$0$0, zx$0$0$0 - yt$0$0$0, 0, xy$0$0$0 - zt$0$0$0, 1 - x2$0$0$0 - z2$0$0$0, yz$0$0$0 + xt$0$0$0, 0, zx$0$0$0 + yt$0$0$0, yz$0$0$0 - xt$0$0$0, 1 - x2$0$0$0 - y2$0$0$0, 0, 0, 0, 0, 1 ][15];
-		m11$0$1$0 = this$0$1$0._m11;
-		m12$0$1$0 = this$0$1$0._m12;
-		m13$0$1$0 = this$0$1$0._m13;
-		m14$0$1$0 = this$0$1$0._m14;
-		m21$0$1$0 = this$0$1$0._m21;
-		m22$0$1$0 = this$0$1$0._m22;
-		m23$0$1$0 = this$0$1$0._m23;
-		m24$0$1$0 = this$0$1$0._m24;
-		m31$0$1$0 = this$0$1$0._m31;
-		m32$0$1$0 = this$0$1$0._m32;
-		m33$0$1$0 = this$0$1$0._m33;
-		m34$0$1$0 = this$0$1$0._m34;
-		m41$0$1$0 = this$0$1$0._m41;
-		m42$0$1$0 = this$0$1$0._m42;
-		m43$0$1$0 = this$0$1$0._m43;
-		m44$0$1$0 = this$0$1$0._m44;
-		this$0$1$0._m11 = m11$0$1$0 * (_m11$1 = other$0$1$0$_m11$0) + m12$0$1$0 * (_m21$1 = other$0$1$0$_m21$0) + m13$0$1$0 * (_m31$1 = other$0$1$0$_m31$0) + m14$0$1$0 * (_m41$1 = other$0$1$0$_m41$0);
-		this$0$1$0._m12 = m11$0$1$0 * (_m12$1 = other$0$1$0$_m12$0) + m12$0$1$0 * (_m22$1 = other$0$1$0$_m22$0) + m13$0$1$0 * (_m32$1 = other$0$1$0$_m32$0) + m14$0$1$0 * (_m42$1 = other$0$1$0$_m42$0);
-		this$0$1$0._m13 = m11$0$1$0 * (_m13$1 = other$0$1$0$_m13$0) + m12$0$1$0 * (_m23$1 = other$0$1$0$_m23$0) + m13$0$1$0 * (_m33$1 = other$0$1$0$_m33$0) + m14$0$1$0 * (_m43$1 = other$0$1$0$_m43$0);
-		this$0$1$0._m14 = m11$0$1$0 * (_m14$1 = other$0$1$0$_m14$0) + m12$0$1$0 * (_m24$1 = other$0$1$0$_m24$0) + m13$0$1$0 * (_m34$1 = other$0$1$0$_m34$0) + m14$0$1$0 * (_m44$1 = other$0$1$0$_m44$0);
-		this$0$1$0._m21 = m21$0$1$0 * _m11$1 + m22$0$1$0 * _m21$1 + m23$0$1$0 * _m31$1 + m24$0$1$0 * _m41$1;
-		this$0$1$0._m22 = m21$0$1$0 * _m12$1 + m22$0$1$0 * _m22$1 + m23$0$1$0 * _m32$1 + m24$0$1$0 * _m42$1;
-		this$0$1$0._m23 = m21$0$1$0 * _m13$1 + m22$0$1$0 * _m23$1 + m23$0$1$0 * _m33$1 + m24$0$1$0 * _m43$1;
-		this$0$1$0._m24 = m21$0$1$0 * _m14$1 + m22$0$1$0 * _m24$1 + m23$0$1$0 * _m34$1 + m24$0$1$0 * _m44$1;
-		this$0$1$0._m31 = m31$0$1$0 * _m11$1 + m32$0$1$0 * _m21$1 + m33$0$1$0 * _m31$1 + m34$0$1$0 * _m41$1;
-		this$0$1$0._m32 = m31$0$1$0 * _m12$1 + m32$0$1$0 * _m22$1 + m33$0$1$0 * _m32$1 + m34$0$1$0 * _m42$1;
-		this$0$1$0._m33 = m31$0$1$0 * _m13$1 + m32$0$1$0 * _m23$1 + m33$0$1$0 * _m33$1 + m34$0$1$0 * _m43$1;
-		this$0$1$0._m34 = m31$0$1$0 * _m14$1 + m32$0$1$0 * _m24$1 + m33$0$1$0 * _m34$1 + m34$0$1$0 * _m44$1;
-		this$0$1$0._m41 = m41$0$1$0 * _m11$1 + m42$0$1$0 * _m21$1 + m43$0$1$0 * _m31$1 + m44$0$1$0 * _m41$1;
-		this$0$1$0._m42 = m41$0$1$0 * _m12$1 + m42$0$1$0 * _m22$1 + m43$0$1$0 * _m32$1 + m44$0$1$0 * _m42$1;
-		this$0$1$0._m43 = m41$0$1$0 * _m13$1 + m42$0$1$0 * _m23$1 + m43$0$1$0 * _m33$1 + m44$0$1$0 * _m43$1;
-		this$0$1$0._m44 = m41$0$1$0 * _m14$1 + m42$0$1$0 * _m24$1 + m43$0$1$0 * _m34$1 + m44$0$1$0 * _m44$1;
-		Util3D$sphere$LContext3D$NI(context, $this.player.radius, 6);
-		context._worldMatrix = new Matrix$();
+		$this._updateClearedPlayer$N(elapsedMsec);
+		player$0 = $this.player;
+		view$0 = new Vector$NNN(player$0.x + Math.sin($this.totalElapsedMsec / 5000) * 50, player$0.y + 20, player$0.z + Math.cos($this.totalElapsedMsec / 5000) * 50);
+		target$0 = new Vector$NNN(player$0.x, player$0.y, player$0.z);
+		(camera$0 = (engine$0 = $this.engine).camera).target = target$0;
+		camera$0.view = view$0;
+		this$0$0 = camera$0;
+		view$0$0 = this$0$0.view;
+		target$0$0 = this$0$0.target;
+		upper$0$0 = this$0$0.upper;
+		fovyX$0$0 = this$0$0.fovyX;
+		nearZ$0$0 = this$0$0.nearZ;
+		farZ$0$0 = this$0$0.farZ;
+		aspectRatio$0$0 = this$0$0.aspectRatio;
+		this$0$0$0$0 = new Vector$NNN(target$0$0.x - view$0$0.x, target$0$0.y - view$0$0.y, target$0$0.z - view$0$0.z);
+		length$0$0$0$0 = Math.sqrt((x$0 = this$0$0$0$0.x) * x$0 + (y$0 = this$0$0$0$0.y) * y$0 + (z$0 = this$0$0$0$0.z) * z$0);
+		zaxis$0$0$0 = (length$0$0$0$0 < 1e-9 ? new Vector$NNN(0, 0, 0) : this$0$0$0$0.divSelf$N(length$0$0$0$0));
+		this$1$0$0$0 = new Vector$NNN((y$2 = upper$0$0.y) * (z$2 = zaxis$0$0$0.z) - (z$1 = upper$0$0.z) * (y$1 = zaxis$0$0$0.y), z$1 * (x$2 = zaxis$0$0$0.x) - (x$1 = upper$0$0.x) * z$2, x$1 * y$1 - y$2 * x$2);
+		length$1$0$0$0 = Math.sqrt((x$3 = this$1$0$0$0.x) * x$3 + (y$3 = this$1$0$0$0.y) * y$3 + (z$3 = this$1$0$0$0.z) * z$3);
+		xaxis$0$0$0 = (length$1$0$0$0 < 1e-9 ? new Vector$NNN(0, 0, 0) : this$1$0$0$0.divSelf$N(length$1$0$0$0));
+		this$2$0$0$0 = new Vector$NNN((y$5 = zaxis$0$0$0.y) * (z$5 = xaxis$0$0$0.z) - (z$4 = zaxis$0$0$0.z) * (y$4 = xaxis$0$0$0.y), z$4 * (x$5 = xaxis$0$0$0.x) - (x$4 = zaxis$0$0$0.x) * z$5, x$4 * y$4 - y$5 * x$5);
+		length$2$0$0$0 = Math.sqrt((x$6 = this$2$0$0$0.x) * x$6 + (y$6 = this$2$0$0$0.y) * y$6 + (z$6 = this$2$0$0$0.z) * z$6);
+		yaxis$0$0$0 = (length$2$0$0$0 < 1e-9 ? new Vector$NNN(0, 0, 0) : this$2$0$0$0.divSelf$N(length$2$0$0$0));
+		viewMatrix$0$0 = new Matrix$AN([ x$7 = xaxis$0$0$0.x, y$7 = xaxis$0$0$0.y, z$7 = xaxis$0$0$0.z, - (x$7 * (x$9 = view$0$0.x) + y$7 * (y$9 = view$0$0.y) + z$7 * (z$9 = view$0$0.z)), x$8 = yaxis$0$0$0.x, y$8 = yaxis$0$0$0.y, z$8 = yaxis$0$0$0.z, - (x$8 * x$9 + y$8 * y$9 + z$8 * z$9), x$10 = zaxis$0$0$0.x, y$10 = zaxis$0$0$0.y, z$10 = zaxis$0$0$0.z, - (x$10 * x$9 + y$10 * y$9 + z$10 * z$9), 0, 0, 0, 1 ]);
+		sx$0$0$0 = 1 / Math.tan(fovyX$0$0 / 2);
+		sy$0$0$0 = sx$0$0$0 / aspectRatio$0$0;
+		sz$0$0$0 = farZ$0$0 / (farZ$0$0 - nearZ$0$0);
+		mz$0$0$0 = - sz$0$0$0 * nearZ$0$0;
+		projectionMatrix$0$0 = new Matrix$AN([ sx$0$0$0, 0, 0, 0, 0, sy$0$0$0, 0, 0, 0, 0, sz$0$0$0, mz$0$0$0, 0, 0, 1, 0 ]);
+		this$0$0.viewMatrix = viewMatrix$0$0;
+		this$0$0.projectionMatrix = projectionMatrix$0$0;
+		m11$0$0$0 = (_m11$0 = projectionMatrix$0$0._m11) * (_m11$1 = viewMatrix$0$0._m11) + (_m12$0 = projectionMatrix$0$0._m12) * (_m21$0 = viewMatrix$0$0._m21) + (_m13$0 = projectionMatrix$0$0._m13) * (_m31$0 = viewMatrix$0$0._m31) + (_m14$0 = projectionMatrix$0$0._m14) * (_m41$0 = viewMatrix$0$0._m41);
+		m12$0$0$0 = _m11$0 * (_m12$1 = viewMatrix$0$0._m12) + _m12$0 * (_m22$1 = viewMatrix$0$0._m22) + _m13$0 * (_m32$0 = viewMatrix$0$0._m32) + _m14$0 * (_m42$0 = viewMatrix$0$0._m42);
+		m13$0$0$0 = _m11$0 * (_m13$1 = viewMatrix$0$0._m13) + _m12$0 * (_m23$1 = viewMatrix$0$0._m23) + _m13$0 * (_m33$0 = viewMatrix$0$0._m33) + _m14$0 * (_m43$0 = viewMatrix$0$0._m43);
+		m14$0$0$0 = _m11$0 * (_m14$1 = viewMatrix$0$0._m14) + _m12$0 * (_m24$1 = viewMatrix$0$0._m24) + _m13$0 * (_m34$0 = viewMatrix$0$0._m34) + _m14$0 * (_m44$0 = viewMatrix$0$0._m44);
+		m21$0$0$0 = (_m21$1 = projectionMatrix$0$0._m21) * _m11$1 + (_m22$0 = projectionMatrix$0$0._m22) * _m21$0 + (_m23$0 = projectionMatrix$0$0._m23) * _m31$0 + (_m24$0 = projectionMatrix$0$0._m24) * _m41$0;
+		m22$0$0$0 = _m21$1 * _m12$1 + _m22$0 * _m22$1 + _m23$0 * _m32$0 + _m24$0 * _m42$0;
+		m23$0$0$0 = _m21$1 * _m13$1 + _m22$0 * _m23$1 + _m23$0 * _m33$0 + _m24$0 * _m43$0;
+		m24$0$0$0 = _m21$1 * _m14$1 + _m22$0 * _m24$1 + _m23$0 * _m34$0 + _m24$0 * _m44$0;
+		m31$0$0$0 = (_m31$1 = projectionMatrix$0$0._m31) * _m11$1 + (_m32$1 = projectionMatrix$0$0._m32) * _m21$0 + (_m33$1 = projectionMatrix$0$0._m33) * _m31$0 + (_m34$1 = projectionMatrix$0$0._m34) * _m41$0;
+		m32$0$0$0 = _m31$1 * _m12$1 + _m32$1 * _m22$1 + _m33$1 * _m32$0 + _m34$1 * _m42$0;
+		m33$0$0$0 = _m31$1 * _m13$1 + _m32$1 * _m23$1 + _m33$1 * _m33$0 + _m34$1 * _m43$0;
+		m34$0$0$0 = _m31$1 * _m14$1 + _m32$1 * _m24$1 + _m33$1 * _m34$0 + _m34$1 * _m44$0;
+		m41$0$0$0 = (_m41$1 = projectionMatrix$0$0._m41) * _m11$1 + (_m42$1 = projectionMatrix$0$0._m42) * _m21$0 + (_m43$1 = projectionMatrix$0$0._m43) * _m31$0 + (_m44$1 = projectionMatrix$0$0._m44) * _m41$0;
+		m42$0$0$0 = _m41$1 * _m12$1 + _m42$1 * _m22$1 + _m43$1 * _m32$0 + _m44$1 * _m42$0;
+		m43$0$0$0 = _m41$1 * _m13$1 + _m42$1 * _m23$1 + _m43$1 * _m33$0 + _m44$1 * _m43$0;
+		m44$0$0$0 = _m41$1 * _m14$1 + _m42$1 * _m24$1 + _m43$1 * _m34$0 + _m44$1 * _m44$0;
+		this$0$0.matrix = new Matrix$AN([ m11$0$0$0, m12$0$0$0, m13$0$0$0, m14$0$0$0, m21$0$0$0, m22$0$0$0, m23$0$0$0, m24$0$0$0, m31$0$0$0, m32$0$0$0, m33$0$0$0, m34$0$0$0, m41$0$0$0, m42$0$0$0, m43$0$0$0, m44$0$0$0 ]);
+	});
+	update = gameUpdate;
+	gameRender = (function (context) {
+		$this._renderPlayer$LContext3D$(context);
 		$this._renderTrees$LContext3D$(context);
 		$this._renderItems$LContext3D$(context);
 		$this._renderField$LContext3D$(context);
+	});
+	clearedRender = (function (context) {
+		$this._renderPlayer$LContext3D$(context);
+		$this._renderField$LContext3D$(context);
+	});
+	render = gameRender;
+	isCleared = false;
+	this.engine.onUpdate = (function (elapsedMsec) {
+		/** @type {!number} */
+		var x$0;
+		/** @type {Player} */
+		var player$0;
+		/** @type {!number} */
+		var z$0;
+		if (! $this.isStarted) {
+			return;
+		}
+		if ($this.player.y < -1000) {
+			$this.player = {r: 12, x: 0, y: 10, z: 0, vx: 0, vy: 0, vz: 0, ax: 0, ay: - 120, az: 0, rot: Quaternion$rotating$NNNN(0, 1, 0, 0), radius: 8, isBraking: false};
+			$this.isStarted = false;
+		}
+		if (! isCleared && (1050 <= (x$0 = (player$0 = $this.player).x) && x$0 <= 1110) && (1350 <= (z$0 = player$0.z) && z$0 <= 1410)) {
+			update = clearedUpdate;
+			render = clearedRender;
+			isCleared = true;
+		}
+		update(elapsedMsec);
+	});
+	backgroundColor = new Color$III(90, 135, 150);
+	this.engine.onRender = (function (context, elapsedMsec) {
+		$this.totalElapsedMsec += elapsedMsec;
+		context.backgroundColor = backgroundColor;
+		render(context);
 	});
 	this$3 = this.engine;
 	if (this$3._isMobile) {
@@ -1732,6 +1692,7 @@ BlueBall.prototype._updateViewpoint$ = function () {
 	}
 	y = player.y;
 	if (y < 0) {
+		y = (y >= -300 ? y : -300);
 		y = - y / 2;
 	}
 	yOffset = 10;
@@ -1740,6 +1701,301 @@ BlueBall.prototype._updateViewpoint$ = function () {
 		yOffset -= (50 - xzVelocity) * 0.6;
 	}
 	view = new Vector$NNN(player.x + dx * 50, y * 1.2 + yOffset, player.z + dz * 50);
+	target = new Vector$NNN(player.x, player.y, player.z);
+	(camera$0 = (engine$0 = this.engine).camera).target = target;
+	camera$0.view = view;
+	this$0 = camera$0;
+	view$0 = this$0.view;
+	target$0 = this$0.target;
+	upper$0 = this$0.upper;
+	fovyX$0 = this$0.fovyX;
+	nearZ$0 = this$0.nearZ;
+	farZ$0 = this$0.farZ;
+	aspectRatio$0 = this$0.aspectRatio;
+	this$0$0$0 = new Vector$NNN(target$0.x - view$0.x, target$0.y - view$0.y, target$0.z - view$0.z);
+	length$0$0$0 = Math.sqrt((x$0 = this$0$0$0.x) * x$0 + (y$0 = this$0$0$0.y) * y$0 + (z$0 = this$0$0$0.z) * z$0);
+	zaxis$0$0 = (length$0$0$0 < 1e-9 ? new Vector$NNN(0, 0, 0) : this$0$0$0.divSelf$N(length$0$0$0));
+	this$1$0$0 = new Vector$NNN((y$2 = upper$0.y) * (z$2 = zaxis$0$0.z) - (z$1 = upper$0.z) * (y$1 = zaxis$0$0.y), z$1 * (x$2 = zaxis$0$0.x) - (x$1 = upper$0.x) * z$2, x$1 * y$1 - y$2 * x$2);
+	length$1$0$0 = Math.sqrt((x$3 = this$1$0$0.x) * x$3 + (y$3 = this$1$0$0.y) * y$3 + (z$3 = this$1$0$0.z) * z$3);
+	xaxis$0$0 = (length$1$0$0 < 1e-9 ? new Vector$NNN(0, 0, 0) : this$1$0$0.divSelf$N(length$1$0$0));
+	this$2$0$0 = new Vector$NNN((y$5 = zaxis$0$0.y) * (z$5 = xaxis$0$0.z) - (z$4 = zaxis$0$0.z) * (y$4 = xaxis$0$0.y), z$4 * (x$5 = xaxis$0$0.x) - (x$4 = zaxis$0$0.x) * z$5, x$4 * y$4 - y$5 * x$5);
+	length$2$0$0 = Math.sqrt((x$6 = this$2$0$0.x) * x$6 + (y$6 = this$2$0$0.y) * y$6 + (z$6 = this$2$0$0.z) * z$6);
+	yaxis$0$0 = (length$2$0$0 < 1e-9 ? new Vector$NNN(0, 0, 0) : this$2$0$0.divSelf$N(length$2$0$0));
+	viewMatrix$0 = new Matrix$AN([ x$7 = xaxis$0$0.x, y$7 = xaxis$0$0.y, z$7 = xaxis$0$0.z, - (x$7 * (x$9 = view$0.x) + y$7 * (y$9 = view$0.y) + z$7 * (z$9 = view$0.z)), x$8 = yaxis$0$0.x, y$8 = yaxis$0$0.y, z$8 = yaxis$0$0.z, - (x$8 * x$9 + y$8 * y$9 + z$8 * z$9), x$10 = zaxis$0$0.x, y$10 = zaxis$0$0.y, z$10 = zaxis$0$0.z, - (x$10 * x$9 + y$10 * y$9 + z$10 * z$9), 0, 0, 0, 1 ]);
+	sx$0$0 = 1 / Math.tan(fovyX$0 / 2);
+	sy$0$0 = sx$0$0 / aspectRatio$0;
+	sz$0$0 = farZ$0 / (farZ$0 - nearZ$0);
+	mz$0$0 = - sz$0$0 * nearZ$0;
+	projectionMatrix$0 = new Matrix$AN([ sx$0$0, 0, 0, 0, 0, sy$0$0, 0, 0, 0, 0, sz$0$0, mz$0$0, 0, 0, 1, 0 ]);
+	this$0.viewMatrix = viewMatrix$0;
+	this$0.projectionMatrix = projectionMatrix$0;
+	m11$0$0 = (_m11$0 = projectionMatrix$0._m11) * (_m11$1 = viewMatrix$0._m11) + (_m12$0 = projectionMatrix$0._m12) * (_m21$0 = viewMatrix$0._m21) + (_m13$0 = projectionMatrix$0._m13) * (_m31$0 = viewMatrix$0._m31) + (_m14$0 = projectionMatrix$0._m14) * (_m41$0 = viewMatrix$0._m41);
+	m12$0$0 = _m11$0 * (_m12$1 = viewMatrix$0._m12) + _m12$0 * (_m22$1 = viewMatrix$0._m22) + _m13$0 * (_m32$0 = viewMatrix$0._m32) + _m14$0 * (_m42$0 = viewMatrix$0._m42);
+	m13$0$0 = _m11$0 * (_m13$1 = viewMatrix$0._m13) + _m12$0 * (_m23$1 = viewMatrix$0._m23) + _m13$0 * (_m33$0 = viewMatrix$0._m33) + _m14$0 * (_m43$0 = viewMatrix$0._m43);
+	m14$0$0 = _m11$0 * (_m14$1 = viewMatrix$0._m14) + _m12$0 * (_m24$1 = viewMatrix$0._m24) + _m13$0 * (_m34$0 = viewMatrix$0._m34) + _m14$0 * (_m44$0 = viewMatrix$0._m44);
+	m21$0$0 = (_m21$1 = projectionMatrix$0._m21) * _m11$1 + (_m22$0 = projectionMatrix$0._m22) * _m21$0 + (_m23$0 = projectionMatrix$0._m23) * _m31$0 + (_m24$0 = projectionMatrix$0._m24) * _m41$0;
+	m22$0$0 = _m21$1 * _m12$1 + _m22$0 * _m22$1 + _m23$0 * _m32$0 + _m24$0 * _m42$0;
+	m23$0$0 = _m21$1 * _m13$1 + _m22$0 * _m23$1 + _m23$0 * _m33$0 + _m24$0 * _m43$0;
+	m24$0$0 = _m21$1 * _m14$1 + _m22$0 * _m24$1 + _m23$0 * _m34$0 + _m24$0 * _m44$0;
+	m31$0$0 = (_m31$1 = projectionMatrix$0._m31) * _m11$1 + (_m32$1 = projectionMatrix$0._m32) * _m21$0 + (_m33$1 = projectionMatrix$0._m33) * _m31$0 + (_m34$1 = projectionMatrix$0._m34) * _m41$0;
+	m32$0$0 = _m31$1 * _m12$1 + _m32$1 * _m22$1 + _m33$1 * _m32$0 + _m34$1 * _m42$0;
+	m33$0$0 = _m31$1 * _m13$1 + _m32$1 * _m23$1 + _m33$1 * _m33$0 + _m34$1 * _m43$0;
+	m34$0$0 = _m31$1 * _m14$1 + _m32$1 * _m24$1 + _m33$1 * _m34$0 + _m34$1 * _m44$0;
+	m41$0$0 = (_m41$1 = projectionMatrix$0._m41) * _m11$1 + (_m42$1 = projectionMatrix$0._m42) * _m21$0 + (_m43$1 = projectionMatrix$0._m43) * _m31$0 + (_m44$1 = projectionMatrix$0._m44) * _m41$0;
+	m42$0$0 = _m41$1 * _m12$1 + _m42$1 * _m22$1 + _m43$1 * _m32$0 + _m44$1 * _m42$0;
+	m43$0$0 = _m41$1 * _m13$1 + _m42$1 * _m23$1 + _m43$1 * _m33$0 + _m44$1 * _m43$0;
+	m44$0$0 = _m41$1 * _m14$1 + _m42$1 * _m24$1 + _m43$1 * _m34$0 + _m44$1 * _m44$0;
+	this$0.matrix = new Matrix$AN([ m11$0$0, m12$0$0, m13$0$0, m14$0$0, m21$0$0, m22$0$0, m23$0$0, m24$0$0, m31$0$0, m32$0$0, m33$0$0, m34$0$0, m41$0$0, m42$0$0, m43$0$0, m44$0$0 ]);
+};
+
+/**
+ * @param {!number} elapsedMsec
+ */
+BlueBall.prototype._updateClearedPlayer$N = function (elapsedMsec) {
+	/** @type {Player} */
+	var player;
+	/** @type {!number} */
+	var dx;
+	/** @type {!number} */
+	var dy;
+	/** @type {!number} */
+	var dz;
+	player = this.player;
+	dx = player.x - 1080;
+	dy = player.y - 20;
+	dz = player.z - 1380;
+	if ((dx >= 0 ? dx : - dx) < 1 && (dz >= 0 ? dz : - dz) < 1) {
+		player.y -= Math.sin(this.totalElapsedMsec / 1000) * 10 * elapsedMsec / 1000;
+	} else {
+		player.x -= dx * elapsedMsec / 1000;
+		player.y -= dy * elapsedMsec / 1000;
+		player.z -= dz * elapsedMsec / 1000;
+	}
+};
+
+/**
+ */
+BlueBall.prototype._updateClearedViewpoint$ = function () {
+	/** @type {Player} */
+	var player;
+	/** @type {Vector} */
+	var view;
+	/** @type {Vector} */
+	var target;
+	/** @type {Camera} */
+	var this$0;
+	/** @type {Vector} */
+	var view$0;
+	/** @type {Vector} */
+	var target$0;
+	/** @type {Vector} */
+	var upper$0;
+	/** @type {!number} */
+	var fovyX$0;
+	/** @type {!number} */
+	var nearZ$0;
+	/** @type {!number} */
+	var farZ$0;
+	/** @type {!number} */
+	var aspectRatio$0;
+	/** @type {Matrix} */
+	var viewMatrix$0;
+	/** @type {Matrix} */
+	var projectionMatrix$0;
+	/** @type {Vector} */
+	var zaxis$0$0;
+	/** @type {Vector} */
+	var xaxis$0$0;
+	/** @type {Vector} */
+	var yaxis$0$0;
+	/** @type {Vector} */
+	var this$0$0$0;
+	/** @type {!number} */
+	var length$0$0$0;
+	/** @type {Vector} */
+	var this$1$0$0;
+	/** @type {!number} */
+	var length$1$0$0;
+	/** @type {Vector} */
+	var this$2$0$0;
+	/** @type {!number} */
+	var length$2$0$0;
+	/** @type {!number} */
+	var sx$0$0;
+	/** @type {!number} */
+	var sy$0$0;
+	/** @type {!number} */
+	var sz$0$0;
+	/** @type {!number} */
+	var mz$0$0;
+	/** @type {!number} */
+	var m11$0$0;
+	/** @type {!number} */
+	var m12$0$0;
+	/** @type {!number} */
+	var m13$0$0;
+	/** @type {!number} */
+	var m14$0$0;
+	/** @type {!number} */
+	var m21$0$0;
+	/** @type {!number} */
+	var m22$0$0;
+	/** @type {!number} */
+	var m23$0$0;
+	/** @type {!number} */
+	var m24$0$0;
+	/** @type {!number} */
+	var m31$0$0;
+	/** @type {!number} */
+	var m32$0$0;
+	/** @type {!number} */
+	var m33$0$0;
+	/** @type {!number} */
+	var m34$0$0;
+	/** @type {!number} */
+	var m41$0$0;
+	/** @type {!number} */
+	var m42$0$0;
+	/** @type {!number} */
+	var m43$0$0;
+	/** @type {!number} */
+	var m44$0$0;
+	/** @type {Camera} */
+	var camera$0;
+	/** @type {Engine} */
+	var engine$0;
+	/** @type {!number} */
+	var x$0;
+	/** @type {!number} */
+	var y$0;
+	/** @type {!number} */
+	var z$0;
+	/** @type {!number} */
+	var z$1;
+	/** @type {!number} */
+	var z$2;
+	/** @type {!number} */
+	var x$1;
+	/** @type {!number} */
+	var y$1;
+	/** @type {!number} */
+	var y$2;
+	/** @type {!number} */
+	var x$2;
+	/** @type {!number} */
+	var x$3;
+	/** @type {!number} */
+	var y$3;
+	/** @type {!number} */
+	var z$3;
+	/** @type {!number} */
+	var z$4;
+	/** @type {!number} */
+	var z$5;
+	/** @type {!number} */
+	var x$4;
+	/** @type {!number} */
+	var y$4;
+	/** @type {!number} */
+	var y$5;
+	/** @type {!number} */
+	var x$5;
+	/** @type {!number} */
+	var x$6;
+	/** @type {!number} */
+	var y$6;
+	/** @type {!number} */
+	var z$6;
+	/** @type {!number} */
+	var x$7;
+	/** @type {!number} */
+	var y$7;
+	/** @type {!number} */
+	var z$7;
+	/** @type {!number} */
+	var x$8;
+	/** @type {!number} */
+	var x$9;
+	/** @type {!number} */
+	var y$8;
+	/** @type {!number} */
+	var y$9;
+	/** @type {!number} */
+	var z$8;
+	/** @type {!number} */
+	var z$9;
+	/** @type {!number} */
+	var x$10;
+	/** @type {!number} */
+	var y$10;
+	/** @type {!number} */
+	var z$10;
+	/** @type {!number} */
+	var _m11$0;
+	/** @type {!number} */
+	var _m12$0;
+	/** @type {!number} */
+	var _m13$0;
+	/** @type {!number} */
+	var _m14$0;
+	/** @type {!number} */
+	var _m11$1;
+	/** @type {!number} */
+	var _m21$0;
+	/** @type {!number} */
+	var _m31$0;
+	/** @type {!number} */
+	var _m41$0;
+	/** @type {!number} */
+	var _m21$1;
+	/** @type {!number} */
+	var _m12$1;
+	/** @type {!number} */
+	var _m22$0;
+	/** @type {!number} */
+	var _m22$1;
+	/** @type {!number} */
+	var _m23$0;
+	/** @type {!number} */
+	var _m32$0;
+	/** @type {!number} */
+	var _m24$0;
+	/** @type {!number} */
+	var _m42$0;
+	/** @type {!number} */
+	var _m13$1;
+	/** @type {!number} */
+	var _m23$1;
+	/** @type {!number} */
+	var _m33$0;
+	/** @type {!number} */
+	var _m43$0;
+	/** @type {!number} */
+	var _m14$1;
+	/** @type {!number} */
+	var _m24$1;
+	/** @type {!number} */
+	var _m34$0;
+	/** @type {!number} */
+	var _m44$0;
+	/** @type {!number} */
+	var _m31$1;
+	/** @type {!number} */
+	var _m32$1;
+	/** @type {!number} */
+	var _m33$1;
+	/** @type {!number} */
+	var _m34$1;
+	/** @type {!number} */
+	var _m41$1;
+	/** @type {!number} */
+	var _m42$1;
+	/** @type {!number} */
+	var _m43$1;
+	/** @type {!number} */
+	var _m44$1;
+	player = this.player;
+	view = new Vector$NNN(player.x + Math.sin(this.totalElapsedMsec / 5000) * 50, player.y + 20, player.z + Math.cos(this.totalElapsedMsec / 5000) * 50);
 	target = new Vector$NNN(player.x, player.y, player.z);
 	(camera$0 = (engine$0 = this.engine).camera).target = target;
 	camera$0.view = view;
@@ -1887,6 +2143,8 @@ BlueBall.prototype._renderPlayer$LContext3D$ = function (context) {
 	var zt$0$0;
 	/** @type {Player} */
 	var player$0;
+	/** @type {Player} */
+	var player$1;
 	/** @type {!number} */
 	var _m11$0;
 	/** @type {!number} */
@@ -2023,9 +2281,14 @@ BlueBall.prototype._renderPlayer$LContext3D$ = function (context) {
 	var other$0$1$_m43$0;
 	/** @type {!number} */
 	var other$0$1$_m44$0;
-	x$0 = (player$0 = this.player).x;
-	y$0 = player$0.y - 12;
-	z$0 = player$0.z;
+	if ((player$0 = this.player).y < - player$0.radius) {
+		Context3D$setDepth$LContext3D$I(context, 5);
+	} else {
+		Context3D$setDepth$LContext3D$I(context, 3);
+	}
+	x$0 = (player$1 = this.player).x;
+	y$0 = player$1.y - 12;
+	z$0 = player$1.z;
 	this$0$0 = context._worldMatrix;
 	other$0$0$_m11$0 = [ 1, 0, 0, x$0, 0, 1, 0, y$0, 0, 0, 1, z$0, 0, 0, 0, 1 ][0];
 	other$0$0$_m12$0 = [ 1, 0, 0, x$0, 0, 1, 0, y$0, 0, 0, 1, z$0, 0, 0, 0, 1 ][1];
@@ -2143,6 +2406,7 @@ BlueBall.prototype._renderPlayer$LContext3D$ = function (context) {
  */
 BlueBall.prototype._renderTrees$LContext3D$ = function (context) {
 	var $this = this;
+	Context3D$setDepth$LContext3D$I(context, 3);
 	this.trees.forEach$F$LVector$V$((function (tree) {
 		/** @type {!number} */
 		var x;
@@ -2325,6 +2589,7 @@ BlueBall.prototype._renderItems$LContext3D$ = function (context) {
 	var axis$y$0;
 	/** @type {!number} */
 	var axis$z$0;
+	Context3D$setDepth$LContext3D$I(context, 3);
 	rad = 3.141592653589793 * this.totalElapsedMsec / 1000;
 	cos$0 = Math.cos(rad / 2);
 	sin$0 = Math.sin(rad / 2);
@@ -2899,7 +3164,7 @@ BlueBall.prototype._renderField$LContext3D$ = function (context) {
 	lightGreen = new Color$III(160, 255, 160);
 	green = new Color$III(96, 255, 96);
 	size = 30;
-	Context3D$setDepth$LContext3D$I(context, 5);
+	Context3D$setDepth$LContext3D$I(context, 4);
 	Util3D$tileRectXZ$LContext3D$IIIIIILColor$LColor$(context, 0, 60, 60, 180, -20, 30, gray, gray);
 	Util3D$tileRectXZ$LContext3D$IIIIIILColor$LColor$(context, 0, 450, 600, 600, -20, 30, lightGreen, green);
 	Util3D$tileRectXZ$LContext3D$IIIIIILColor$LColor$(context, 0, 780, 60, 60, -20, 30, green, lightGreen);
