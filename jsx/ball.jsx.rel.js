@@ -1260,6 +1260,10 @@ BlueBall.prototype._checkCollisionWithFloor$N = function (elapsedMsec) {
 	/** @type {!number} */
 	var vdot$2;
 	/** @type {Vector} */
+	var normal$3;
+	/** @type {!number} */
+	var vdot$3;
+	/** @type {Vector} */
 	var this$0;
 	/** @type {!number} */
 	var length$0;
@@ -1267,6 +1271,10 @@ BlueBall.prototype._checkCollisionWithFloor$N = function (elapsedMsec) {
 	var this$1;
 	/** @type {!number} */
 	var length$1;
+	/** @type {Vector} */
+	var this$2;
+	/** @type {!number} */
+	var length$2;
 	/** @type {!number} */
 	var x$0;
 	/** @type {!number} */
@@ -1297,6 +1305,18 @@ BlueBall.prototype._checkCollisionWithFloor$N = function (elapsedMsec) {
 	var y$4;
 	/** @type {!number} */
 	var z$4;
+	/** @type {!number} */
+	var x$5;
+	/** @type {!number} */
+	var y$5;
+	/** @type {!number} */
+	var z$5;
+	/** @type {!number} */
+	var x$6;
+	/** @type {!number} */
+	var y$6;
+	/** @type {!number} */
+	var z$6;
 	/** @type {!number} */
 	var normal$0$x$0;
 	/** @type {!number} */
@@ -1348,6 +1368,19 @@ BlueBall.prototype._checkCollisionWithFloor$N = function (elapsedMsec) {
 			player.vx -= 1.5 * vdot$2 * x$4;
 			player.vy -= 1.5 * vdot$2 * y$4;
 			player.vz -= 1.5 * vdot$2 * z$4;
+			player.y = height;
+		}
+	}
+	if (1110 <= x && x <= 1270 && 150 <= z && z <= 750) {
+		height = (x - 1110) / 160 * 80;
+		if (height - player.radius * 2 < y && y < height) {
+			this$2 = new Vector$NNN(-1, 2, 0);
+			length$2 = Math.sqrt((x$5 = this$2.x) * x$5 + (y$5 = this$2.y) * y$5 + (z$5 = this$2.z) * z$5);
+			normal$3 = (length$2 < 1e-9 ? new Vector$NNN(0, 0, 0) : this$2.divSelf$N(length$2));
+			vdot$3 = player.vx * (x$6 = normal$3.x) + player.vy * (y$6 = normal$3.y) + player.vz * (z$6 = normal$3.z);
+			player.vx -= 1.5 * vdot$3 * x$6;
+			player.vy -= 1.5 * vdot$3 * y$6;
+			player.vz -= 1.5 * vdot$3 * z$6;
 			player.y = height;
 		}
 	}
@@ -2698,6 +2731,42 @@ BlueBall.prototype._renderField$LContext3D$ = function (context) {
 	var m43$0$0;
 	/** @type {!number} */
 	var m44$0$0;
+	/** @type {Vector} */
+	var center$1;
+	/** @type {Matrix} */
+	var this$0$1;
+	/** @type {!number} */
+	var m11$0$1;
+	/** @type {!number} */
+	var m12$0$1;
+	/** @type {!number} */
+	var m13$0$1;
+	/** @type {!number} */
+	var m14$0$1;
+	/** @type {!number} */
+	var m21$0$1;
+	/** @type {!number} */
+	var m22$0$1;
+	/** @type {!number} */
+	var m23$0$1;
+	/** @type {!number} */
+	var m24$0$1;
+	/** @type {!number} */
+	var m31$0$1;
+	/** @type {!number} */
+	var m32$0$1;
+	/** @type {!number} */
+	var m33$0$1;
+	/** @type {!number} */
+	var m34$0$1;
+	/** @type {!number} */
+	var m41$0$1;
+	/** @type {!number} */
+	var m42$0$1;
+	/** @type {!number} */
+	var m43$0$1;
+	/** @type {!number} */
+	var m44$0$1;
 	/** @type {!number} */
 	var _m11$0;
 	/** @type {!number} */
@@ -2731,6 +2800,38 @@ BlueBall.prototype._renderField$LContext3D$ = function (context) {
 	/** @type {!number} */
 	var _m44$0;
 	/** @type {!number} */
+	var _m11$1;
+	/** @type {!number} */
+	var _m21$1;
+	/** @type {!number} */
+	var _m31$1;
+	/** @type {!number} */
+	var _m41$1;
+	/** @type {!number} */
+	var _m12$1;
+	/** @type {!number} */
+	var _m22$1;
+	/** @type {!number} */
+	var _m32$1;
+	/** @type {!number} */
+	var _m42$1;
+	/** @type {!number} */
+	var _m13$1;
+	/** @type {!number} */
+	var _m23$1;
+	/** @type {!number} */
+	var _m33$1;
+	/** @type {!number} */
+	var _m43$1;
+	/** @type {!number} */
+	var _m14$1;
+	/** @type {!number} */
+	var _m24$1;
+	/** @type {!number} */
+	var _m34$1;
+	/** @type {!number} */
+	var _m44$1;
+	/** @type {!number} */
 	var other$0$0$_m11$0;
 	/** @type {!number} */
 	var other$0$0$_m12$0;
@@ -2762,6 +2863,38 @@ BlueBall.prototype._renderField$LContext3D$ = function (context) {
 	var other$0$0$_m43$0;
 	/** @type {!number} */
 	var other$0$0$_m44$0;
+	/** @type {!number} */
+	var other$0$1$_m11$0;
+	/** @type {!number} */
+	var other$0$1$_m12$0;
+	/** @type {!number} */
+	var other$0$1$_m13$0;
+	/** @type {!number} */
+	var other$0$1$_m14$0;
+	/** @type {!number} */
+	var other$0$1$_m21$0;
+	/** @type {!number} */
+	var other$0$1$_m22$0;
+	/** @type {!number} */
+	var other$0$1$_m23$0;
+	/** @type {!number} */
+	var other$0$1$_m24$0;
+	/** @type {!number} */
+	var other$0$1$_m31$0;
+	/** @type {!number} */
+	var other$0$1$_m32$0;
+	/** @type {!number} */
+	var other$0$1$_m33$0;
+	/** @type {!number} */
+	var other$0$1$_m34$0;
+	/** @type {!number} */
+	var other$0$1$_m41$0;
+	/** @type {!number} */
+	var other$0$1$_m42$0;
+	/** @type {!number} */
+	var other$0$1$_m43$0;
+	/** @type {!number} */
+	var other$0$1$_m44$0;
 	gray = new Color$III(192, 192, 192);
 	lightGreen = new Color$III(160, 255, 160);
 	green = new Color$III(96, 255, 96);
@@ -2840,6 +2973,68 @@ BlueBall.prototype._renderField$LContext3D$ = function (context) {
 	Context3D$endGroup$LContext3D$(context);
 	context._worldMatrix = context._matrixStack.removeFirst$();
 	Util3D$tileRectXZ$LContext3D$IIIIIILColor$LColor$(context, 810, 180, 600, 60, -20, size, green, lightGreen);
+	context._matrixStack.prepend$LMatrix$(context._worldMatrix.copy$());
+	center$1 = new Vector$NNN(0, 0, 0);
+	context._polygonList = new List$Polygon$E$();
+	context._groupCenter = center$1;
+	context._ignoringZHidden = true;
+	this$0$1 = context._worldMatrix;
+	other$0$1$_m11$0 = [ 1, 0, 0, 1110, 0, 1, 0, 0, 0, 0, 1, 150, 0, 0, 0, 1 ][0];
+	other$0$1$_m12$0 = [ 1, 0, 0, 1110, 0, 1, 0, 0, 0, 0, 1, 150, 0, 0, 0, 1 ][1];
+	other$0$1$_m13$0 = [ 1, 0, 0, 1110, 0, 1, 0, 0, 0, 0, 1, 150, 0, 0, 0, 1 ][2];
+	other$0$1$_m14$0 = [ 1, 0, 0, 1110, 0, 1, 0, 0, 0, 0, 1, 150, 0, 0, 0, 1 ][3];
+	other$0$1$_m21$0 = [ 1, 0, 0, 1110, 0, 1, 0, 0, 0, 0, 1, 150, 0, 0, 0, 1 ][4];
+	other$0$1$_m22$0 = [ 1, 0, 0, 1110, 0, 1, 0, 0, 0, 0, 1, 150, 0, 0, 0, 1 ][5];
+	other$0$1$_m23$0 = [ 1, 0, 0, 1110, 0, 1, 0, 0, 0, 0, 1, 150, 0, 0, 0, 1 ][6];
+	other$0$1$_m24$0 = [ 1, 0, 0, 1110, 0, 1, 0, 0, 0, 0, 1, 150, 0, 0, 0, 1 ][7];
+	other$0$1$_m31$0 = [ 1, 0, 0, 1110, 0, 1, 0, 0, 0, 0, 1, 150, 0, 0, 0, 1 ][8];
+	other$0$1$_m32$0 = [ 1, 0, 0, 1110, 0, 1, 0, 0, 0, 0, 1, 150, 0, 0, 0, 1 ][9];
+	other$0$1$_m33$0 = [ 1, 0, 0, 1110, 0, 1, 0, 0, 0, 0, 1, 150, 0, 0, 0, 1 ][10];
+	other$0$1$_m34$0 = [ 1, 0, 0, 1110, 0, 1, 0, 0, 0, 0, 1, 150, 0, 0, 0, 1 ][11];
+	other$0$1$_m41$0 = [ 1, 0, 0, 1110, 0, 1, 0, 0, 0, 0, 1, 150, 0, 0, 0, 1 ][12];
+	other$0$1$_m42$0 = [ 1, 0, 0, 1110, 0, 1, 0, 0, 0, 0, 1, 150, 0, 0, 0, 1 ][13];
+	other$0$1$_m43$0 = [ 1, 0, 0, 1110, 0, 1, 0, 0, 0, 0, 1, 150, 0, 0, 0, 1 ][14];
+	other$0$1$_m44$0 = [ 1, 0, 0, 1110, 0, 1, 0, 0, 0, 0, 1, 150, 0, 0, 0, 1 ][15];
+	m11$0$1 = this$0$1._m11;
+	m12$0$1 = this$0$1._m12;
+	m13$0$1 = this$0$1._m13;
+	m14$0$1 = this$0$1._m14;
+	m21$0$1 = this$0$1._m21;
+	m22$0$1 = this$0$1._m22;
+	m23$0$1 = this$0$1._m23;
+	m24$0$1 = this$0$1._m24;
+	m31$0$1 = this$0$1._m31;
+	m32$0$1 = this$0$1._m32;
+	m33$0$1 = this$0$1._m33;
+	m34$0$1 = this$0$1._m34;
+	m41$0$1 = this$0$1._m41;
+	m42$0$1 = this$0$1._m42;
+	m43$0$1 = this$0$1._m43;
+	m44$0$1 = this$0$1._m44;
+	this$0$1._m11 = m11$0$1 * (_m11$1 = other$0$1$_m11$0) + m12$0$1 * (_m21$1 = other$0$1$_m21$0) + m13$0$1 * (_m31$1 = other$0$1$_m31$0) + m14$0$1 * (_m41$1 = other$0$1$_m41$0);
+	this$0$1._m12 = m11$0$1 * (_m12$1 = other$0$1$_m12$0) + m12$0$1 * (_m22$1 = other$0$1$_m22$0) + m13$0$1 * (_m32$1 = other$0$1$_m32$0) + m14$0$1 * (_m42$1 = other$0$1$_m42$0);
+	this$0$1._m13 = m11$0$1 * (_m13$1 = other$0$1$_m13$0) + m12$0$1 * (_m23$1 = other$0$1$_m23$0) + m13$0$1 * (_m33$1 = other$0$1$_m33$0) + m14$0$1 * (_m43$1 = other$0$1$_m43$0);
+	this$0$1._m14 = m11$0$1 * (_m14$1 = other$0$1$_m14$0) + m12$0$1 * (_m24$1 = other$0$1$_m24$0) + m13$0$1 * (_m34$1 = other$0$1$_m34$0) + m14$0$1 * (_m44$1 = other$0$1$_m44$0);
+	this$0$1._m21 = m21$0$1 * _m11$1 + m22$0$1 * _m21$1 + m23$0$1 * _m31$1 + m24$0$1 * _m41$1;
+	this$0$1._m22 = m21$0$1 * _m12$1 + m22$0$1 * _m22$1 + m23$0$1 * _m32$1 + m24$0$1 * _m42$1;
+	this$0$1._m23 = m21$0$1 * _m13$1 + m22$0$1 * _m23$1 + m23$0$1 * _m33$1 + m24$0$1 * _m43$1;
+	this$0$1._m24 = m21$0$1 * _m14$1 + m22$0$1 * _m24$1 + m23$0$1 * _m34$1 + m24$0$1 * _m44$1;
+	this$0$1._m31 = m31$0$1 * _m11$1 + m32$0$1 * _m21$1 + m33$0$1 * _m31$1 + m34$0$1 * _m41$1;
+	this$0$1._m32 = m31$0$1 * _m12$1 + m32$0$1 * _m22$1 + m33$0$1 * _m32$1 + m34$0$1 * _m42$1;
+	this$0$1._m33 = m31$0$1 * _m13$1 + m32$0$1 * _m23$1 + m33$0$1 * _m33$1 + m34$0$1 * _m43$1;
+	this$0$1._m34 = m31$0$1 * _m14$1 + m32$0$1 * _m24$1 + m33$0$1 * _m34$1 + m34$0$1 * _m44$1;
+	this$0$1._m41 = m41$0$1 * _m11$1 + m42$0$1 * _m21$1 + m43$0$1 * _m31$1 + m44$0$1 * _m41$1;
+	this$0$1._m42 = m41$0$1 * _m12$1 + m42$0$1 * _m22$1 + m43$0$1 * _m32$1 + m44$0$1 * _m42$1;
+	this$0$1._m43 = m41$0$1 * _m13$1 + m42$0$1 * _m23$1 + m43$0$1 * _m33$1 + m44$0$1 * _m43$1;
+	this$0$1._m44 = m41$0$1 * _m14$1 + m42$0$1 * _m24$1 + m43$0$1 * _m34$1 + m44$0$1 * _m44$1;
+	for (i = 0; i < 4; i++) {
+		for (j = 0; j < 10; j++) {
+			color = ((i + j) % 2 === 0 ? lightGreen : green);
+			Context3D$renderPolygonGroup$LContext3D$ALVector$LColor$(context, [ new Vector$NNN(i * 40, -20 + i * 20, j * size), new Vector$NNN(i * 40, -20 + i * 20, (j + 1) * size), new Vector$NNN((i + 1) * 40, -20 + (i + 1) * 20, (j + 1) * size), new Vector$NNN((i + 1) * 40, -20 + (i + 1) * 20, j * size) ], color);
+		}
+	}
+	Context3D$endGroup$LContext3D$(context);
+	context._worldMatrix = context._matrixStack.removeFirst$();
 	Context3D$setDepth$LContext3D$I(context, 3);
 };
 
@@ -2869,7 +3064,7 @@ BlueBall.prototype._setMobileOperation$ = function () {
 		de = (function (o) { return o instanceof DeviceMotionEvent ? o : null; })(e);
 		az = de.accelerationIncludingGravity.y * 30;
 		ax = de.accelerationIncludingGravity.x * 30 / 2;
-		if (az < -80) {
+		if (az < -60) {
 			$this$0 = player$0 = $this.player;
 			$this$0.isBraking = true;
 			Player$move$LPlayer$NN(player$0, 0, ax / 4);

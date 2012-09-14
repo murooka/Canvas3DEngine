@@ -358,6 +358,13 @@ class BlueBall {
                 player.y = height;
             }
         }
+        if (1110<= x && x <=1270 && 150 <= z && z <= 750) {
+            var height = (x - 1110) / 160 * 80;
+            if (height-player.radius*2 < y && y < height) {
+                player.bounce(new Vector(-1, 2, 0).unitSelf());
+                player.y = height;
+            }
+        }
     }
 
     function _checkCollisionWithTrees() : void {
@@ -521,6 +528,23 @@ class BlueBall {
         // passage from stage 2 to stage 3
         Util3D.tileRectXZ(context, 810, 180, 600,  60, -20, size, green, lightGreen);
 
+        // stage 3
+        context.pushMatrix();
+        context.beginGroup(new Vector(0, 0, 0), true);
+        context.translate(1110, 0, 150);
+        for (var i=0; i<4; i++) {
+            for (var j=0; j<10; j++) {
+                var color = (i+j)%2==0 ? lightGreen : green;
+                context.renderPolygonGroup([
+                    new Vector(    i*40,     -20+i*20,     j*size),
+                    new Vector(    i*40,     -20+i*20, (j+1)*size),
+                    new Vector((i+1)*40, -20+(i+1)*20, (j+1)*size),
+                    new Vector((i+1)*40, -20+(i+1)*20,     j*size)
+                ], color);
+            }
+        }
+        context.endGroup();
+        context.popMatrix();
 
 
         context.setDepth(3);
@@ -532,6 +556,7 @@ class BlueBall {
 
             var az = de.accelerationIncludingGravity.y * 30;
             var ax = de.accelerationIncludingGravity.x * 30 / 2;
+            az = Math.min(az, 120);
             if (az < -60) {
                 this.player.brake();
                 this.player.move(0, ax/4);
