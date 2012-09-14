@@ -410,6 +410,10 @@ function BlueBall$() {
 		if (! $this.isStarted) {
 			return;
 		}
+		if ($this.player.y < - 1000) {
+			$this.player = new Player$();
+			$this.isStarted = false;
+		}
 		$this._checkCollisionWithFloor$N(elapsedMsec);
 		$this._checkCollisionWithTrees$();
 		$this._checkCollisionWithItems$();
@@ -603,6 +607,7 @@ BlueBall.prototype._updateViewpoint$ = function () {
 	}
 	y = player.y;
 	if (y < 0) {
+		y = Math.max(y, - 300);
 		y = - y / 2;
 	}
 	yOffset = 10;
@@ -621,6 +626,11 @@ BlueBall.prototype._updateViewpoint$ = function () {
  * @param {Context3D} context
  */
 BlueBall.prototype._renderPlayer$LContext3D$ = function (context) {
+	if (this.player.y < - this.player.radius) {
+		context.setDepth$I(5);
+	} else {
+		context.setDepth$I(3);
+	}
 	context.translate$NNN(this.player.x, this.player.y - 12, this.player.z);
 	context.rotate$LQuaternion$(this.player.rot);
 	Util3D$sphere$LContext3D$NI(context, this.player.radius, 6);
@@ -632,6 +642,7 @@ BlueBall.prototype._renderPlayer$LContext3D$ = function (context) {
  */
 BlueBall.prototype._renderTrees$LContext3D$ = function (context) {
 	var $this = this;
+	context.setDepth$I(3);
 	this.trees.forEach$F$LVector$V$((function (tree) {
 		/** @type {!number} */
 		var x;
@@ -658,6 +669,7 @@ BlueBall.prototype._renderItems$LContext3D$ = function (context) {
 	var rad;
 	/** @type {Quaternion} */
 	var axis;
+	context.setDepth$I(3);
 	rad = Math.PI * this.totalElapsedMsec / 1000;
 	axis = Quaternion$rotating$NNNN(rad, 0, 1, 0);
 	this.items.forEach$F$LVector$V$((function (item) {
@@ -700,7 +712,7 @@ BlueBall.prototype._renderField$LContext3D$ = function (context) {
 	lightGreen = new Color$III(160, 255, 160);
 	green = new Color$III(96, 255, 96);
 	size = 30;
-	context.setDepth$I(5);
+	context.setDepth$I(4);
 	Util3D$tileRectXZ$LContext3D$IIIIIILColor$LColor$(context, 0, 60, 60, 180, - 20, size, gray, gray);
 	Util3D$tileRectXZ$LContext3D$IIIIIILColor$LColor$(context, 0, 450, 600, 600, - 20, size, lightGreen, green);
 	Util3D$tileRectXZ$LContext3D$IIIIIILColor$LColor$(context, 0, 780, 60, 60, - 20, size, green, lightGreen);
@@ -754,14 +766,14 @@ BlueBall.prototype._setMobileOperation$ = function () {
 		az = (function (v) {
 			if (! (v != null)) {
 				debugger;
-				throw new Error("[jsx/ball.jsx:561] null access");
+				throw new Error("[jsx/ball.jsx:574] null access");
 			}
 			return v;
 		}(de.accelerationIncludingGravity.y)) * 30;
 		ax = (function (v) {
 			if (! (v != null)) {
 				debugger;
-				throw new Error("[jsx/ball.jsx:562] null access");
+				throw new Error("[jsx/ball.jsx:575] null access");
 			}
 			return v;
 		}(de.accelerationIncludingGravity.x)) * 30 / 2;

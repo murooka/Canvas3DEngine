@@ -3035,7 +3035,7 @@ BlueBall.prototype._renderField$LContext3D$ = function (context) {
 	}
 	Context3D$endGroup$LContext3D$(context);
 	context._worldMatrix = context._matrixStack.removeFirst$();
-	Util3D$tileRectXZ$LContext3D$IIIIIILColor$LColor$(context, 1050, 1050, 60, 600, -20, size, green, lightGreen);
+	Util3D$tileRectXZ$LContext3D$IIIIIILColor$LColor$(context, 1080, 1050, 60, 600, -20, size, green, lightGreen);
 	Util3D$tileRectXZ$LContext3D$IIIIIILColor$LColor$(context, 1080, 1380, 60, 60, -20, size / 2, new Color$III(0xff, 0xd7, 0x00), new Color$III(0xff, 0xff, 255));
 	Context3D$setDepth$LContext3D$I(context, 3);
 };

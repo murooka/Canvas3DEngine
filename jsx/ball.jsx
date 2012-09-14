@@ -253,6 +253,11 @@ class BlueBall {
         // update
         this.engine.onUpdate = (elapsedMsec:number):void -> {
             if (!this.isStarted) return;
+            if (this.player.y < -1000) {
+                // game over
+                this.player = new Player;
+                this.isStarted = false;
+            }
 
             this._checkCollisionWithFloor(elapsedMsec);
 
@@ -426,7 +431,10 @@ class BlueBall {
         }
 
         var y = player.y;
-        if (y < 0) y = -y / 2;
+        if (y < 0) {
+            y = Math.max(y, -300);
+            y = -y / 2;
+        }
         var yOffset = 10;
         var xzVelocity = Math.sqrt(player.vx*player.vx+player.vz*player.vz);
         if (xzVelocity < 50) {
@@ -451,6 +459,9 @@ class BlueBall {
 
 
     function _renderPlayer(context:Context3D) : void {
+        if (this.player.y < -this.player.radius) context.setDepth(5);
+        else                                     context.setDepth(3);
+
         context.translate(this.player.x, this.player.y-12, this.player.z);
         context.rotate(this.player.rot);
         Util3D.sphere(context, this.player.radius, 6);
@@ -458,6 +469,7 @@ class BlueBall {
     }
 
     function _renderTrees(context:Context3D) : void {
+        context.setDepth(3);
         this.trees.forEach((tree) -> {
             var x = tree.x;
             var y = tree.y;
@@ -470,6 +482,7 @@ class BlueBall {
     }
 
     function _renderItems(context:Context3D) : void {
+        context.setDepth(3);
         var rad = Math.PI * this.totalElapsedMsec / 1000;
         var axis = Quaternion.rotating(rad, 0, 1, 0);
 
@@ -496,7 +509,7 @@ class BlueBall {
         var green = new Color(96, 255, 96);
         var size = 30;
 
-        context.setDepth(5);
+        context.setDepth(4);
 
         // starting floor
         Util3D.tileRectXZ(context,   0,  60,  60, 180, -20, size, gray, gray);
