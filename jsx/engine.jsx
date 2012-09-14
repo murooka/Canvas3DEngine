@@ -679,7 +679,7 @@ class Polygon extends Renderable {
                 // calc normal vector
                 var v1 = verts[0].sub(center);
                 var v2 = verts[1].sub(center);
-                var norm = v2.cross(v1).unit();
+                var norm = v2.crossSelf(v1).unitSelf();
 
                 var lightPower = norm.dot(center.unit());
                 var diffusePower = 0.7;

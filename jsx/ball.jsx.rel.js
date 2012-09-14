@@ -3525,6 +3525,66 @@ Vector.prototype.rotateZSelf$N = function (rad) {
 };
 
 /**
+ * @param {Matrix} m
+ * @return {Vector}
+ */
+Vector.prototype.transform$LMatrix$ = function (m) {
+	/** @type {!number} */
+	var x;
+	/** @type {!number} */
+	var y;
+	/** @type {!number} */
+	var z;
+	/** @type {!number} */
+	var w;
+	/** @type {!number} */
+	var x$0;
+	/** @type {!number} */
+	var y$0;
+	/** @type {!number} */
+	var z$0;
+	/** @type {!number} */
+	var w$0;
+	x = m._m11 * (x$0 = this.x) + m._m12 * (y$0 = this.y) + m._m13 * (z$0 = this.z) + m._m14 * (w$0 = this.w);
+	y = m._m21 * x$0 + m._m22 * y$0 + m._m23 * z$0 + m._m24 * w$0;
+	z = m._m31 * x$0 + m._m32 * y$0 + m._m33 * z$0 + m._m34 * w$0;
+	w = m._m41 * x$0 + m._m42 * y$0 + m._m43 * z$0 + m._m44 * w$0;
+	return new Vector$NNNN(x, y, z, w);
+};
+
+/**
+ * @param {Matrix} m
+ * @return {Vector}
+ */
+Vector.prototype.transformSelf$LMatrix$ = function (m) {
+	/** @type {!number} */
+	var x;
+	/** @type {!number} */
+	var y;
+	/** @type {!number} */
+	var z;
+	/** @type {!number} */
+	var w;
+	/** @type {!number} */
+	var x$0;
+	/** @type {!number} */
+	var y$0;
+	/** @type {!number} */
+	var z$0;
+	/** @type {!number} */
+	var w$0;
+	x = m._m11 * (x$0 = this.x) + m._m12 * (y$0 = this.y) + m._m13 * (z$0 = this.z) + m._m14 * (w$0 = this.w);
+	y = m._m21 * x$0 + m._m22 * y$0 + m._m23 * z$0 + m._m24 * w$0;
+	z = m._m31 * x$0 + m._m32 * y$0 + m._m33 * z$0 + m._m34 * w$0;
+	w = m._m41 * x$0 + m._m42 * y$0 + m._m43 * z$0 + m._m44 * w$0;
+	this.x = x / w;
+	this.y = y / w;
+	this.z = z / w;
+	this.w = 1;
+	return this;
+};
+
+/**
  * @return {!string}
  */
 Vector.prototype.toString = function () {
@@ -6567,7 +6627,7 @@ Camera.prototype.move$LVector$ = function (v) {
 	/** @type {Vector} */
 	var vector;
 	/** @type {Matrix} */
-	var this$0;
+	var m$0;
 	/** @type {!number} */
 	var x$0;
 	/** @type {!number} */
@@ -6577,9 +6637,9 @@ Camera.prototype.move$LVector$ = function (v) {
 	/** @type {!number} */
 	var w$0;
 	/** @type {Vector} */
-	var this$1;
+	var this$0;
 	/** @type {Vector} */
-	var this$2;
+	var this$1;
 	/** @type {!number} */
 	var x$1;
 	/** @type {!number} */
@@ -6594,20 +6654,20 @@ Camera.prototype.move$LVector$ = function (v) {
 	var y$2;
 	/** @type {!number} */
 	var z$2;
-	this$0 = this.rotatingMatrix;
-	x$0 = this$0._m11 * (x$1 = v.x) + this$0._m12 * (y$1 = v.y) + this$0._m13 * (z$1 = v.z) + this$0._m14 * (w$1 = v.w);
-	y$0 = this$0._m21 * x$1 + this$0._m22 * y$1 + this$0._m23 * z$1 + this$0._m24 * w$1;
-	z$0 = this$0._m31 * x$1 + this$0._m32 * y$1 + this$0._m33 * z$1 + this$0._m34 * w$1;
-	w$0 = this$0._m41 * x$1 + this$0._m42 * y$1 + this$0._m43 * z$1 + this$0._m44 * w$1;
+	m$0 = this.rotatingMatrix;
+	x$0 = m$0._m11 * (x$1 = v.x) + m$0._m12 * (y$1 = v.y) + m$0._m13 * (z$1 = v.z) + m$0._m14 * (w$1 = v.w);
+	y$0 = m$0._m21 * x$1 + m$0._m22 * y$1 + m$0._m23 * z$1 + m$0._m24 * w$1;
+	z$0 = m$0._m31 * x$1 + m$0._m32 * y$1 + m$0._m33 * z$1 + m$0._m34 * w$1;
+	w$0 = m$0._m41 * x$1 + m$0._m42 * y$1 + m$0._m43 * z$1 + m$0._m44 * w$1;
 	vector = new Vector$NNNN(x$0, y$0, z$0, w$0);
-	this$1 = this.view;
-	this$1.x += x$2 = vector.x;
-	this$1.y += y$2 = vector.y;
-	this$1.z += z$2 = vector.z;
-	this$2 = this.target;
-	this$2.x += x$2;
-	this$2.y += y$2;
-	this$2.z += z$2;
+	this$0 = this.view;
+	this$0.x += x$2 = vector.x;
+	this$0.y += y$2 = vector.y;
+	this$0.z += z$2 = vector.z;
+	this$1 = this.target;
+	this$1.x += x$2;
+	this$1.y += y$2;
+	this$1.z += z$2;
 };
 
 /**
@@ -6631,7 +6691,7 @@ Camera.prototype.rotateY$N = function (rad) {
 	/** @type {Vector} */
 	var other$1;
 	/** @type {Matrix} */
-	var this$2;
+	var this$1;
 	/** @type {Matrix} */
 	var other$2;
 	/** @type {!number} */
@@ -6715,63 +6775,66 @@ Camera.prototype.rotateY$N = function (rad) {
 	/** @type {!number} */
 	var _m44$0;
 	/** @type {!number} */
-	var this$1$_m11$0;
+	var m$0$_m11$0;
 	/** @type {!number} */
-	var this$1$_m12$0;
+	var m$0$_m12$0;
 	/** @type {!number} */
-	var this$1$_m13$0;
+	var m$0$_m13$0;
 	/** @type {!number} */
-	var this$1$_m14$0;
+	var m$0$_m14$0;
 	/** @type {!number} */
-	var this$1$_m21$0;
+	var m$0$_m21$0;
 	/** @type {!number} */
-	var this$1$_m22$0;
+	var m$0$_m22$0;
 	/** @type {!number} */
-	var this$1$_m23$0;
+	var m$0$_m23$0;
 	/** @type {!number} */
-	var this$1$_m24$0;
+	var m$0$_m24$0;
 	/** @type {!number} */
-	var this$1$_m31$0;
+	var m$0$_m31$0;
 	/** @type {!number} */
-	var this$1$_m32$0;
+	var m$0$_m32$0;
 	/** @type {!number} */
-	var this$1$_m33$0;
+	var m$0$_m33$0;
 	/** @type {!number} */
-	var this$1$_m34$0;
+	var m$0$_m34$0;
 	/** @type {!number} */
-	var this$1$_m41$0;
+	var m$0$_m41$0;
 	/** @type {!number} */
-	var this$1$_m42$0;
+	var m$0$_m42$0;
 	/** @type {!number} */
-	var this$1$_m43$0;
+	var m$0$_m43$0;
 	/** @type {!number} */
-	var this$1$_m44$0;
+	var m$0$_m44$0;
 	this$0 = this.target;
 	other$0 = this.view;
 	lookingVec = new Vector$NNN(this$0.x - other$0.x, this$0.y - other$0.y, this$0.z - other$0.z);
 	sin$0 = Math.sin(rad);
 	cos$0 = Math.cos(rad);
-	this$1$_m11$0 = [ cos$0, 0, sin$0, 0, 0, 1, 0, 0, - sin$0, 0, cos$0, 0, 0, 0, 0, 1 ][0];
-	this$1$_m12$0 = [ cos$0, 0, sin$0, 0, 0, 1, 0, 0, - sin$0, 0, cos$0, 0, 0, 0, 0, 1 ][1];
-	this$1$_m13$0 = [ cos$0, 0, sin$0, 0, 0, 1, 0, 0, - sin$0, 0, cos$0, 0, 0, 0, 0, 1 ][2];
-	this$1$_m14$0 = [ cos$0, 0, sin$0, 0, 0, 1, 0, 0, - sin$0, 0, cos$0, 0, 0, 0, 0, 1 ][3];
-	this$1$_m21$0 = [ cos$0, 0, sin$0, 0, 0, 1, 0, 0, - sin$0, 0, cos$0, 0, 0, 0, 0, 1 ][4];
-	this$1$_m22$0 = [ cos$0, 0, sin$0, 0, 0, 1, 0, 0, - sin$0, 0, cos$0, 0, 0, 0, 0, 1 ][5];
-	this$1$_m23$0 = [ cos$0, 0, sin$0, 0, 0, 1, 0, 0, - sin$0, 0, cos$0, 0, 0, 0, 0, 1 ][6];
-	this$1$_m24$0 = [ cos$0, 0, sin$0, 0, 0, 1, 0, 0, - sin$0, 0, cos$0, 0, 0, 0, 0, 1 ][7];
-	this$1$_m31$0 = [ cos$0, 0, sin$0, 0, 0, 1, 0, 0, - sin$0, 0, cos$0, 0, 0, 0, 0, 1 ][8];
-	this$1$_m32$0 = [ cos$0, 0, sin$0, 0, 0, 1, 0, 0, - sin$0, 0, cos$0, 0, 0, 0, 0, 1 ][9];
-	this$1$_m33$0 = [ cos$0, 0, sin$0, 0, 0, 1, 0, 0, - sin$0, 0, cos$0, 0, 0, 0, 0, 1 ][10];
-	this$1$_m34$0 = [ cos$0, 0, sin$0, 0, 0, 1, 0, 0, - sin$0, 0, cos$0, 0, 0, 0, 0, 1 ][11];
-	this$1$_m41$0 = [ cos$0, 0, sin$0, 0, 0, 1, 0, 0, - sin$0, 0, cos$0, 0, 0, 0, 0, 1 ][12];
-	this$1$_m42$0 = [ cos$0, 0, sin$0, 0, 0, 1, 0, 0, - sin$0, 0, cos$0, 0, 0, 0, 0, 1 ][13];
-	this$1$_m43$0 = [ cos$0, 0, sin$0, 0, 0, 1, 0, 0, - sin$0, 0, cos$0, 0, 0, 0, 0, 1 ][14];
-	this$1$_m44$0 = [ cos$0, 0, sin$0, 0, 0, 1, 0, 0, - sin$0, 0, cos$0, 0, 0, 0, 0, 1 ][15];
-	x$0 = this$1$_m11$0 * (x$1 = lookingVec.x) + this$1$_m12$0 * (y$1 = lookingVec.y) + this$1$_m13$0 * (z$1 = lookingVec.z) + this$1$_m14$0 * (w$1 = lookingVec.w);
-	y$0 = this$1$_m21$0 * x$1 + this$1$_m22$0 * y$1 + this$1$_m23$0 * z$1 + this$1$_m24$0 * w$1;
-	z$0 = this$1$_m31$0 * x$1 + this$1$_m32$0 * y$1 + this$1$_m33$0 * z$1 + this$1$_m34$0 * w$1;
-	w$0 = this$1$_m41$0 * x$1 + this$1$_m42$0 * y$1 + this$1$_m43$0 * z$1 + this$1$_m44$0 * w$1;
-	lookingVec = new Vector$NNNN(x$0, y$0, z$0, w$0);
+	m$0$_m11$0 = [ cos$0, 0, sin$0, 0, 0, 1, 0, 0, - sin$0, 0, cos$0, 0, 0, 0, 0, 1 ][0];
+	m$0$_m12$0 = [ cos$0, 0, sin$0, 0, 0, 1, 0, 0, - sin$0, 0, cos$0, 0, 0, 0, 0, 1 ][1];
+	m$0$_m13$0 = [ cos$0, 0, sin$0, 0, 0, 1, 0, 0, - sin$0, 0, cos$0, 0, 0, 0, 0, 1 ][2];
+	m$0$_m14$0 = [ cos$0, 0, sin$0, 0, 0, 1, 0, 0, - sin$0, 0, cos$0, 0, 0, 0, 0, 1 ][3];
+	m$0$_m21$0 = [ cos$0, 0, sin$0, 0, 0, 1, 0, 0, - sin$0, 0, cos$0, 0, 0, 0, 0, 1 ][4];
+	m$0$_m22$0 = [ cos$0, 0, sin$0, 0, 0, 1, 0, 0, - sin$0, 0, cos$0, 0, 0, 0, 0, 1 ][5];
+	m$0$_m23$0 = [ cos$0, 0, sin$0, 0, 0, 1, 0, 0, - sin$0, 0, cos$0, 0, 0, 0, 0, 1 ][6];
+	m$0$_m24$0 = [ cos$0, 0, sin$0, 0, 0, 1, 0, 0, - sin$0, 0, cos$0, 0, 0, 0, 0, 1 ][7];
+	m$0$_m31$0 = [ cos$0, 0, sin$0, 0, 0, 1, 0, 0, - sin$0, 0, cos$0, 0, 0, 0, 0, 1 ][8];
+	m$0$_m32$0 = [ cos$0, 0, sin$0, 0, 0, 1, 0, 0, - sin$0, 0, cos$0, 0, 0, 0, 0, 1 ][9];
+	m$0$_m33$0 = [ cos$0, 0, sin$0, 0, 0, 1, 0, 0, - sin$0, 0, cos$0, 0, 0, 0, 0, 1 ][10];
+	m$0$_m34$0 = [ cos$0, 0, sin$0, 0, 0, 1, 0, 0, - sin$0, 0, cos$0, 0, 0, 0, 0, 1 ][11];
+	m$0$_m41$0 = [ cos$0, 0, sin$0, 0, 0, 1, 0, 0, - sin$0, 0, cos$0, 0, 0, 0, 0, 1 ][12];
+	m$0$_m42$0 = [ cos$0, 0, sin$0, 0, 0, 1, 0, 0, - sin$0, 0, cos$0, 0, 0, 0, 0, 1 ][13];
+	m$0$_m43$0 = [ cos$0, 0, sin$0, 0, 0, 1, 0, 0, - sin$0, 0, cos$0, 0, 0, 0, 0, 1 ][14];
+	m$0$_m44$0 = [ cos$0, 0, sin$0, 0, 0, 1, 0, 0, - sin$0, 0, cos$0, 0, 0, 0, 0, 1 ][15];
+	x$0 = m$0$_m11$0 * (x$1 = lookingVec.x) + m$0$_m12$0 * (y$1 = lookingVec.y) + m$0$_m13$0 * (z$1 = lookingVec.z) + m$0$_m14$0 * (w$1 = lookingVec.w);
+	y$0 = m$0$_m21$0 * x$1 + m$0$_m22$0 * y$1 + m$0$_m23$0 * z$1 + m$0$_m24$0 * w$1;
+	z$0 = m$0$_m31$0 * x$1 + m$0$_m32$0 * y$1 + m$0$_m33$0 * z$1 + m$0$_m34$0 * w$1;
+	w$0 = m$0$_m41$0 * x$1 + m$0$_m42$0 * y$1 + m$0$_m43$0 * z$1 + m$0$_m44$0 * w$1;
+	lookingVec.x = x$0 / w$0;
+	lookingVec.y = y$0 / w$0;
+	lookingVec.z = z$0 / w$0;
+	lookingVec.w = 1;
 	other$1 = this.view;
 	lookingVec.x += other$1.x;
 	lookingVec.y += other$1.y;
@@ -6779,41 +6842,41 @@ Camera.prototype.rotateY$N = function (rad) {
 	this.target = lookingVec;
 	sin$1 = Math.sin(rad);
 	cos$1 = Math.cos(rad);
-	this$2 = new Matrix$AN([ cos$1, 0, sin$1, 0, 0, 1, 0, 0, - sin$1, 0, cos$1, 0, 0, 0, 0, 1 ]);
+	this$1 = new Matrix$AN([ cos$1, 0, sin$1, 0, 0, 1, 0, 0, - sin$1, 0, cos$1, 0, 0, 0, 0, 1 ]);
 	other$2 = this.rotatingMatrix;
-	m11$0 = this$2._m11;
-	m12$0 = this$2._m12;
-	m13$0 = this$2._m13;
-	m14$0 = this$2._m14;
-	m21$0 = this$2._m21;
-	m22$0 = this$2._m22;
-	m23$0 = this$2._m23;
-	m24$0 = this$2._m24;
-	m31$0 = this$2._m31;
-	m32$0 = this$2._m32;
-	m33$0 = this$2._m33;
-	m34$0 = this$2._m34;
-	m41$0 = this$2._m41;
-	m42$0 = this$2._m42;
-	m43$0 = this$2._m43;
-	m44$0 = this$2._m44;
-	this$2._m11 = m11$0 * (_m11$0 = other$2._m11) + m12$0 * (_m21$0 = other$2._m21) + m13$0 * (_m31$0 = other$2._m31) + m14$0 * (_m41$0 = other$2._m41);
-	this$2._m12 = m11$0 * (_m12$0 = other$2._m12) + m12$0 * (_m22$0 = other$2._m22) + m13$0 * (_m32$0 = other$2._m32) + m14$0 * (_m42$0 = other$2._m42);
-	this$2._m13 = m11$0 * (_m13$0 = other$2._m13) + m12$0 * (_m23$0 = other$2._m23) + m13$0 * (_m33$0 = other$2._m33) + m14$0 * (_m43$0 = other$2._m43);
-	this$2._m14 = m11$0 * (_m14$0 = other$2._m14) + m12$0 * (_m24$0 = other$2._m24) + m13$0 * (_m34$0 = other$2._m34) + m14$0 * (_m44$0 = other$2._m44);
-	this$2._m21 = m21$0 * _m11$0 + m22$0 * _m21$0 + m23$0 * _m31$0 + m24$0 * _m41$0;
-	this$2._m22 = m21$0 * _m12$0 + m22$0 * _m22$0 + m23$0 * _m32$0 + m24$0 * _m42$0;
-	this$2._m23 = m21$0 * _m13$0 + m22$0 * _m23$0 + m23$0 * _m33$0 + m24$0 * _m43$0;
-	this$2._m24 = m21$0 * _m14$0 + m22$0 * _m24$0 + m23$0 * _m34$0 + m24$0 * _m44$0;
-	this$2._m31 = m31$0 * _m11$0 + m32$0 * _m21$0 + m33$0 * _m31$0 + m34$0 * _m41$0;
-	this$2._m32 = m31$0 * _m12$0 + m32$0 * _m22$0 + m33$0 * _m32$0 + m34$0 * _m42$0;
-	this$2._m33 = m31$0 * _m13$0 + m32$0 * _m23$0 + m33$0 * _m33$0 + m34$0 * _m43$0;
-	this$2._m34 = m31$0 * _m14$0 + m32$0 * _m24$0 + m33$0 * _m34$0 + m34$0 * _m44$0;
-	this$2._m41 = m41$0 * _m11$0 + m42$0 * _m21$0 + m43$0 * _m31$0 + m44$0 * _m41$0;
-	this$2._m42 = m41$0 * _m12$0 + m42$0 * _m22$0 + m43$0 * _m32$0 + m44$0 * _m42$0;
-	this$2._m43 = m41$0 * _m13$0 + m42$0 * _m23$0 + m43$0 * _m33$0 + m44$0 * _m43$0;
-	this$2._m44 = m41$0 * _m14$0 + m42$0 * _m24$0 + m43$0 * _m34$0 + m44$0 * _m44$0;
-	this.rotatingMatrix = this$2;
+	m11$0 = this$1._m11;
+	m12$0 = this$1._m12;
+	m13$0 = this$1._m13;
+	m14$0 = this$1._m14;
+	m21$0 = this$1._m21;
+	m22$0 = this$1._m22;
+	m23$0 = this$1._m23;
+	m24$0 = this$1._m24;
+	m31$0 = this$1._m31;
+	m32$0 = this$1._m32;
+	m33$0 = this$1._m33;
+	m34$0 = this$1._m34;
+	m41$0 = this$1._m41;
+	m42$0 = this$1._m42;
+	m43$0 = this$1._m43;
+	m44$0 = this$1._m44;
+	this$1._m11 = m11$0 * (_m11$0 = other$2._m11) + m12$0 * (_m21$0 = other$2._m21) + m13$0 * (_m31$0 = other$2._m31) + m14$0 * (_m41$0 = other$2._m41);
+	this$1._m12 = m11$0 * (_m12$0 = other$2._m12) + m12$0 * (_m22$0 = other$2._m22) + m13$0 * (_m32$0 = other$2._m32) + m14$0 * (_m42$0 = other$2._m42);
+	this$1._m13 = m11$0 * (_m13$0 = other$2._m13) + m12$0 * (_m23$0 = other$2._m23) + m13$0 * (_m33$0 = other$2._m33) + m14$0 * (_m43$0 = other$2._m43);
+	this$1._m14 = m11$0 * (_m14$0 = other$2._m14) + m12$0 * (_m24$0 = other$2._m24) + m13$0 * (_m34$0 = other$2._m34) + m14$0 * (_m44$0 = other$2._m44);
+	this$1._m21 = m21$0 * _m11$0 + m22$0 * _m21$0 + m23$0 * _m31$0 + m24$0 * _m41$0;
+	this$1._m22 = m21$0 * _m12$0 + m22$0 * _m22$0 + m23$0 * _m32$0 + m24$0 * _m42$0;
+	this$1._m23 = m21$0 * _m13$0 + m22$0 * _m23$0 + m23$0 * _m33$0 + m24$0 * _m43$0;
+	this$1._m24 = m21$0 * _m14$0 + m22$0 * _m24$0 + m23$0 * _m34$0 + m24$0 * _m44$0;
+	this$1._m31 = m31$0 * _m11$0 + m32$0 * _m21$0 + m33$0 * _m31$0 + m34$0 * _m41$0;
+	this$1._m32 = m31$0 * _m12$0 + m32$0 * _m22$0 + m33$0 * _m32$0 + m34$0 * _m42$0;
+	this$1._m33 = m31$0 * _m13$0 + m32$0 * _m23$0 + m33$0 * _m33$0 + m34$0 * _m43$0;
+	this$1._m34 = m31$0 * _m14$0 + m32$0 * _m24$0 + m33$0 * _m34$0 + m34$0 * _m44$0;
+	this$1._m41 = m41$0 * _m11$0 + m42$0 * _m21$0 + m43$0 * _m31$0 + m44$0 * _m41$0;
+	this$1._m42 = m41$0 * _m12$0 + m42$0 * _m22$0 + m43$0 * _m32$0 + m44$0 * _m42$0;
+	this$1._m43 = m41$0 * _m13$0 + m42$0 * _m23$0 + m43$0 * _m33$0 + m44$0 * _m43$0;
+	this$1._m44 = m41$0 * _m14$0 + m42$0 * _m24$0 + m43$0 * _m34$0 + m44$0 * _m44$0;
+	this.rotatingMatrix = this$1;
 };
 
 /**
@@ -7198,8 +7261,34 @@ Polygon$ALVector$LColor$.prototype = new Polygon;
 Polygon.prototype.applyWorldMatrix$LMatrix$ = function (worldMatrix) {
 	/** @type {!number} */
 	var i;
+	/** @type {Vector} */
+	var this$0;
+	/** @type {!number} */
+	var x$0;
+	/** @type {!number} */
+	var y$0;
+	/** @type {!number} */
+	var z$0;
+	/** @type {!number} */
+	var w$0;
+	/** @type {!number} */
+	var x$1;
+	/** @type {!number} */
+	var y$1;
+	/** @type {!number} */
+	var z$1;
+	/** @type {!number} */
+	var w$1;
 	for (i = 0; i < this.vertices.length; i++) {
-		this.vertices[i] = worldMatrix.mul$LVector$(this.vertices[i]);
+		this$0 = this.vertices[i];
+		x$0 = worldMatrix._m11 * (x$1 = this$0.x) + worldMatrix._m12 * (y$1 = this$0.y) + worldMatrix._m13 * (z$1 = this$0.z) + worldMatrix._m14 * (w$1 = this$0.w);
+		y$0 = worldMatrix._m21 * x$1 + worldMatrix._m22 * y$1 + worldMatrix._m23 * z$1 + worldMatrix._m24 * w$1;
+		z$0 = worldMatrix._m31 * x$1 + worldMatrix._m32 * y$1 + worldMatrix._m33 * z$1 + worldMatrix._m34 * w$1;
+		w$0 = worldMatrix._m41 * x$1 + worldMatrix._m42 * y$1 + worldMatrix._m43 * z$1 + worldMatrix._m44 * w$1;
+		this$0.x = x$0 / w$0;
+		this$0.y = y$0 / w$0;
+		this$0.z = z$0 / w$0;
+		this$0.w = 1;
 	}
 	this.updateCenter$();
 };
@@ -7215,7 +7304,7 @@ Polygon.prototype.applyViewMatrix$LMatrix$ = function (viewMatrix) {
 	/** @type {Vector} */
 	var vVertex;
 	/** @type {Vector} */
-	var other$0;
+	var this$0;
 	/** @type {!number} */
 	var x$0;
 	/** @type {!number} */
@@ -7225,7 +7314,7 @@ Polygon.prototype.applyViewMatrix$LMatrix$ = function (viewMatrix) {
 	/** @type {!number} */
 	var w$0;
 	/** @type {!number} */
-	var other$1;
+	var other$0;
 	/** @type {!number} */
 	var x$1;
 	/** @type {!number} */
@@ -7248,8 +7337,8 @@ Polygon.prototype.applyViewMatrix$LMatrix$ = function (viewMatrix) {
 	vSumPos$z$0 = 0;
 	vSumPos$w$0 = 1;
 	for (i = 0; i < this.vertices.length; i++) {
-		other$0 = this.vertices[i];
-		x$0 = viewMatrix._m11 * (x$1 = other$0.x) + viewMatrix._m12 * (y$1 = other$0.y) + viewMatrix._m13 * (z$1 = other$0.z) + viewMatrix._m14 * (w$1 = other$0.w);
+		this$0 = this.vertices[i];
+		x$0 = viewMatrix._m11 * (x$1 = this$0.x) + viewMatrix._m12 * (y$1 = this$0.y) + viewMatrix._m13 * (z$1 = this$0.z) + viewMatrix._m14 * (w$1 = this$0.w);
 		y$0 = viewMatrix._m21 * x$1 + viewMatrix._m22 * y$1 + viewMatrix._m23 * z$1 + viewMatrix._m24 * w$1;
 		z$0 = viewMatrix._m31 * x$1 + viewMatrix._m32 * y$1 + viewMatrix._m33 * z$1 + viewMatrix._m34 * w$1;
 		w$0 = viewMatrix._m41 * x$1 + viewMatrix._m42 * y$1 + viewMatrix._m43 * z$1 + viewMatrix._m44 * w$1;
@@ -7259,8 +7348,8 @@ Polygon.prototype.applyViewMatrix$LMatrix$ = function (viewMatrix) {
 		vSumPos$y$0 += vVertex.y;
 		vSumPos$z$0 += vVertex.z;
 	}
-	other$1 = this.vertices.length;
-	this.vCenter = new Vector$NNN(vSumPos$x$0 / other$1, vSumPos$y$0 / other$1, vSumPos$z$0 / other$1);
+	other$0 = this.vertices.length;
+	this.vCenter = new Vector$NNN(vSumPos$x$0 / other$0, vSumPos$y$0 / other$0, vSumPos$z$0 / other$0);
 	this.vVertices = vVertices;
 };
 
@@ -7371,6 +7460,8 @@ Polygon.prototype.draw$LEngine$ = function (engine) {
 	/** @type {Vector} */
 	var center$0;
 	/** @type {Vector} */
+	var v2$0;
+	/** @type {Vector} */
 	var norm$0;
 	/** @type {!number} */
 	var lightPower$0;
@@ -7397,11 +7488,17 @@ Polygon.prototype.draw$LEngine$ = function (engine) {
 	/** @type {!number} */
 	var value2$2$0;
 	/** @type {!number} */
+	var x$0$0;
+	/** @type {!number} */
+	var y$0$0;
+	/** @type {!number} */
+	var z$0$0;
+	/** @type {!number} */
 	var length$1$0;
-	/** @type {Matrix} */
-	var this$0;
 	/** @type {Vector} */
-	var other$0;
+	var this$0;
+	/** @type {Matrix} */
+	var m$0;
 	/** @type {!number} */
 	var x$0;
 	/** @type {!number} */
@@ -7410,10 +7507,10 @@ Polygon.prototype.draw$LEngine$ = function (engine) {
 	var z$0;
 	/** @type {!number} */
 	var w$0;
-	/** @type {Matrix} */
-	var this$1;
 	/** @type {Vector} */
-	var other$1;
+	var this$1;
+	/** @type {Matrix} */
+	var m$1;
 	/** @type {!number} */
 	var x$1;
 	/** @type {!number} */
@@ -7472,14 +7569,6 @@ Polygon.prototype.draw$LEngine$ = function (engine) {
 	var v1$0$z$0;
 	/** @type {!number} */
 	var v1$0$w$0;
-	/** @type {!number} */
-	var v2$0$x$0;
-	/** @type {!number} */
-	var v2$0$y$0;
-	/** @type {!number} */
-	var v2$0$z$0;
-	/** @type {!number} */
-	var v2$0$w$0;
 	context = engine.context;
 	len = this.vertices.length;
 	verts = this.vVertices;
@@ -7492,13 +7581,16 @@ Polygon.prototype.draw$LEngine$ = function (engine) {
 		v1$0$z$0 = this$0$0.z - center$0.z;
 		v1$0$w$0 = 1;
 		this$1$0 = verts[1];
-		v2$0$x$0 = this$1$0.x - center$0.x;
-		v2$0$y$0 = this$1$0.y - center$0.y;
-		v2$0$z$0 = this$1$0.z - center$0.z;
-		v2$0$w$0 = 1;
-		this$2$0 = new Vector$NNN((y$3 = v2$0$y$0) * (z$3 = v1$0$z$0) - (z$2 = v2$0$z$0) * (y$2 = v1$0$y$0), z$2 * (x$3 = v1$0$x$0) - (x$2 = v2$0$x$0) * z$3, x$2 * y$2 - y$3 * x$3);
-		length$0$0 = Math.sqrt((x$4 = this$2$0.x) * x$4 + (y$4 = this$2$0.y) * y$4 + (z$4 = this$2$0.z) * z$4);
-		norm$0 = (length$0$0 < 1e-9 ? new Vector$NNN(0, 0, 0) : new Vector$NNN(this$2$0.x / length$0$0, this$2$0.y / length$0$0, this$2$0.z / length$0$0));
+		v2$0 = new Vector$NNN(this$1$0.x - center$0.x, this$1$0.y - center$0.y, this$1$0.z - center$0.z);
+		x$0$0 = (y$3 = v2$0.y) * (z$3 = v1$0$z$0) - (z$2 = v2$0.z) * (y$2 = v1$0$y$0);
+		y$0$0 = z$2 * (x$3 = v1$0$x$0) - (x$2 = v2$0.x) * z$3;
+		z$0$0 = x$2 * y$2 - y$3 * x$3;
+		x$4 = v2$0.x = x$0$0;
+		y$4 = v2$0.y = y$0$0;
+		z$4 = v2$0.z = z$0$0;
+		this$2$0 = v2$0;
+		length$0$0 = Math.sqrt(x$4 * x$4 + y$4 * y$4 + z$4 * z$4);
+		norm$0 = (length$0$0 < 1e-9 ? new Vector$NNN(0, 0, 0) : this$2$0.divSelf$N(length$0$0));
 		length$1$0 = Math.sqrt((x$5 = center$0.x) * x$5 + (y$5 = center$0.y) * y$5 + (z$5 = center$0.z) * z$5);
 		other$0$0 = (length$1$0 < 1e-9 ? new Vector$NNN(0, 0, 0) : new Vector$NNN(center$0.x / length$1$0, center$0.y / length$1$0, center$0.z / length$1$0));
 		lightPower$0 = norm$0.x * other$0$0.x + norm$0.y * other$0$0.y + norm$0.z * other$0$0.z;
@@ -7511,22 +7603,28 @@ Polygon.prototype.draw$LEngine$ = function (engine) {
 		color = new Color$III(r$0, g$0, b$0);
 	}
 	for (i = 0; i < len; i++) {
-		this$0 = engine.camera.projectionMatrix;
-		other$0 = verts[i];
-		x$0 = this$0._m11 * (x$6 = other$0.x) + this$0._m12 * (y$6 = other$0.y) + this$0._m13 * (z$6 = other$0.z) + this$0._m14 * (w$2 = other$0.w);
-		y$0 = this$0._m21 * x$6 + this$0._m22 * y$6 + this$0._m23 * z$6 + this$0._m24 * w$2;
-		z$0 = this$0._m31 * x$6 + this$0._m32 * y$6 + this$0._m33 * z$6 + this$0._m34 * w$2;
-		w$0 = this$0._m41 * x$6 + this$0._m42 * y$6 + this$0._m43 * z$6 + this$0._m44 * w$2;
-		verts[i] = new Vector$NNNN(x$0, y$0, z$0, w$0);
+		this$0 = verts[i];
+		m$0 = engine.camera.projectionMatrix;
+		x$0 = m$0._m11 * (x$6 = this$0.x) + m$0._m12 * (y$6 = this$0.y) + m$0._m13 * (z$6 = this$0.z) + m$0._m14 * (w$2 = this$0.w);
+		y$0 = m$0._m21 * x$6 + m$0._m22 * y$6 + m$0._m23 * z$6 + m$0._m24 * w$2;
+		z$0 = m$0._m31 * x$6 + m$0._m32 * y$6 + m$0._m33 * z$6 + m$0._m34 * w$2;
+		w$0 = m$0._m41 * x$6 + m$0._m42 * y$6 + m$0._m43 * z$6 + m$0._m44 * w$2;
+		this$0.x = x$0 / w$0;
+		this$0.y = y$0 / w$0;
+		this$0.z = z$0 / w$0;
+		this$0.w = 1;
 	}
 	for (i = 0; i < len; i++) {
-		this$1 = engine.screenMatrix;
-		other$1 = verts[i];
-		x$1 = this$1._m11 * (x$7 = other$1.x) + this$1._m12 * (y$7 = other$1.y) + this$1._m13 * (z$7 = other$1.z) + this$1._m14 * (w$3 = other$1.w);
-		y$1 = this$1._m21 * x$7 + this$1._m22 * y$7 + this$1._m23 * z$7 + this$1._m24 * w$3;
-		z$1 = this$1._m31 * x$7 + this$1._m32 * y$7 + this$1._m33 * z$7 + this$1._m34 * w$3;
-		w$1 = this$1._m41 * x$7 + this$1._m42 * y$7 + this$1._m43 * z$7 + this$1._m44 * w$3;
-		verts[i] = new Vector$NNNN(x$1, y$1, z$1, w$1);
+		this$1 = verts[i];
+		m$1 = engine.screenMatrix;
+		x$1 = m$1._m11 * (x$7 = this$1.x) + m$1._m12 * (y$7 = this$1.y) + m$1._m13 * (z$7 = this$1.z) + m$1._m14 * (w$3 = this$1.w);
+		y$1 = m$1._m21 * x$7 + m$1._m22 * y$7 + m$1._m23 * z$7 + m$1._m24 * w$3;
+		z$1 = m$1._m31 * x$7 + m$1._m32 * y$7 + m$1._m33 * z$7 + m$1._m34 * w$3;
+		w$1 = m$1._m41 * x$7 + m$1._m42 * y$7 + m$1._m43 * z$7 + m$1._m44 * w$3;
+		this$1.x = x$1 / w$1;
+		this$1.y = y$1 / w$1;
+		this$1.z = z$1 / w$1;
+		this$1.w = 1;
 	}
 	isHiddenXY = Renderable$isHiddenXY$ALVector$LEngine$(verts, engine);
 	if (isHiddenXY) {
@@ -7601,7 +7699,7 @@ PolygonGroup$LList$Polygon$E$LVector$B.prototype = new PolygonGroup;
  */
 PolygonGroup.prototype.applyWorldMatrix$LMatrix$ = function (worldMatrix) {
 	/** @type {Vector} */
-	var other$0;
+	var this$0;
 	/** @type {!number} */
 	var x$0;
 	/** @type {!number} */
@@ -7618,12 +7716,15 @@ PolygonGroup.prototype.applyWorldMatrix$LMatrix$ = function (worldMatrix) {
 	var z$1;
 	/** @type {!number} */
 	var w$1;
-	other$0 = this.center;
-	x$0 = worldMatrix._m11 * (x$1 = other$0.x) + worldMatrix._m12 * (y$1 = other$0.y) + worldMatrix._m13 * (z$1 = other$0.z) + worldMatrix._m14 * (w$1 = other$0.w);
+	this$0 = this.center;
+	x$0 = worldMatrix._m11 * (x$1 = this$0.x) + worldMatrix._m12 * (y$1 = this$0.y) + worldMatrix._m13 * (z$1 = this$0.z) + worldMatrix._m14 * (w$1 = this$0.w);
 	y$0 = worldMatrix._m21 * x$1 + worldMatrix._m22 * y$1 + worldMatrix._m23 * z$1 + worldMatrix._m24 * w$1;
 	z$0 = worldMatrix._m31 * x$1 + worldMatrix._m32 * y$1 + worldMatrix._m33 * z$1 + worldMatrix._m34 * w$1;
 	w$0 = worldMatrix._m41 * x$1 + worldMatrix._m42 * y$1 + worldMatrix._m43 * z$1 + worldMatrix._m44 * w$1;
-	this.center = new Vector$NNNN(x$0, y$0, z$0, w$0);
+	this$0.x = x$0 / w$0;
+	this$0.y = y$0 / w$0;
+	this$0.z = z$0 / w$0;
+	this$0.w = 1;
 };
 
 /**
@@ -7631,7 +7732,7 @@ PolygonGroup.prototype.applyWorldMatrix$LMatrix$ = function (worldMatrix) {
  */
 PolygonGroup.prototype.applyViewMatrix$LMatrix$ = function (viewMatrix) {
 	/** @type {Vector} */
-	var other$0;
+	var this$0;
 	/** @type {!number} */
 	var x$0;
 	/** @type {!number} */
@@ -7648,8 +7749,8 @@ PolygonGroup.prototype.applyViewMatrix$LMatrix$ = function (viewMatrix) {
 	var z$1;
 	/** @type {!number} */
 	var w$1;
-	other$0 = this.center;
-	x$0 = viewMatrix._m11 * (x$1 = other$0.x) + viewMatrix._m12 * (y$1 = other$0.y) + viewMatrix._m13 * (z$1 = other$0.z) + viewMatrix._m14 * (w$1 = other$0.w);
+	this$0 = this.center;
+	x$0 = viewMatrix._m11 * (x$1 = this$0.x) + viewMatrix._m12 * (y$1 = this$0.y) + viewMatrix._m13 * (z$1 = this$0.z) + viewMatrix._m14 * (w$1 = this$0.w);
 	y$0 = viewMatrix._m21 * x$1 + viewMatrix._m22 * y$1 + viewMatrix._m23 * z$1 + viewMatrix._m24 * w$1;
 	z$0 = viewMatrix._m31 * x$1 + viewMatrix._m32 * y$1 + viewMatrix._m33 * z$1 + viewMatrix._m34 * w$1;
 	w$0 = viewMatrix._m41 * x$1 + viewMatrix._m42 * y$1 + viewMatrix._m43 * z$1 + viewMatrix._m44 * w$1;
@@ -7796,7 +7897,7 @@ SmoothTexture.prototype.applyWorldMatrix$LMatrix$ = function (worldMatrix) {
 	/** @type {!number} */
 	var i;
 	/** @type {Vector} */
-	var other$0;
+	var this$0;
 	/** @type {!number} */
 	var x$0;
 	/** @type {!number} */
@@ -7805,6 +7906,8 @@ SmoothTexture.prototype.applyWorldMatrix$LMatrix$ = function (worldMatrix) {
 	var z$0;
 	/** @type {!number} */
 	var w$0;
+	/** @type {Vector} */
+	var this$1;
 	/** @type {!number} */
 	var x$1;
 	/** @type {!number} */
@@ -7813,15 +7916,42 @@ SmoothTexture.prototype.applyWorldMatrix$LMatrix$ = function (worldMatrix) {
 	var z$1;
 	/** @type {!number} */
 	var w$1;
+	/** @type {!number} */
+	var x$2;
+	/** @type {!number} */
+	var y$2;
+	/** @type {!number} */
+	var z$2;
+	/** @type {!number} */
+	var w$2;
+	/** @type {!number} */
+	var x$3;
+	/** @type {!number} */
+	var y$3;
+	/** @type {!number} */
+	var z$3;
+	/** @type {!number} */
+	var w$3;
 	for (i = 0; i < this.vertices.length; i++) {
-		this.vertices[i] = worldMatrix.mul$LVector$(this.vertices[i]);
+		this$0 = this.vertices[i];
+		x$0 = worldMatrix._m11 * (x$2 = this$0.x) + worldMatrix._m12 * (y$2 = this$0.y) + worldMatrix._m13 * (z$2 = this$0.z) + worldMatrix._m14 * (w$2 = this$0.w);
+		y$0 = worldMatrix._m21 * x$2 + worldMatrix._m22 * y$2 + worldMatrix._m23 * z$2 + worldMatrix._m24 * w$2;
+		z$0 = worldMatrix._m31 * x$2 + worldMatrix._m32 * y$2 + worldMatrix._m33 * z$2 + worldMatrix._m34 * w$2;
+		w$0 = worldMatrix._m41 * x$2 + worldMatrix._m42 * y$2 + worldMatrix._m43 * z$2 + worldMatrix._m44 * w$2;
+		this$0.x = x$0 / w$0;
+		this$0.y = y$0 / w$0;
+		this$0.z = z$0 / w$0;
+		this$0.w = 1;
 	}
-	other$0 = this.center;
-	x$0 = worldMatrix._m11 * (x$1 = other$0.x) + worldMatrix._m12 * (y$1 = other$0.y) + worldMatrix._m13 * (z$1 = other$0.z) + worldMatrix._m14 * (w$1 = other$0.w);
-	y$0 = worldMatrix._m21 * x$1 + worldMatrix._m22 * y$1 + worldMatrix._m23 * z$1 + worldMatrix._m24 * w$1;
-	z$0 = worldMatrix._m31 * x$1 + worldMatrix._m32 * y$1 + worldMatrix._m33 * z$1 + worldMatrix._m34 * w$1;
-	w$0 = worldMatrix._m41 * x$1 + worldMatrix._m42 * y$1 + worldMatrix._m43 * z$1 + worldMatrix._m44 * w$1;
-	this.center = new Vector$NNNN(x$0, y$0, z$0, w$0);
+	this$1 = this.center;
+	x$1 = worldMatrix._m11 * (x$3 = this$1.x) + worldMatrix._m12 * (y$3 = this$1.y) + worldMatrix._m13 * (z$3 = this$1.z) + worldMatrix._m14 * (w$3 = this$1.w);
+	y$1 = worldMatrix._m21 * x$3 + worldMatrix._m22 * y$3 + worldMatrix._m23 * z$3 + worldMatrix._m24 * w$3;
+	z$1 = worldMatrix._m31 * x$3 + worldMatrix._m32 * y$3 + worldMatrix._m33 * z$3 + worldMatrix._m34 * w$3;
+	w$1 = worldMatrix._m41 * x$3 + worldMatrix._m42 * y$3 + worldMatrix._m43 * z$3 + worldMatrix._m44 * w$3;
+	this$1.x = x$1 / w$1;
+	this$1.y = y$1 / w$1;
+	this$1.z = z$1 / w$1;
+	this$1.w = 1;
 };
 
 /**
@@ -7833,7 +7963,7 @@ SmoothTexture.prototype.applyViewMatrix$LMatrix$ = function (viewMatrix) {
 	/** @type {!number} */
 	var i;
 	/** @type {Vector} */
-	var other$0;
+	var this$0;
 	/** @type {!number} */
 	var x$0;
 	/** @type {!number} */
@@ -7852,11 +7982,11 @@ SmoothTexture.prototype.applyViewMatrix$LMatrix$ = function (viewMatrix) {
 	var w$1;
 	vVertices = [  ];
 	for (i = 0; i < this.vertices.length; i++) {
-		vVertices.push(viewMatrix.mul$LVector$(this.vertices[i]));
+		vVertices.push(this.vertices[i].transform$LMatrix$(viewMatrix));
 	}
 	this.vVertices = vVertices;
-	other$0 = this.center;
-	x$0 = viewMatrix._m11 * (x$1 = other$0.x) + viewMatrix._m12 * (y$1 = other$0.y) + viewMatrix._m13 * (z$1 = other$0.z) + viewMatrix._m14 * (w$1 = other$0.w);
+	this$0 = this.center;
+	x$0 = viewMatrix._m11 * (x$1 = this$0.x) + viewMatrix._m12 * (y$1 = this$0.y) + viewMatrix._m13 * (z$1 = this$0.z) + viewMatrix._m14 * (w$1 = this$0.w);
 	y$0 = viewMatrix._m21 * x$1 + viewMatrix._m22 * y$1 + viewMatrix._m23 * z$1 + viewMatrix._m24 * w$1;
 	z$0 = viewMatrix._m31 * x$1 + viewMatrix._m32 * y$1 + viewMatrix._m33 * z$1 + viewMatrix._m34 * w$1;
 	w$0 = viewMatrix._m41 * x$1 + viewMatrix._m42 * y$1 + viewMatrix._m43 * z$1 + viewMatrix._m44 * w$1;
@@ -8718,7 +8848,7 @@ Billboard$LVector$NNS.prototype = new Billboard;
  */
 Billboard.prototype.applyWorldMatrix$LMatrix$ = function (worldMatrix) {
 	/** @type {Vector} */
-	var other$0;
+	var this$0;
 	/** @type {!number} */
 	var x$0;
 	/** @type {!number} */
@@ -8735,12 +8865,15 @@ Billboard.prototype.applyWorldMatrix$LMatrix$ = function (worldMatrix) {
 	var z$1;
 	/** @type {!number} */
 	var w$1;
-	other$0 = this.center;
-	x$0 = worldMatrix._m11 * (x$1 = other$0.x) + worldMatrix._m12 * (y$1 = other$0.y) + worldMatrix._m13 * (z$1 = other$0.z) + worldMatrix._m14 * (w$1 = other$0.w);
+	this$0 = this.center;
+	x$0 = worldMatrix._m11 * (x$1 = this$0.x) + worldMatrix._m12 * (y$1 = this$0.y) + worldMatrix._m13 * (z$1 = this$0.z) + worldMatrix._m14 * (w$1 = this$0.w);
 	y$0 = worldMatrix._m21 * x$1 + worldMatrix._m22 * y$1 + worldMatrix._m23 * z$1 + worldMatrix._m24 * w$1;
 	z$0 = worldMatrix._m31 * x$1 + worldMatrix._m32 * y$1 + worldMatrix._m33 * z$1 + worldMatrix._m34 * w$1;
 	w$0 = worldMatrix._m41 * x$1 + worldMatrix._m42 * y$1 + worldMatrix._m43 * z$1 + worldMatrix._m44 * w$1;
-	this.center = new Vector$NNNN(x$0, y$0, z$0, w$0);
+	this$0.x = x$0 / w$0;
+	this$0.y = y$0 / w$0;
+	this$0.z = z$0 / w$0;
+	this$0.w = 1;
 };
 
 /**
@@ -8748,7 +8881,7 @@ Billboard.prototype.applyWorldMatrix$LMatrix$ = function (worldMatrix) {
  */
 Billboard.prototype.applyViewMatrix$LMatrix$ = function (viewMatrix) {
 	/** @type {Vector} */
-	var other$0;
+	var this$0;
 	/** @type {!number} */
 	var x$0;
 	/** @type {!number} */
@@ -8765,8 +8898,8 @@ Billboard.prototype.applyViewMatrix$LMatrix$ = function (viewMatrix) {
 	var z$1;
 	/** @type {!number} */
 	var w$1;
-	other$0 = this.center;
-	x$0 = viewMatrix._m11 * (x$1 = other$0.x) + viewMatrix._m12 * (y$1 = other$0.y) + viewMatrix._m13 * (z$1 = other$0.z) + viewMatrix._m14 * (w$1 = other$0.w);
+	this$0 = this.center;
+	x$0 = viewMatrix._m11 * (x$1 = this$0.x) + viewMatrix._m12 * (y$1 = this$0.y) + viewMatrix._m13 * (z$1 = this$0.z) + viewMatrix._m14 * (w$1 = this$0.w);
 	y$0 = viewMatrix._m21 * x$1 + viewMatrix._m22 * y$1 + viewMatrix._m23 * z$1 + viewMatrix._m24 * w$1;
 	z$0 = viewMatrix._m31 * x$1 + viewMatrix._m32 * y$1 + viewMatrix._m33 * z$1 + viewMatrix._m34 * w$1;
 	w$0 = viewMatrix._m41 * x$1 + viewMatrix._m42 * y$1 + viewMatrix._m43 * z$1 + viewMatrix._m44 * w$1;
@@ -8845,7 +8978,7 @@ Billboard.prototype.draw$LEngine$ = function (engine) {
 	/** @type {Vector} */
 	var this$1;
 	/** @type {Vector} */
-	var other$2;
+	var this$2;
 	/** @type {!number} */
 	var x$0;
 	/** @type {!number} */
@@ -9039,8 +9172,8 @@ Billboard.prototype.draw$LEngine$ = function (engine) {
 	vLeftBottom$y$0 = this$1.y - other$1$y$0;
 	vLeftBottom$z$0 = this$1.z - other$1$z$0;
 	vLeftBottom$w$0 = 1;
-	other$2 = this.vCenter;
-	x$0 = projectionAndScreenMatrix$_m11$0 * (x$2 = other$2.x) + projectionAndScreenMatrix$_m12$0 * (y$2 = other$2.y) + projectionAndScreenMatrix$_m13$0 * (z$2 = other$2.z) + projectionAndScreenMatrix$_m14$0 * (w$2 = other$2.w);
+	this$2 = this.vCenter;
+	x$0 = projectionAndScreenMatrix$_m11$0 * (x$2 = this$2.x) + projectionAndScreenMatrix$_m12$0 * (y$2 = this$2.y) + projectionAndScreenMatrix$_m13$0 * (z$2 = this$2.z) + projectionAndScreenMatrix$_m14$0 * (w$2 = this$2.w);
 	y$0 = projectionAndScreenMatrix$_m21$0 * x$2 + projectionAndScreenMatrix$_m22$0 * y$2 + projectionAndScreenMatrix$_m23$0 * z$2 + projectionAndScreenMatrix$_m24$0 * w$2;
 	z$0 = projectionAndScreenMatrix$_m31$0 * x$2 + projectionAndScreenMatrix$_m32$0 * y$2 + projectionAndScreenMatrix$_m33$0 * z$2 + projectionAndScreenMatrix$_m34$0 * w$2;
 	w$0 = projectionAndScreenMatrix$_m41$0 * x$2 + projectionAndScreenMatrix$_m42$0 * y$2 + projectionAndScreenMatrix$_m43$0 * z$2 + projectionAndScreenMatrix$_m44$0 * w$2;
