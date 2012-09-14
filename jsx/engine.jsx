@@ -46,7 +46,8 @@ class Engine {
      * @param canvas_id 利用するcanvas(DOM)のid
      */
     function constructor(canvasId:string) {
-        this._isMobile = /iPhone/.test(dom.window.navigator.userAgent);
+        var userAgent = dom.window.navigator.userAgent;
+        this._isMobile = /iPhone/.test(userAgent) || /Android/.test(userAgent);
 
         var canvas = dom.id(canvasId) as HTMLCanvasElement;
         this.context = canvas.getContext('2d') as CanvasRenderingContext2D;

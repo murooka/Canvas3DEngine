@@ -4827,6 +4827,8 @@ Engine.prototype = new Object;
  * @param {!string} canvasId
  */
 function Engine$S(canvasId) {
+	/** @type {!string} */
+	var userAgent;
 	/** @type {HTMLCanvasElement} */
 	var canvas;
 	/** @type {Vector} */
@@ -5167,7 +5169,8 @@ function Engine$S(canvasId) {
 	this.onRender = null;
 	this._skyImageSrc = null;
 	this._skyImage = null;
-	this._isMobile = /iPhone/.test(dom.window.navigator.userAgent);
+	userAgent = dom.window.navigator.userAgent;
+	this._isMobile = /iPhone/.test(userAgent) || /Android/.test(userAgent);
 	canvas = (function (o) { return o instanceof HTMLCanvasElement ? o : null; })((function (o) { return o instanceof HTMLElement ? o : null; })(dom.document.getElementById(canvasId)));
 	this.context = (function (o) { return o instanceof CanvasRenderingContext2D ? o : null; })(canvas.getContext('2d'));
 	_width$0 = this._width = canvas.width;
@@ -5965,7 +5968,7 @@ Context3D$LCamera$.prototype = new Context3D;
 Context3D.setDepth$LContext3D$I = function ($this, depth) {
 	if (! (1 <= depth && depth <= 5)) {
 		debugger;
-		throw new Error("[jsx/engine.jsx:263] assertion failure");
+		throw new Error("[jsx/engine.jsx:264] assertion failure");
 	}
 	$this._depth = depth;
 };
