@@ -799,9 +799,9 @@ function BlueBall$() {
 	this.items = null;
 	this.itemRadius = 0;
 	this.totalElapsedMsec = 0;
-	Engine$loadImages$AS([ './image/tree.png', './image/so-nya.png', './image/redbull_free.png', './image/sky1.jpg' ]);
+	Engine$loadImages$AS([ 'http://murooka.me/project2/image/tree.png', 'http://murooka.me/project2/image/so-nya.png', 'http://murooka.me/project2/image/redbull_free.png', 'http://murooka.me/project2/image/sky1.jpg' ]);
 	this.isStarted = false;
-	engine$1 = this.engine = new Engine$S('canvas');
+	engine$1 = this.engine = new Engine$S('canvas_demo2');
 	this$0 = engine$1;
 	this$0._skyImageSrc = './image/sky1.jpg';
 	this$0._skyImage = Engine.images['./image/sky1.jpg'];
@@ -3383,6 +3383,8 @@ BlueBall.prototype._setPCOperation$ = function () {
 		var $this$6;
 		/** @type {Player} */
 		var $this$7;
+		/** @type {Engine} */
+		var this$0;
 		/** @type {Player} */
 		var player$0;
 		/** @type {Player} */
@@ -3440,6 +3442,10 @@ BlueBall.prototype._setPCOperation$ = function () {
 			$this$7 = player$5 = $this.player;
 			$this$7.isBraking = false;
 			Player$move$LPlayer$NN(player$5, 0, accel / 2);
+			break;
+		case 113:
+			this$0 = $this.engine;
+			this$0._isRunning = false;
 			break;
 		case 32:
 			$this.player.vy = 80;
@@ -11082,7 +11088,7 @@ $__jsx_lazy_init(Timer, "_cancelAnimationFrame", function () {
 js.global = (function () { return this; })();
 
 var $__jsx_classMap = {
-	"jsx/ball.jsx": {
+	"jsx/demo2.jsx": {
 		Util3D: Util3D,
 		Util3D$: Util3D$,
 		Player: Player,
@@ -11211,7 +11217,7 @@ JSX.runTests = function (sourceFile, tests) {
 function $__jsx_onload (event) {
 	window.removeEventListener("load", $__jsx_onload);
 	document.removeEventListener("DOMContentLoaded", $__jsx_onload);
-	JSX.runMain("jsx/ball.jsx", [])
+	JSX.runMain("jsx/demo2.jsx", [])
 }
 
 window.addEventListener("load", $__jsx_onload);

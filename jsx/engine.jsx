@@ -42,6 +42,8 @@ class Engine {
     var _skyImageSrc : Nullable.<string>;
     var _skyImage : Nullable.<HTMLImageElement>;
 
+    var _isRunning : boolean;
+
     /**
      * @param canvas_id 利用するcanvas(DOM)のid
      */
@@ -59,6 +61,7 @@ class Engine {
         this._skyImageSrc = null;
         this._skyImage = null;
 
+        this._isRunning = false;
 
         var viewPosition   = new Vector(0,  0,-90);
         var targetPosition = new Vector(0,  0,  0);
@@ -117,8 +120,12 @@ class Engine {
     }
 
     function start() : void {
-        var fpsManager = new FpsManager('fps');
+        var fpsManager = new FpsManager();
+        fpsManager._enabledHtmlLog = false;
+        fpsManager._enabledConsoleLog = false;
         fpsManager.start();
+
+        this._isRunning = true;
 
         var update = ():void -> {
             fpsManager.update();
@@ -145,7 +152,7 @@ class Engine {
             context.modelList2.forEach((model) -> { model.draw(this); });
             context.modelList1.forEach((model) -> { model.draw(this); });
 
-            Timer.setTimeout(update, 0);
+            if (this._isRunning) Timer.setTimeout(update, 0);
         };
 
         Timer.setTimeout(():void -> {
@@ -153,6 +160,10 @@ class Engine {
         }, 500);
 
         Timer.setTimeout(update, 0);
+    }
+
+    function stop() : void {
+        this._isRunning = false;
     }
 
     // upperVectorが(0, 1, 0)の場合にしか対応できないかもしれない

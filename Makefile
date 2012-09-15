@@ -7,6 +7,11 @@ release:
 	jsx --executable web --release --optimize lto,unclassify,fold-const,return-if,inline,dce,fold-const,dce,lcse,array-length,unclassify,unbox --output jsx/ball.jsx.rel.js jsx/ball.jsx
 	java -jar /usr/local/closure-compiler/compiler.jar jsx/ball.jsx.rel.js > jsx/ball.jsx.js
 
+demo:
+	jsx --executable web --release --optimize lto,unclassify,fold-const,return-if,inline,dce,fold-const,dce,lcse,array-length,unclassify,unbox --output jsx/demo2.jsx.rel.js jsx/demo2.jsx
+	java -jar /usr/local/closure-compiler/compiler.jar jsx/demo2.jsx.rel.js > jsx/demo2.jsx.js
+
+
 clean:
 	rm jsx/*.js
 	rm jsx/*.mapping
