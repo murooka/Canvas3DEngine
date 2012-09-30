@@ -91,7 +91,7 @@ class Engine {
     static var isLoadedImage = {} : Map.<boolean>;
 
     static function loadImages(srcs:string[]) : void {
-        var canvas = dom.id('tmp_canvas') as HTMLCanvasElement;
+        var canvas = dom.createElement('canvas') as HTMLCanvasElement;
         var context = canvas.getContext('2d') as CanvasRenderingContext2D;
 
         var setOnload = (src:string):void -> {

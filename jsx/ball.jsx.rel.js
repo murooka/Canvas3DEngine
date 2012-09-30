@@ -5308,7 +5308,7 @@ Engine.loadImages$AS = function (srcs) {
 	var src;
 	/** @type {HTMLImageElement} */
 	var image;
-	canvas = (function (o) { return o instanceof HTMLCanvasElement ? o : null; })((function (o) { return o instanceof HTMLElement ? o : null; })(dom.document.getElementById('tmp_canvas')));
+	canvas = (function (o) { return o instanceof HTMLCanvasElement ? o : null; })(dom.document.createElement('canvas'));
 	context = (function (o) { return o instanceof CanvasRenderingContext2D ? o : null; })(canvas.getContext('2d'));
 	setOnload = (function (src) {
 		Engine.images[src].onload = (function (e) {
@@ -5979,7 +5979,7 @@ Context3D$LCamera$.prototype = new Context3D;
 Context3D.setDepth$LContext3D$I = function ($this, depth) {
 	if (! (1 <= depth && depth <= 5)) {
 		debugger;
-		throw new Error("[jsx/engine.jsx:273] assertion failure");
+		throw new Error("[jsx/engine.jsx:274] assertion failure");
 	}
 	$this._depth = depth;
 };
