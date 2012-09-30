@@ -5347,7 +5347,8 @@ Engine.prototype.start$ = function () {
 	/** @type {FpsManager} */
 	var fpsManager;
 	var update;
-	fpsManager = {_stopwatch: {_elapsedMsec: 0, _startedMsec: null, _lastLapMsec: null}, _recentlyMsecLog: [  ], _lastMsec: 0, _fpsElement: (function (o) { return o instanceof HTMLElement ? o : null; })(dom.document.getElementById('fps')), _enabledHtmlLog: true, _enabledConsoleLog: false};
+	fpsManager = new FpsManager$();
+	fpsManager.setEnabledHtmlLog$B(true);
 	Stopwatch$start$LStopwatch$(fpsManager._stopwatch);
 	this._isRunning = true;
 	update = (function () {
@@ -5355,7 +5356,7 @@ Engine.prototype.start$ = function () {
 		var lap;
 		/** @type {Context3D} */
 		var context;
-		FpsManager$update$LFpsManager$(fpsManager);
+		fpsManager.update$();
 		lap = fpsManager._lastMsec;
 		$this.onUpdate(lap);
 		context = {_worldMatrix: new Matrix$(), _matrixStack: new List$Matrix$E$(), camera: $this.camera, _depth: 3, modelList1: new List$Renderable$E$(), modelList2: new List$Renderable$E$(), modelList3: new List$Renderable$E$(), modelList4: new List$Renderable$E$(), modelList5: new List$Renderable$E$(), _polygonList: null, _groupCenter: null, _ignoringZHidden: false, backgroundColor: new Color$III(90, 135, 158)};
@@ -10953,54 +10954,81 @@ FpsManager.prototype = new Object;
  * @constructor
  */
 function FpsManager$() {
+	/** @type {HTMLElement} */
+	var fpsElement$0;
+	this._stopwatch = null;
+	this._recentlyMsecLog = null;
+	this._lastMsec = 0;
 	this._fpsElement = null;
+	this._enabledHtmlLog = false;
+	this._enabledConsoleLog = false;
+	fpsElement$0 = dom.document.createElement('span');
+	fpsElement$0.style.position = 'absolute';
+	fpsElement$0.style.top = '0px';
+	fpsElement$0.style.left = '0px';
+	fpsElement$0.style.display = 'none';
+	fpsElement$0.innerHTML = 'XXXfps';
+	dom.document.body.appendChild(fpsElement$0);
+	this._fpsElement = fpsElement$0;
 	this._stopwatch = {_elapsedMsec: 0, _startedMsec: null, _lastLapMsec: null};
 	this._recentlyMsecLog = [  ];
 	this._lastMsec = 0;
 	this._enabledHtmlLog = false;
-	this._enabledConsoleLog = true;
+	this._enabledConsoleLog = false;
 };
 
 FpsManager$.prototype = new FpsManager;
 
 /**
- * @constructor
- * @param {!string} spanId
+ * @return {HTMLElement}
  */
-function FpsManager$S(spanId) {
-	this._fpsElement = (function (o) { return o instanceof HTMLElement ? o : null; })(dom.document.getElementById(spanId));
-	this._stopwatch = {_elapsedMsec: 0, _startedMsec: null, _lastLapMsec: null};
-	this._recentlyMsecLog = [  ];
-	this._lastMsec = 0;
-	this._enabledHtmlLog = true;
-	this._enabledConsoleLog = false;
+FpsManager.prototype.createFpsElement$ = function () {
+	/** @type {HTMLElement} */
+	var fpsElement;
+	fpsElement = dom.document.createElement('span');
+	fpsElement.style.position = 'absolute';
+	fpsElement.style.top = '0px';
+	fpsElement.style.left = '0px';
+	fpsElement.style.display = 'none';
+	fpsElement.innerHTML = 'XXXfps';
+	return fpsElement;
 };
 
-FpsManager$S.prototype = new FpsManager;
-
 /**
- * @param {FpsManager} $this
+ * @param {!boolean} b
  */
-FpsManager.start$LFpsManager$ = function ($this) {
-	Stopwatch$start$LStopwatch$($this._stopwatch);
+FpsManager.prototype.setEnabledHtmlLog$B = function (b) {
+	this._enabledHtmlLog = b;
+	if (b) {
+		this._fpsElement.style.display = null;
+	} else {
+		this._fpsElement.style.display = 'none';
+	}
 };
 
-var FpsManager$start$LFpsManager$ = FpsManager.start$LFpsManager$;
+/**
+ * @param {!boolean} b
+ */
+FpsManager.prototype.setEnabledConsoleLog$B = function (b) {
+	this._enabledConsoleLog = b;
+};
 
 /**
- * @param {FpsManager} $this
+ */
+FpsManager.prototype.start$ = function () {
+	Stopwatch$start$LStopwatch$(this._stopwatch);
+};
+
+/**
  * @return {!number}
  */
-FpsManager.lastLap$LFpsManager$ = function ($this) {
-	return $this._lastMsec;
+FpsManager.prototype.lastLap$ = function () {
+	return this._lastMsec;
 };
 
-var FpsManager$lastLap$LFpsManager$ = FpsManager.lastLap$LFpsManager$;
-
 /**
- * @param {FpsManager} $this
  */
-FpsManager.update$LFpsManager$ = function ($this) {
+FpsManager.prototype.update$ = function () {
 	/** @type {!number} */
 	var lap;
 	/** @type {!number} */
@@ -11011,34 +11039,32 @@ FpsManager.update$LFpsManager$ = function ($this) {
 	var i;
 	/** @type {!number} */
 	var fps;
-	if (! (! Stopwatch$isStopped$LStopwatch$($this._stopwatch))) {
+	if (! (! Stopwatch$isStopped$LStopwatch$(this._stopwatch))) {
 		debugger;
-		throw new Error("[jsx/util.jsx:126] assertion failure");
+		throw new Error("[jsx/util.jsx:142] assertion failure");
 	}
-	lap = Stopwatch$lap$LStopwatch$($this._stopwatch);
-	$this._lastMsec = lap;
-	if ($this._recentlyMsecLog.length < 1) {
-		$this._recentlyMsecLog.push(lap);
+	lap = Stopwatch$lap$LStopwatch$(this._stopwatch);
+	this._lastMsec = lap;
+	if (this._recentlyMsecLog.length < 1) {
+		this._recentlyMsecLog.push(lap);
 	} else {
-		$this._recentlyMsecLog.push(lap);
-		$this._recentlyMsecLog.shift();
+		this._recentlyMsecLog.push(lap);
+		this._recentlyMsecLog.shift();
 	}
-	length = $this._recentlyMsecLog.length;
+	length = this._recentlyMsecLog.length;
 	totalMsec = 0;
 	for (i = 0; i < length; i++) {
-		totalMsec += $this._recentlyMsecLog[i];
+		totalMsec += this._recentlyMsecLog[i];
 	}
 	fps = length / (totalMsec / 1000);
-	if ($this._fpsElement != null && $this._enabledHtmlLog) {
-		$this._fpsElement.innerHTML = fps.toFixed(1) + "fps";
+	if (this._fpsElement != null && this._enabledHtmlLog) {
+		this._fpsElement.innerHTML = fps.toFixed(1) + "fps";
 	} else {
-		if ($this._enabledConsoleLog) {
+		if (this._enabledConsoleLog) {
 			console.log(fps.toFixed(1) + "fps");
 		}
 	}
 };
-
-var FpsManager$update$LFpsManager$ = FpsManager.update$LFpsManager$;
 
 /**
  * class js extends Object
@@ -11145,8 +11171,7 @@ var $__jsx_classMap = {
 		Stopwatch: Stopwatch,
 		Stopwatch$: Stopwatch$,
 		FpsManager: FpsManager,
-		FpsManager$: FpsManager$,
-		FpsManager$S: FpsManager$S
+		FpsManager$: FpsManager$
 	},
 	"system:lib/js/js.jsx": {
 		js: js,

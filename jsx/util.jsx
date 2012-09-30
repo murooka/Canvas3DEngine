@@ -87,28 +87,44 @@ class FpsManager {
     var _stopwatch : Stopwatch;
     var _recentlyMsecLog : number[];
     var _lastMsec : number;
-    var _fpsElement : Nullable.<HTMLElement>;
+    var _fpsElement : HTMLElement;
     var _enabledHtmlLog : boolean;
     var _enabledConsoleLog : boolean;
 
     function constructor() {
-        this._fpsElement = null;
+        var fpsElement = this.createFpsElement();
+        dom.document.body.appendChild(fpsElement);
+
+        this._fpsElement = fpsElement;
         this._stopwatch = new Stopwatch;
         this._recentlyMsecLog = [] : number[];
         this._lastMsec = 0;
 
         this._enabledHtmlLog = false;
-        this._enabledConsoleLog = true;
+        this._enabledConsoleLog = false;
     }
 
-    function constructor(spanId:string) {
-        this._fpsElement = dom.id(spanId);
-        this._stopwatch = new Stopwatch;
-        this._recentlyMsecLog = [] : number[];
-        this._lastMsec = 0;
+    function createFpsElement() : HTMLElement {
+        var fpsElement = dom.createElement('span') as Nullable.<HTMLElement>;
+        fpsElement.style.position = 'absolute';
+        fpsElement.style.top      = '0px';
+        fpsElement.style.left     = '0px';
+        fpsElement.style.display  = 'none';
+        fpsElement.innerHTML      = 'XXXfps';
+        return fpsElement;
+    }
 
-        this._enabledHtmlLog = true;
-        this._enabledConsoleLog = false;
+    function setEnabledHtmlLog(b:boolean) : void {
+        this._enabledHtmlLog = b;
+        if (b) {
+            this._fpsElement.style.display = null;
+        } else {
+            this._fpsElement.style.display = 'none';
+        }
+    }
+
+    function setEnabledConsoleLog(b:boolean) : void {
+        this._enabledConsoleLog = b;
     }
 
     function start() : void {

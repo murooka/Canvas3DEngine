@@ -120,7 +120,8 @@ class Engine {
     }
 
     function start() : void {
-        var fpsManager = new FpsManager('fps');
+        var fpsManager = new FpsManager();
+        fpsManager.setEnabledHtmlLog(true);
         fpsManager.start();
 
         this._isRunning = true;
