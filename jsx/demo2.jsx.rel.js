@@ -5308,12 +5308,6 @@ Engine.loadImages$AS = function (srcs) {
 	/** @type {CanvasRenderingContext2D} */
 	var context;
 	var setOnload;
-	/** @type {!number} */
-	var i;
-	/** @type {undefined|!string} */
-	var src;
-	/** @type {HTMLImageElement} */
-	var image;
 	canvas = (function (o) { return o instanceof HTMLCanvasElement ? o : null; })((function (o) { return o instanceof HTMLElement ? o : null; })(dom.document.getElementById('tmp_canvas')));
 	context = (function (o) { return o instanceof CanvasRenderingContext2D ? o : null; })(canvas.getContext('2d'));
 	setOnload = (function (src) {
@@ -5326,14 +5320,22 @@ Engine.loadImages$AS = function (srcs) {
 			Engine.imageDatas[src] = context.getImageData(0, 0, image.width, image.height);
 		});
 	});
-	for (i = 0; i < srcs.length; i++) {
-		src = srcs[i];
-		image = (function (o) { return o instanceof HTMLImageElement ? o : null; })(dom.document.createElement('img'));
-		image.src = src;
-		Engine.isLoadedImage[src] = false;
-		Engine.images[src] = image;
-		setOnload(src);
-	}
+	js.global.setTimeout((function () {
+		/** @type {!number} */
+		var i;
+		/** @type {undefined|!string} */
+		var src;
+		/** @type {HTMLImageElement} */
+		var image;
+		for (i = 0; i < srcs.length; i++) {
+			src = srcs[i];
+			image = (function (o) { return o instanceof HTMLImageElement ? o : null; })(dom.document.createElement('img'));
+			image.src = src;
+			Engine.isLoadedImage[src] = false;
+			Engine.images[src] = image;
+			setOnload(src);
+		}
+	}), 1000);
 };
 
 var Engine$loadImages$AS = Engine.loadImages$AS;
@@ -5987,7 +5989,7 @@ Context3D$LCamera$.prototype = new Context3D;
 Context3D.setDepth$LContext3D$I = function ($this, depth) {
 	if (! (1 <= depth && depth <= 5)) {
 		debugger;
-		throw new Error("[jsx/engine.jsx:275] assertion failure");
+		throw new Error("[jsx/engine.jsx:277] assertion failure");
 	}
 	$this._depth = depth;
 };

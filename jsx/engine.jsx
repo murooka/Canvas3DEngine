@@ -45,7 +45,7 @@ class Engine {
     var _isRunning : boolean;
 
     /**
-     * @param canvas_id 利用するcanvas(DOM)のid
+     * @param canvasId 利用するcanvas(DOM)のid
      */
     function constructor(canvasId:string) {
         var userAgent = dom.window.navigator.userAgent;
@@ -56,7 +56,7 @@ class Engine {
 
         this._width  = canvas.width;
         this._height = canvas.height;
-        this.setScreenMatrix(this._width, this._height);
+        this.setScreenSize(this._width, this._height);
 
         this._skyImageSrc = null;
         this._skyImage = null;
@@ -120,9 +120,7 @@ class Engine {
     }
 
     function start() : void {
-        var fpsManager = new FpsManager();
-        fpsManager._enabledHtmlLog = false;
-        fpsManager._enabledConsoleLog = false;
+        var fpsManager = new FpsManager('fps');
         fpsManager.start();
 
         this._isRunning = true;
@@ -220,7 +218,7 @@ class Engine {
     }
     
 
-    function setScreenMatrix(width:number, height:number) : void {
+    function setScreenSize(width:number, height:number) : void {
         this.screenMatrix =
             Matrix.translating(width/2, height/2, 0).composeSelf(
                 Matrix.scaling(width/2,-height/2, 1));
@@ -421,7 +419,7 @@ class Camera {
      * @param fovyX  横方向の視野角
      * @param nearZ  物が見える範囲のうち、最も近い距離
      * @param farZ   物が見える範囲のうち、最も遠い距離
-     * @param apect_ratio カメラ画面のheight/widthの値
+     * @param aspectRatio カメラ画面のheight/widthの値
      */
     function constructor(view:Vector, target:Vector, upper:Vector, fovyX:number, nearZ:number, farZ:number, aspectRatio:number) {
         this.view   = view;

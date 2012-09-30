@@ -5347,9 +5347,7 @@ Engine.prototype.start$ = function () {
 	/** @type {FpsManager} */
 	var fpsManager;
 	var update;
-	fpsManager = {_stopwatch: {_elapsedMsec: 0, _startedMsec: null, _lastLapMsec: null}, _recentlyMsecLog: [  ], _lastMsec: 0, _fpsElement: null, _enabledHtmlLog: false, _enabledConsoleLog: true};
-	fpsManager._enabledHtmlLog = false;
-	fpsManager._enabledConsoleLog = false;
+	fpsManager = {_stopwatch: {_elapsedMsec: 0, _startedMsec: null, _lastLapMsec: null}, _recentlyMsecLog: [  ], _lastMsec: 0, _fpsElement: (function (o) { return o instanceof HTMLElement ? o : null; })(dom.document.getElementById('fps')), _enabledHtmlLog: true, _enabledConsoleLog: false};
 	Stopwatch$start$LStopwatch$(fpsManager._stopwatch);
 	this._isRunning = true;
 	update = (function () {
@@ -5526,7 +5524,7 @@ Engine.prototype.renderSkyImage$ = function () {
  * @param {!number} width
  * @param {!number} height
  */
-Engine.prototype.setScreenMatrix$NN = function (width, height) {
+Engine.prototype.setScreenSize$NN = function (width, height) {
 	/** @type {Matrix} */
 	var this$0;
 	/** @type {!number} */
@@ -5981,7 +5979,7 @@ Context3D$LCamera$.prototype = new Context3D;
 Context3D.setDepth$LContext3D$I = function ($this, depth) {
 	if (! (1 <= depth && depth <= 5)) {
 		debugger;
-		throw new Error("[jsx/engine.jsx:275] assertion failure");
+		throw new Error("[jsx/engine.jsx:273] assertion failure");
 	}
 	$this._depth = depth;
 };
