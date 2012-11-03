@@ -49,7 +49,7 @@ class Engine {
      */
     function constructor(canvasId:string) {
         var userAgent = dom.window.navigator.userAgent;
-        this._isMobile = /iPhone/.test(userAgent) || /Android/.test(userAgent);
+        this._isMobile = /iPhone/.test(userAgent) || /Android/.test(userAgent) || /iPad/.test(userAgent);
 
         var canvas = dom.id(canvasId) as HTMLCanvasElement;
         this.context = canvas.getContext('2d') as CanvasRenderingContext2D;

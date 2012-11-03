@@ -5171,7 +5171,7 @@ function Engine$S(canvasId) {
 	this._skyImage = null;
 	this._isRunning = false;
 	userAgent = dom.window.navigator.userAgent;
-	this._isMobile = /iPhone/.test(userAgent) || /Android/.test(userAgent);
+	this._isMobile = /iPhone/.test(userAgent) || /Android/.test(userAgent) || /iPad/.test(userAgent);
 	canvas = (function (o) { return o instanceof HTMLCanvasElement ? o : null; })((function (o) { return o instanceof HTMLElement ? o : null; })(dom.document.getElementById(canvasId)));
 	this.context = (function (o) { return o instanceof CanvasRenderingContext2D ? o : null; })(canvas.getContext('2d'));
 	_width$0 = this._width = canvas.width;
