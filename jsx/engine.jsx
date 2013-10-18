@@ -243,11 +243,11 @@ class Context3D {
 
     var camera : Camera;
     var _depth : int;
-    var modelList1 = List.<Renderable>;
-    var modelList2 = List.<Renderable>;
-    var modelList3 = List.<Renderable>;
-    var modelList4 = List.<Renderable>;
-    var modelList5 = List.<Renderable>;
+    var modelList1 : List.<Renderable>;
+    var modelList2 : List.<Renderable>;
+    var modelList3 : List.<Renderable>;
+    var modelList4 : List.<Renderable>;
+    var modelList5 : List.<Renderable>;
 
     var _polygonList : List.<Polygon>;
     var _groupCenter : Vector;
