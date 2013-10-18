@@ -1,1 +1,2 @@
-jsx/*.mapping
+**/jsx/*.mapping
+**/jsx/*.js

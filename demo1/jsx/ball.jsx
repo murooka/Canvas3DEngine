@@ -1,8 +1,8 @@
-import "./vector.jsx";
-import "./matrix.jsx";
-import "./quaternion.jsx";
-import "./engine.jsx";
-import "./list.jsx";
+import "../../lib/vector.jsx";
+import "../../lib/matrix.jsx";
+import "../../lib/quaternion.jsx";
+import "../../lib/engine.jsx";
+import "../../lib/list.jsx";
 import "js/web.jsx";
 import "timer.jsx";
 

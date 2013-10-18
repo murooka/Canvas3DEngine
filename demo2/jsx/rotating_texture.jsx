@@ -1,6 +1,6 @@
-import "./vector.jsx";
-import "./quaternion.jsx";
-import "./engine.jsx";
+import "../../lib/vector.jsx";
+import "../../lib/quaternion.jsx";
+import "../../lib/engine.jsx";
 
 final class _Main {
     static function main(args:string[]) : void {

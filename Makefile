@@ -1,17 +1,15 @@
-all: debug
+all: demo1 demo2
 
-debug:
-	jsx --executable web --warn all --enable-type-check --enable-source-map --output jsx/ball.jsx.js jsx/ball.jsx
+demo1:
+	jsx --executable web --release --output demo1/jsx/ball.jsx.js demo1/jsx/ball.jsx
 
-release:
-	jsx --executable web --release --optimize lto,unclassify,fold-const,return-if,inline,dce,fold-const,dce,lcse,array-length,unclassify,unbox --output jsx/ball.jsx.rel.js jsx/ball.jsx
-	java -jar /usr/local/closure-compiler/compiler.jar jsx/ball.jsx.rel.js > jsx/ball.jsx.js
-
-demo:
-	jsx --executable web --release --optimize lto,unclassify,fold-const,return-if,inline,dce,fold-const,dce,lcse,array-length,unclassify,unbox --output jsx/demo2.jsx.rel.js jsx/demo2.jsx
-	java -jar /usr/local/closure-compiler/compiler.jar jsx/demo2.jsx.rel.js > jsx/demo2.jsx.js
-
+demo2:
+	jsx --executable web --release --output demo2/jsx/rotating_texture.jsx.js demo2/jsx/rotating_texture.jsx
 
 clean:
-	rm jsx/*.js
-	rm jsx/*.mapping
+	rm -f demo1/jsx/*.js
+	rm -f demo2/jsx/*.js
+	rm -f demo1/jsx/*.mapping
+	rm -f demo2/jsx/*.mapping
+
+.PHONY: demo1 demo2
